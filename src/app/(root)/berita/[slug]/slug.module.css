@@ -1,0 +1,14 @@
+/* slug.module.css */
+
+.imgContainer {
+  position: relative;
+  width: 100%;
+  height: 400px;
+}
+
+/* slug.module.css */
+
+.imgBanner {
+  height: 100%;
+  object-fit: cover;
+}

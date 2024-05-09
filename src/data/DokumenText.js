@@ -1,0 +1,92 @@
+export const DokumenText = [
+  {
+    id: "section-1",
+    title: "Bonebol Sepekan",
+    content: [
+      {
+        id: "content-1",
+        tableTitle: "Bonebol Sepekan - Februari ",
+        tablePublisher: "Diskominfo Bone Bolango",
+        tableYear: "2024",
+        tableDate: "29-02-2024",
+        file: "/",
+      },
+      {
+        id: "content-2",
+        tableTitle: "Bonebol Sepekan - Februari ",
+        tablePublisher: "Diskominfo Bone Bolango",
+        tableYear: "2024",
+        tableDate: "29-02-2024",
+        file: "/",
+      },
+      {
+        id: "content-3",
+        tableTitle: "Bonebol Sepekan - Februari ",
+        tablePublisher: "Diskominfo Bone Bolango",
+        tableYear: "2024",
+        tableDate: "29-02-2024",
+        file: "/",
+      },
+    ],
+  },
+  {
+    id: "section-2",
+    title: "Produk Hukum",
+    content: [
+      {
+        id: "content-1",
+        tableTitle: "Produk Hukum ",
+        tablePublisher: "Diskominfo Bone Bolango",
+        tableYear: "2024",
+        tableDate: "29-02-2024",
+        file: "/",
+      },
+      {
+        id: "content-2",
+        tableTitle: "Produk Hukum ",
+        tablePublisher: "Diskominfo Bone Bolango",
+        tableYear: "2024",
+        tableDate: "29-02-2024",
+        file: "/",
+      },
+      {
+        id: "content-3",
+        tableTitle: "Produk Hukum ",
+        tablePublisher: "Diskominfo Bone Bolango",
+        tableYear: "2024",
+        tableDate: "29-02-2024",
+        file: "/",
+      },
+    ],
+  },
+  {
+    id: "section-3",
+    title: "Dokumen Lainnya",
+    content: [
+      {
+        id: "content-1",
+        tableTitle: "Dokumen Lainnya ",
+        tablePublisher: "Diskominfo Bone Bolango",
+        tableYear: "2024",
+        tableDate: "29-02-2024",
+        file: "/",
+      },
+      {
+        id: "content-2",
+        tableTitle: "Dokumen Lainnya ",
+        tablePublisher: "Diskominfo Bone Bolango",
+        tableYear: "2024",
+        tableDate: "29-02-2024",
+        file: "/",
+      },
+      {
+        id: "content-3",
+        tableTitle: "Dokumen Lainnya ",
+        tablePublisher: "Diskominfo Bone Bolango",
+        tableYear: "2024",
+        tableDate: "29-02-2024",
+        file: "/",
+      },
+    ],
+  },
+];
