@@ -1,2 +1,5 @@
 # diskominfoBonebol-companyProfile
- For Thesis Purposes
+
+For Thesis Purposes
+
+# Test ajah
