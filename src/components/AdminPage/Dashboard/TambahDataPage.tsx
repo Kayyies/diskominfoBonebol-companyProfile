@@ -46,7 +46,7 @@ const TambahDataPage: React.FC<Props> = ({
 
   return (
     <>
-      {/* Kembali and Reset Button */}
+      {/* Kembali Button and Reset Button */}
       <div className="mb-5 flex flex-row items-center justify-between align-middle">
         {/* Tombol Kembali ke Halaman Sebelumnya */}
         <button
