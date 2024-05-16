@@ -1,5 +1,5 @@
 import React from "react";
-import TambahDataPage from "../TambahDataPage";
+import TambahDataPage from "../TambahDataPage/TambahDataPage";
 
 const DokumenAdd: React.FC = () => {
   const inputFields = [

@@ -1,10 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import React, { useState } from "react";
-import { TextEditorReact } from "../wysiwyg/WYSIWYG";
-import { usePathname, useRouter } from "next/navigation";
-import { ModalButton } from "./ModalButton";
+import React, { useState, useEffect } from "react";
+import { TextEditorReact } from "../../wysiwyg/WYSIWYG";
+import { usePathname } from "next/navigation";
+import { useRouter } from "next/router";
+import Modal from "./Modal";
 
 interface InputField {
   type: "text" | "select";
@@ -22,15 +23,48 @@ const TambahDataPage: React.FC<Props> = ({
   inputFields,
   showTextEditor = false,
 }) => {
+  //useState untuk form input
   const [inputValues, setInputValues] = useState<{ [key: string]: string }>(
     Object.fromEntries(inputFields.map((field) => [field.label, ""])),
   );
 
+  //handler untuk controlled input
   const handleChange = (label: string, value: string) => {
     setInputValues({ ...inputValues, [label]: value });
   };
 
-  const handleClear = () => {
+  //Modal State
+  const [showModal, setShowModal] = useState(false);
+  const [modalTitle, setModalTitle] = useState("");
+  const [modalMessage, setModalMessage] = useState("");
+  const [modalCancel, setModalCancel] = useState("");
+  const [modalConfirm, setModalConfirm] = useState("");
+  const [previousPath, setPreviousPath] = useState("");
+
+  //handle open modal
+  const handleOpenModal = (
+    title: string,
+    message: string,
+    modalCancel: string,
+    modalConfrim: string,
+    previousPath: string,
+    onConfirm: () => void,
+  ) => {
+    setModalTitle(title);
+    setModalMessage(message);
+    setModalCancel(modalCancel);
+    setModalConfirm(modalConfrim);
+    setShowModal(true);
+    setModalConfirmAction(onConfirm);
+  };
+
+  const handleCloseModal = () => {
+    setShowModal(false);
+  };
+
+  //handler untk clear form input
+  const handleReset = () => {
+    console.log("data cleared");
     setInputValues(
       Object.fromEntries(inputFields.map((field) => [field.label, ""])),
     );
@@ -38,12 +72,25 @@ const TambahDataPage: React.FC<Props> = ({
     selectElements.forEach((select) => {
       select.value = ""; // Reset each select element to its default value
     });
+    setShowModal(false);
   };
 
+  // Calculate previous path using usePathname
   const pathName = usePathname();
-  const finalSlashIndex = pathName.lastIndexOf("/");
-  const previousPath = pathName.slice(0, finalSlashIndex);
+  useEffect(() => {
+    const finalSlashIndex = pathName.lastIndexOf("/");
+    setPreviousPath(pathName.slice(0, finalSlashIndex));
+  }, [pathName]);
 
+  // handler untuk kembali
+  const handleKembali = () => {
+    console.log("Kembali ke halaman:", previousPath);
+    window.location.href = previousPath; // Navigate to previous path
+  };
+
+  const [modalConfirmAction, setModalConfirmAction] = useState<() => void>(
+    () => {},
+  );
   return (
     <>
       {/* Kembali Button and Reset Button */}
@@ -51,7 +98,15 @@ const TambahDataPage: React.FC<Props> = ({
         {/* Tombol Kembali ke Halaman Sebelumnya */}
         <button
           className="flex w-max items-center gap-2 transition-all hover:text-blue-400"
-          onClick={() => document.getElementById("my_modal_1").showModal()}
+          onClick={() =>
+            handleOpenModal(
+              "Yakin ingin pindah halaman?",
+              "Data yang kamu input belum tersimpan, lanjutkan keluar dari halaman?",
+              "Batalkan",
+              "Kembali ke halaman sebelumnya",
+              handleKembali,
+            )
+          }
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -69,34 +124,19 @@ const TambahDataPage: React.FC<Props> = ({
           </svg>
           Kembali
         </button>
-        <dialog id="my_modal_1" className="modal">
-          <div className="modal-box bg-white text-black">
-            <h3 className="text-lg font-bold">Ta-tapi tunggu dulu!</h3>
-            <p className="py-4">
-              Data yang kamu input belum tersimpan, lanjutkan keluar dari
-              halaman?
-            </p>
-            <div className="modal-action">
-              <form method="dialog">
-                {/* if there is a button in form, it will close the modal */}
-                <div className="flex flex-row gap-3">
-                  <button className="btn btn-sm border-gray-500 bg-transparent font-medium text-black hover:bg-gray-200">
-                    Batalkan
-                  </button>
-                  <button className="btn  btn-sm border-gray-500 bg-black font-medium text-white hover:bg-black/90">
-                    Keluar dari halaman
-                  </button>
-                </div>
-              </form>
-            </div>
-          </div>
-        </dialog>
-
         {/* Reset Button */}
         <button
           className="flex select-none items-center gap-3 rounded-lg border border-gray-900 px-6 py-3 text-center align-middle font-sans text-xs font-bold uppercase text-gray-900 transition-all hover:opacity-75 focus:ring focus:ring-gray-300 active:opacity-[0.85] disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
           type="button"
-          onClick={handleClear}
+          onClick={() =>
+            handleOpenModal(
+              "Yakin mau reset input?",
+              "Data yang kamu input belum tersimpan, lanjutkan mereset input data?",
+              "Batalkan",
+              "Reset Form",
+              handleReset,
+            )
+          }
         >
           Reset
           <svg
@@ -167,6 +207,20 @@ const TambahDataPage: React.FC<Props> = ({
       >
         Masukan Data
       </Link>
+
+      {showModal && (
+        <Modal
+          isOpen={showModal}
+          title={modalTitle}
+          message={modalMessage}
+          modalCancel={modalCancel}
+          modalConfirm={modalConfirm}
+          onCancel={handleCloseModal}
+          onConfirm={
+            modalConfirm === "Reset Form" ? handleReset : handleKembali
+          }
+        />
+      )}
     </>
   );
 };

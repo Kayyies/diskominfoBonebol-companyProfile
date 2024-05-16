@@ -1,5 +1,4 @@
-import CompTambahData from "@/components/AdminPage/Dashboard/CompTambahData";
-import TambahDataComp from "@/components/AdminPage/Dashboard/TambahDataPage";
+import TambahDataComp from "@/components/AdminPage/Dashboard/TambahDataPage/TambahDataPage";
 import DefaultLayout from "@/components/AdminPage/Layouts/DefaultLayout";
 
 export const metadata: Metadata = {
