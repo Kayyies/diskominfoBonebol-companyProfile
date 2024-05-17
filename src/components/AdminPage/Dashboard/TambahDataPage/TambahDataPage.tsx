@@ -75,12 +75,17 @@ const TambahDataPage: React.FC<Props> = ({
     setShowModal(false);
   };
 
-  // Calculate previous path using usePathname
+  // Kalkulasi previous path using usePathname
   const pathName = usePathname();
   useEffect(() => {
     const finalSlashIndex = pathName.lastIndexOf("/");
     setPreviousPath(pathName.slice(0, finalSlashIndex));
   }, [pathName]);
+
+  // Check is form is filled
+  const isFormFilled = () => {
+    return Object.values(inputValues).some((value) => value != "");
+  };
 
   // handler untuk kembali
   const handleKembali = () => {
@@ -98,15 +103,19 @@ const TambahDataPage: React.FC<Props> = ({
         {/* Tombol Kembali ke Halaman Sebelumnya */}
         <button
           className="flex w-max items-center gap-2 transition-all hover:text-blue-400"
-          onClick={() =>
-            handleOpenModal(
-              "Yakin ingin pindah halaman?",
-              "Data yang kamu input belum tersimpan, lanjutkan keluar dari halaman?",
-              "Batalkan",
-              "Kembali ke halaman sebelumnya",
-              handleKembali,
-            )
-          }
+          onClick={() => {
+            if (isFormFilled()) {
+              handleOpenModal(
+                "Yakin ingin pindah halaman?",
+                "Data yang kamu input belum tersimpan, lanjutkan keluar dari halaman?",
+                "Batalkan",
+                "Kembali ke halaman sebelumnya",
+                handleKembali,
+              );
+            } else {
+              handleKembali();
+            }
+          }}
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -128,15 +137,19 @@ const TambahDataPage: React.FC<Props> = ({
         <button
           className="flex select-none items-center gap-3 rounded-lg border border-gray-900 px-6 py-3 text-center align-middle font-sans text-xs font-bold uppercase text-gray-900 transition-all hover:opacity-75 focus:ring focus:ring-gray-300 active:opacity-[0.85] disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
           type="button"
-          onClick={() =>
-            handleOpenModal(
-              "Yakin mau reset input?",
-              "Data yang kamu input belum tersimpan, lanjutkan mereset input data?",
-              "Batalkan",
-              "Reset Form",
-              handleReset,
-            )
-          }
+          onClick={() => {
+            if (isFormFilled()) {
+              handleOpenModal(
+                "Yakin mau reset input?",
+                "Data yang kamu input belum tersimpan, lanjutkan mereset input data?",
+                "Batalkan",
+                "Reset Form",
+                handleReset,
+              );
+            } else {
+              handleReset();
+            }
+          }}
         >
           Reset
           <svg
