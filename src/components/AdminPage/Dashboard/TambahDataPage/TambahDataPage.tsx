@@ -9,9 +9,9 @@ import Modal from "./Modal";
 
 interface InputField {
   type: "text" | "select";
-  label: String;
-  placeholder: String;
-  options?: String[];
+  label: string;
+  placeholder: string;
+  options?: string[];
 }
 
 interface Props {

@@ -6,17 +6,17 @@ import Image from "next/image";
 import { usePathname } from "next/navigation";
 
 interface DataItem {
-  category?: String;
-  title?: String;
-  createdAt?: String;
-  desc?: String;
+  category?: string;
+  title?: string;
+  createdAt?: string;
+  desc?: string;
   slugLink?: URL;
   logo?: string;
 }
 
 interface Props {
   datas: DataItem[];
-  headers: String[];
+  headers: string[];
   sortableIcon: (index: number) => boolean;
 }
 
