@@ -18,9 +18,15 @@ interface Props {
   datas: DataItem[];
   headers: string[];
   sortableIcon: (index: number) => boolean;
+  onRefresh: () => void;
 }
 
-const TableDashboard: React.FC<Props> = ({ datas, headers, sortableIcon }) => {
+const TableDashboard: React.FC<Props> = ({
+  datas,
+  headers,
+  sortableIcon,
+  onRefresh,
+}) => {
   const pathname = usePathname();
   const tambahData = `${pathname}/tambahdata`;
   return (
@@ -37,10 +43,10 @@ const TableDashboard: React.FC<Props> = ({ datas, headers, sortableIcon }) => {
           </div>
           <div className="flex shrink-0 flex-col gap-2 sm:flex-row">
             {/* Refresh Button */}
-            <Link
+            <button
               className="flex select-none items-center gap-3 rounded-lg border border-gray-900 px-6 py-3 text-center align-middle font-sans text-xs font-bold uppercase text-gray-900 transition-all hover:opacity-75 focus:ring focus:ring-gray-300 active:opacity-[0.85] disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
               type="button"
-              href="#"
+              onClick={onRefresh}
             >
               Refresh
               <svg
@@ -57,7 +63,7 @@ const TableDashboard: React.FC<Props> = ({ datas, headers, sortableIcon }) => {
                   d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99"
                 ></path>
               </svg>
-            </Link>
+            </button>
 
             {/* Tambah Data Button */}
             <Link

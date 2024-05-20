@@ -1,7 +1,7 @@
 "use client";
 
 //import pages
-import React from "react";
+import React, { useState } from "react";
 import Breadcrumb from "../../Breadcrumbs/Breadcrumb";
 import TableDashboard from "../TableDashboard";
 
@@ -11,8 +11,8 @@ const LayananComp: React.FC = () => {
   //inisiasi table headers
   const headers = ["id", "Logo", "Title", "Description", "Link", "Action"];
 
-  //inisiasi table body
-  const datas = [
+  //inisiasi table data
+  const [datas, setDatas] = useState([
     {
       id: 123,
       image: "/beritabonebol.svg",
@@ -37,7 +37,39 @@ const LayananComp: React.FC = () => {
       link: "https://berita.bonebolangokab.go.id/",
       slugLink: "/admin/profil/aba",
     },
-  ];
+  ]);
+
+  //fungsi refresh data
+  const refreshData = () => {
+    //harusnya fetching logic dari database atau API
+    //tapi di sini pakai data lokal dulu
+    setDatas([
+      {
+        id: 123,
+        image: "/beritabonebol.svg",
+        title: "Berita Bone Bolango",
+        desc: "Open Data Bone Bolango adalah portal terintegrasi untuk pengelolaan, keterbukaan, dan kemudahan akses data bagi warga dan pemerintah Bone Bolango. Jenis data yang disajikan yakni dataset, visualisasi, dan indikator kinerja.",
+        link: "https://berita.bonebolangokab.go.id/",
+        slugLink: "/admin/profil/aba",
+      },
+      {
+        id: 124,
+        image: "/opendatabonebol.svg",
+        title: "Open Data Bone Bolango",
+        desc: "Open Data Bone Bolango adalah portal terintegrasi untuk pengelolaan, keterbukaan, dan kemudahan akses data bagi warga dan pemerintah Bone Bolango. Jenis data yang disajikan yakni dataset, visualisasi, dan indikator kinerja.",
+        link: "https://berita.bonebolangokab.go.id/",
+        slugLink: "/admin/profil/aba",
+      },
+      {
+        id: 125,
+        image: "/cloudbonebol.svg",
+        title: "Cloud Bone Bolango",
+        desc: "Open Data Bone Bolango adalah portal terintegrasi untuk pengelolaan, keterbukaan, dan kemudahan akses data bagi warga dan pemerintah Bone Bolango. Jenis data yang disajikan yakni dataset, visualisasi, dan indikator kinerja.",
+        link: "https://berita.bonebolangokab.go.id/",
+        slugLink: "/admin/profil/aba",
+      },
+    ]);
+  };
 
   //fungsi mengatur kapan harus ada icon sortable
   const sortableIcon = (index: number) => {
@@ -84,6 +116,7 @@ const LayananComp: React.FC = () => {
           datas={datas}
           headers={modifiedHeaders}
           sortableIcon={sortableIcon}
+          onRefresh={refreshData}
         />
       </div>
     </>
