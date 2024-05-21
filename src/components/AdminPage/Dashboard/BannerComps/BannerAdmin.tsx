@@ -4,22 +4,35 @@
 import React from "react";
 import Breadcrumb from "../../Breadcrumbs/Breadcrumb";
 import TableDashboard from "../TableDashboard";
+import useRefreshData from "@/hooks/useRefreshData";
 
-//import image [del soon]
+//inisiasi table body
+const initialData = [
+  {
+    id: 123,
+    image: "/beritabonebol.svg",
+    desc: "gambar banner tentang makan",
+    slugLink: "/admin/profil/aba",
+  },
+];
+
+const fetchData = async () => {
+  // Simulate an API call to fetch data
+  return new Promise<DataItem[]>((resolve) => {
+    setTimeout(() => {
+      resolve(initialData);
+    }, 2000); // Simulate a 2 second delay
+  });
+};
 
 const BannerAdmin: React.FC = () => {
   //inisiasi table headers
   const headers = ["Id", "Image", "Description", "Action"];
 
-  //inisiasi table body
-  const datas = [
-    {
-      id: 123,
-      image: "/beritabonebol.svg",
-      desc: "gambar banner tentang makan",
-      slugLink: "/admin/profil/aba",
-    },
-  ];
+  const [datas, isLoading, refreshData] = useRefreshData(
+    initialData,
+    fetchData,
+  );
 
   //fungsi mengatur kapan harus ada icon sortable
   const sortableIcon = (index: number) => {
@@ -66,6 +79,8 @@ const BannerAdmin: React.FC = () => {
           datas={datas}
           headers={modifiedHeaders}
           sortableIcon={sortableIcon}
+          onRefresh={refreshData}
+          isLoading={isLoading}
         />
       </div>
     </>

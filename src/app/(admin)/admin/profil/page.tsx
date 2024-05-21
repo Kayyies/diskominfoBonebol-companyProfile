@@ -1,4 +1,4 @@
-import Profil from "@/components/AdminPage/Dashboard/ProfilComps/Profil";
+import Profil from "@/components/AdminPage/Dashboard/ProfilComps/ProfilComp";
 import { Metadata } from "next";
 import DefaultLayout from "@/components/AdminPage/Layouts/DefaultLayout";
 

@@ -1,6 +1,6 @@
 import { Metadata } from "next";
 import DefaultLayout from "@/components/AdminPage/Layouts/DefaultLayout";
-import Dokumen from "@/components/AdminPage/Dashboard/DokumenComps/Dokumen";
+import Dokumen from "@/components/AdminPage/Dashboard/DokumenComps/DokumenComp";
 
 export const metadata: Metadata = {
   title: "Dokumen | Diskominfo Bone Bolango",

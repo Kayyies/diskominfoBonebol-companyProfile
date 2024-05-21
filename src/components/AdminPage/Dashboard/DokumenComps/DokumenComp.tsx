@@ -2,44 +2,58 @@
 import React from "react";
 import Breadcrumb from "../../Breadcrumbs/Breadcrumb";
 import TableDashboard from "../TableDashboard";
+import useRefreshData from "@/hooks/useRefreshData";
+
+// inisiasi table body
+const initialData = [
+  {
+    createdAt: "24 Feburari 2024",
+    title: `Bonebol Sepekan - Januari pekan 3`,
+    category: "Bonebol Sepekan",
+    slugLink: "/admin/profil/aba",
+  },
+  {
+    createdAt: "23 Feburari 2024",
+    title: `SK Gubernur 28/001/XXI`,
+    category: "SK Gubernur",
+    slugLink: "/admin/profil/aba",
+  },
+  {
+    createdAt: "22 Februari 2024",
+    title: `Bonebol Sepekan - Januari pekan 2`,
+    category: "Bonebol Sepekan",
+    slugLink: "/admin/profil/aba",
+  },
+  {
+    createdAt: "21 Februari 2024",
+    title: `Bonebol Sepekan - Januari pekan 1`,
+    category: "Bonebol Sepekan",
+    slugLink: "/admin/profil/aba",
+  },
+  {
+    createdAt: "20 Feburuari 2024",
+    title: `SK Bupati 28/001/XXI`,
+    category: "SK Bupati",
+    slugLink: "/admin/profil/aba",
+  },
+];
+
+const fetchData = async () => {
+  // Simulate an API call to fetch data
+  return new Promise<DataItem[]>((resolve) => {
+    setTimeout(() => {
+      resolve(initialData);
+    }, 2000); // Simulate a 2 second delay
+  });
+};
 
 const Profil: React.FC = () => {
   // inisiasi table headers
   const headers = ["Date", "Title", "Category", "Action"];
-
-  // inisiasi table body
-  const datas = [
-    {
-      createdAt: "24 Feburari 2024",
-      title: `Bonebol Sepekan - Januari pekan 3`,
-      category: "Bonebol Sepekan",
-      slugLink: "/admin/profil/aba",
-    },
-    {
-      createdAt: "23 Feburari 2024",
-      title: `SK Gubernur 28/001/XXI`,
-      category: "SK Gubernur",
-      slugLink: "/admin/profil/aba",
-    },
-    {
-      createdAt: "22 Februari 2024",
-      title: `Bonebol Sepekan - Januari pekan 2`,
-      category: "Bonebol Sepekan",
-      slugLink: "/admin/profil/aba",
-    },
-    {
-      createdAt: "21 Februari 2024",
-      title: `Bonebol Sepekan - Januari pekan 1`,
-      category: "Bonebol Sepekan",
-      slugLink: "/admin/profil/aba",
-    },
-    {
-      createdAt: "20 Feburuari 2024",
-      title: `SK Bupati 28/001/XXI`,
-      category: "SK Bupati",
-      slugLink: "/admin/profil/aba",
-    },
-  ];
+  const [datas, isLoading, refreshData] = useRefreshData(
+    initialData,
+    fetchData,
+  );
 
   // fungsi mengatur kapan harus ada icon sortable
   const sortableIcon = (index: number) => {
@@ -86,6 +100,8 @@ const Profil: React.FC = () => {
           datas={datas}
           headers={modifiedHeaders}
           sortableIcon={sortableIcon}
+          onRefresh={refreshData}
+          isLoading={isLoading}
         />
       </div>
     </>
