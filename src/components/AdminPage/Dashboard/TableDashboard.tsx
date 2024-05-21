@@ -19,6 +19,7 @@ interface Props {
   headers: string[];
   sortableIcon: (index: number) => boolean;
   onRefresh: () => void;
+  isLoading: boolean;
 }
 
 const TableDashboard: React.FC<Props> = ({
@@ -26,6 +27,7 @@ const TableDashboard: React.FC<Props> = ({
   headers,
   sortableIcon,
   onRefresh,
+  isLoading,
 }) => {
   const pathname = usePathname();
   const tambahData = `${pathname}/tambahdata`;
@@ -47,6 +49,7 @@ const TableDashboard: React.FC<Props> = ({
               className="flex select-none items-center gap-3 rounded-lg border border-gray-900 px-6 py-3 text-center align-middle font-sans text-xs font-bold uppercase text-gray-900 transition-all hover:opacity-75 focus:ring focus:ring-gray-300 active:opacity-[0.85] disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
               type="button"
               onClick={onRefresh}
+              disabled={isLoading}
             >
               Refresh
               <svg

@@ -12,7 +12,7 @@ const LayananComp: React.FC = () => {
   const headers = ["id", "Logo", "Title", "Description", "Link", "Action"];
 
   //inisiasi table data
-  const [datas, setDatas] = useState([
+  const initialData = [
     {
       id: 123,
       image: "/beritabonebol.svg",
@@ -37,38 +37,24 @@ const LayananComp: React.FC = () => {
       link: "https://berita.bonebolangokab.go.id/",
       slugLink: "/admin/profil/aba",
     },
-  ]);
+  ];
+
+  const [datas, setDatas] = useState(initialData);
+  const [isLoading, setIsLoading] = useState(false);
 
   //fungsi refresh data
   const refreshData = () => {
+    setIsLoading(true);
+    console.log("Menekan tombol refresh, mulai Refresh Data...");
+    setDatas([]);
+
     //harusnya fetching logic dari database atau API
     //tapi di sini pakai data lokal dulu
-    setDatas([
-      {
-        id: 123,
-        image: "/beritabonebol.svg",
-        title: "Berita Bone Bolango",
-        desc: "Open Data Bone Bolango adalah portal terintegrasi untuk pengelolaan, keterbukaan, dan kemudahan akses data bagi warga dan pemerintah Bone Bolango. Jenis data yang disajikan yakni dataset, visualisasi, dan indikator kinerja.",
-        link: "https://berita.bonebolangokab.go.id/",
-        slugLink: "/admin/profil/aba",
-      },
-      {
-        id: 124,
-        image: "/opendatabonebol.svg",
-        title: "Open Data Bone Bolango",
-        desc: "Open Data Bone Bolango adalah portal terintegrasi untuk pengelolaan, keterbukaan, dan kemudahan akses data bagi warga dan pemerintah Bone Bolango. Jenis data yang disajikan yakni dataset, visualisasi, dan indikator kinerja.",
-        link: "https://berita.bonebolangokab.go.id/",
-        slugLink: "/admin/profil/aba",
-      },
-      {
-        id: 125,
-        image: "/cloudbonebol.svg",
-        title: "Cloud Bone Bolango",
-        desc: "Open Data Bone Bolango adalah portal terintegrasi untuk pengelolaan, keterbukaan, dan kemudahan akses data bagi warga dan pemerintah Bone Bolango. Jenis data yang disajikan yakni dataset, visualisasi, dan indikator kinerja.",
-        link: "https://berita.bonebolangokab.go.id/",
-        slugLink: "/admin/profil/aba",
-      },
-    ]);
+    setTimeout(() => {
+      setIsLoading(false);
+      setDatas(initialData);
+      console.log("Refresh data berhasil!");
+    }, 1000);
   };
 
   //fungsi mengatur kapan harus ada icon sortable
@@ -117,6 +103,7 @@ const LayananComp: React.FC = () => {
           headers={modifiedHeaders}
           sortableIcon={sortableIcon}
           onRefresh={refreshData}
+          isLoading={isLoading}
         />
       </div>
     </>
