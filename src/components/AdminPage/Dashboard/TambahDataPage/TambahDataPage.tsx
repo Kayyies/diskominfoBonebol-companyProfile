@@ -1,106 +1,100 @@
 "use client";
 
-import Link from "next/link";
-import React, { useState, useEffect } from "react";
-import { TextEditorReact } from "../../wysiwyg/WYSIWYG";
-import { usePathname } from "next/navigation";
-import { useRouter } from "next/router";
+import React, { useEffect, useState } from "react";
 import Modal from "./Modal";
+import Tiptap from "../../wysiwyg/Tiptap";
+import useModal from "./useModal";
+import useForm from "./useForm";
+import useNavigation from "./useNavigation";
+import { InputField, Props } from "./types";
 
-interface InputField {
-  type: "text" | "select";
-  label: string;
-  placeholder: string;
-  options?: string[];
-}
-
-interface Props {
-  inputFields: InputField[];
-  showTextEditor?: boolean;
-}
+//import icons
+import { FaTrashAlt } from "react-icons/fa";
+import { FaArrowLeftLong } from "react-icons/fa6";
 
 const TambahDataPage: React.FC<Props> = ({
-  inputFields,
+  inputFields = [],
   showTextEditor = false,
+  apiEndpoint,
 }) => {
-  //useState untuk form input
-  const [inputValues, setInputValues] = useState<{ [key: string]: string }>(
-    Object.fromEntries(inputFields.map((field) => [field.label, ""])),
-  );
+  console.log("inputFields:", inputFields); // Debugging line
 
-  //handler untuk controlled input
-  const handleChange = (label: string, value: string) => {
-    setInputValues({ ...inputValues, [label]: value });
-  };
+  const { inputValues, handleChange, handleReset } = useForm(inputFields);
+  const {
+    showModal,
+    modalTitle,
+    modalMessage,
+    modalCancel,
+    modalConfirm,
+    modalConfirmAction,
+    handleOpenModal,
+    handleCloseModal,
+  } = useModal();
+  const { handleKembali, previousPath } = useNavigation();
 
-  //Modal State
-  const [showModal, setShowModal] = useState(false);
-  const [modalTitle, setModalTitle] = useState("");
-  const [modalMessage, setModalMessage] = useState("");
-  const [modalCancel, setModalCancel] = useState("");
-  const [modalConfirm, setModalConfirm] = useState("");
-  const [previousPath, setPreviousPath] = useState("");
+  const [resetEditor, setResetEditor] = useState(false);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
-  //handle open modal
-  const handleOpenModal = (
-    title: string,
-    message: string,
-    modalCancel: string,
-    modalConfrim: string,
-    previousPath: string,
-    onConfirm: () => void,
-  ) => {
-    setModalTitle(title);
-    setModalMessage(message);
-    setModalCancel(modalCancel);
-    setModalConfirm(modalConfrim);
-    setShowModal(true);
-    setModalConfirmAction(onConfirm);
-  };
-
-  const handleCloseModal = () => {
-    setShowModal(false);
-  };
-
-  //handler untk clear form input
-  const handleReset = () => {
-    console.log("data cleared");
-    setInputValues(
-      Object.fromEntries(inputFields.map((field) => [field.label, ""])),
-    );
-    const selectElements = document.querySelectorAll("select"); // Get all select elements
-    selectElements.forEach((select) => {
-      select.value = ""; // Reset each select element to its default value
-    });
-    setShowModal(false);
-  };
-
-  // Kalkulasi previous path using usePathname
-  const pathName = usePathname();
   useEffect(() => {
-    const finalSlashIndex = pathName.lastIndexOf("/");
-    setPreviousPath(pathName.slice(0, finalSlashIndex));
-  }, [pathName]);
+    setResetEditor(false);
+  }, [resetEditor]);
 
-  // Check is form is filled
   const isFormFilled = () => {
-    return Object.values(inputValues).some((value) => value != "");
+    const isTextFieldsFilled = Object.entries(inputValues).some(
+      ([key, value]) => key !== "Date" && value !== "",
+    );
+    return isTextFieldsFilled || selectedFile !== null;
   };
 
-  // handler untuk kembali
-  const handleKembali = () => {
-    console.log("Kembali ke halaman:", previousPath);
-    window.location.href = previousPath; // Navigate to previous path
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files && event.target.files[0]) {
+      setSelectedFile(event.target.files[0]);
+    }
   };
 
-  const [modalConfirmAction, setModalConfirmAction] = useState<() => void>(
-    () => {},
-  );
+  const handleClearFile = () => {
+    setSelectedFile(null);
+    const fileInput = document.getElementById("fileInput") as HTMLInputElement;
+    if (fileInput) {
+      fileInput.value = "";
+    }
+  };
+
+  const handleSubmit = async (event: React.FormEvent) => {
+    event.preventDefault();
+
+    const formData = new FormData();
+    Object.entries(inputValues).forEach(([key, value]) => {
+      formData.append(key, value);
+    });
+
+    if (selectedFile) {
+      formData.append("file", selectedFile);
+    }
+
+    try {
+      const response = await fetch(apiEndpoint, {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to submit data");
+      }
+
+      // Handle successful submission (e.g., redirect or show a success message)
+      alert("Data submitted successfully!");
+    } catch (error) {
+      console.error("Error submitting data:", error);
+      alert("Error submitting data");
+    }
+  };
+
   return (
     <>
-      {/* Kembali Button and Reset Button */}
+      {/* Headbar */}
       <div className="mb-5 flex flex-row items-center justify-between align-middle">
-        {/* Tombol Kembali ke Halaman Sebelumnya */}
+        {/* Kembali Button */}
         <button
           className="flex w-max items-center gap-2 transition-all hover:text-blue-400"
           onClick={() => {
@@ -117,22 +111,10 @@ const TambahDataPage: React.FC<Props> = ({
             }
           }}
         >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            strokeWidth={2}
-            stroke="currentColor"
-            className="h-5 w-5 scale-x-[-1] transform"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M17.25 8.25L21 12m0 0l-3.75 3.75M21 12H3"
-            />
-          </svg>
+          <FaArrowLeftLong />
           Kembali
         </button>
+
         {/* Reset Button */}
         <button
           className="flex select-none items-center gap-3 rounded-lg border border-gray-900 px-6 py-3 text-center align-middle font-sans text-xs font-bold uppercase text-gray-900 transition-all hover:opacity-75 focus:ring focus:ring-gray-300 active:opacity-[0.85] disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
@@ -152,74 +134,101 @@ const TambahDataPage: React.FC<Props> = ({
           }}
         >
           Reset
-          <svg
-            className="h-[16px] w-[16px] text-gray-800 dark:text-white"
-            aria-hidden="true"
-            xmlns="http://www.w3.org/2000/svg"
-            width="24"
-            height="24"
-            fill="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              fill-rule="evenodd"
-              d="M8.586 2.586A2 2 0 0 1 10 2h4a2 2 0 0 1 2 2v2h3a1 1 0 1 1 0 2v12a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V8a1 1 0 0 1 0-2h3V4a2 2 0 0 1 .586-1.414ZM10 6h4V4h-4v2Zm1 4a1 1 0 1 0-2 0v8a1 1 0 1 0 2 0v-8Zm4 0a1 1 0 1 0-2 0v8a1 1 0 1 0 2 0v-8Z"
-              clip-rule="evenodd"
-            />
-          </svg>
+          <FaTrashAlt />
         </button>
       </div>
 
-      {/* Form Input */}
       <div className="relative mb-5 flex h-full w-full flex-col rounded-xl bg-white bg-clip-border text-gray-700 shadow-md">
         <div className="relative mx-4 mt-4 overflow-hidden rounded-none bg-white bg-clip-border text-gray-700">
-          {inputFields.map((field, index) => (
-            <div key={index} className="mb-5">
-              <p className="mb-3">{field.label}</p>
-              {field.type === "text" ? (
-                <input
-                  type="text"
-                  placeholder={field.placeholder}
-                  className="mb-5 block w-full appearance-none rounded border border-blue-gray-300 bg-white px-4 py-3 pr-8 leading-tight text-blue-gray-700 transition-all focus:border-gray-500 focus:bg-white focus:outline-none"
-                  value={inputValues[field.label]}
-                  onChange={(e) => handleChange(field.label, e.target.value)}
-                />
-              ) : field.type === "select" && field.options ? (
-                <select
-                  className="mb-5 block w-full appearance-none rounded border border-blue-gray-300 bg-white px-4 py-3 pr-8 leading-tight text-blue-gray-700 transition-all focus:border-gray-500 focus:bg-white focus:outline-none"
-                  label=""
-                  defaultValue=""
-                >
-                  <option value="" disabled hidden>
-                    --Pilih Data--
-                  </option>
-                  {field.options.map((option, optionIndex) => (
-                    <option key={optionIndex} value={option}>
-                      {option}
+          <form onSubmit={handleSubmit}>
+            {inputFields.map((field, index) => (
+              <div key={index} className="mb-5">
+                <p className="mb-3">{field.label}</p>
+                {field.type === "text" ? (
+                  <input
+                    type="text"
+                    placeholder={field.placeholder}
+                    className={`mb-5 block w-full appearance-none rounded border border-blue-gray-300 bg-white px-4 py-3 pr-8 leading-tight text-blue-gray-700 transition-all focus:border-gray-500 focus:bg-white focus:outline-none 
+                    ${
+                      field.label === "Date"
+                        ? "cursor-not-allowed bg-gray-200"
+                        : ""
+                    }`}
+                    value={inputValues[field.label]}
+                    onChange={(e) => handleChange(field.label, e.target.value)}
+                    disabled={field.label === "Date"}
+                  />
+                ) : field.type === "select" && field.options ? (
+                  <select
+                    className="mb-5 block w-full appearance-none rounded border border-blue-gray-300 bg-white px-4 py-3 pr-8 leading-tight text-blue-gray-700 transition-all focus:border-gray-500 focus:bg-white focus:outline-none"
+                    defaultValue=""
+                    onChange={(e) => handleChange(field.label, e.target.value)}
+                  >
+                    <option value="" disabled hidden>
+                      --Pilih Data--
                     </option>
-                  ))}
-                </select>
-              ) : null}
-            </div>
-          ))}
+                    {field.options.map((option, optionIndex) => (
+                      <option key={optionIndex} value={option}>
+                        {option}
+                      </option>
+                    ))}
+                  </select>
+                ) : field.type === "file" ? (
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="file"
+                      id="fileInput"
+                      className="text-slate-500 block cursor-pointer rounded-lg border-2 text-sm file:mr-4 file:border-0 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-white file:transition-all hover:file:bg-gray-800 hover:file:text-white active:file:bg-gray-600 active:file:text-white"
+                      onChange={handleFileChange}
+                    />
+                    {selectedFile && (
+                      <button
+                        type="button"
+                        className="flex items-center justify-center"
+                        onClick={handleClearFile}
+                      >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          strokeWidth={2}
+                          stroke="currentColor"
+                          className="h-5 w-5 text-gray-900"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            d="M6 18L18 6M6 6l12 12"
+                          />
+                        </svg>
+                      </button>
+                    )}
+                  </div>
+                ) : field.type === "textArea" ? (
+                  <textarea
+                    placeholder={field.placeholder}
+                    className="mb-5 block w-full appearance-none rounded border border-blue-gray-300 bg-white px-4 py-3 pr-8 leading-tight text-blue-gray-700 transition-all focus:border-gray-500 focus:bg-white focus:outline-none"
+                    value={inputValues[field.label]}
+                    onChange={(e) => handleChange(field.label, e.target.value)}
+                  />
+                ) : null}
+              </div>
+            ))}
+            {showTextEditor && (
+              <div className="relative flex h-full w-full flex-col rounded-xl text-gray-700">
+                <Tiptap />
+              </div>
+            )}
+
+            <button
+              type="submit"
+              className="flex w-full select-none items-center justify-center gap-3 rounded-lg bg-gradient-to-tr from-blue-900 to-blue-800 py-3 text-center align-middle font-sans text-xs font-bold uppercase text-white shadow-md shadow-blue-900/10 transition-all hover:shadow-lg hover:shadow-blue-900/20 active:opacity-[0.85] disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
+            >
+              Masukan Data
+            </button>
+          </form>
         </div>
       </div>
-
-      {/* Text editor */}
-      {showTextEditor && (
-        <div className="relative flex h-full w-full flex-col rounded-xl text-gray-700 ">
-          <TextEditorReact />
-        </div>
-      )}
-
-      {/* Button Masukan Data */}
-      <Link
-        href="#"
-        className="flex select-none items-center justify-center gap-3 rounded-lg bg-gradient-to-tr from-blue-900 to-blue-800 px-6 py-3 text-center align-middle font-sans text-xs font-bold uppercase text-white shadow-md shadow-blue-900/10 transition-all hover:shadow-lg hover:shadow-blue-900/20 active:opacity-[0.85] disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
-        type="button"
-      >
-        Masukan Data
-      </Link>
 
       {showModal && (
         <Modal
@@ -229,9 +238,7 @@ const TambahDataPage: React.FC<Props> = ({
           modalCancel={modalCancel}
           modalConfirm={modalConfirm}
           onCancel={handleCloseModal}
-          onConfirm={
-            modalConfirm === "Reset Form" ? handleReset : handleKembali
-          }
+          onConfirm={modalConfirmAction}
         />
       )}
     </>

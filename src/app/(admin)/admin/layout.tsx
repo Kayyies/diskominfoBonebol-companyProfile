@@ -1,8 +1,9 @@
 "use client";
-import "jsvectormap/dist/css/jsvectormap.css";
+// import "jsvectormap/dist/css/jsvectormap.css";
 import "flatpickr/dist/flatpickr.min.css";
 import "@/css/satoshi.css";
 import "@/css/style.css";
+import "@/app/globals.css";
 import React, { useEffect, useState } from "react";
 import Loader from "@/components/AdminPage/common/Loader/index";
 import PrelineScript from "@/components/PreLineScript";

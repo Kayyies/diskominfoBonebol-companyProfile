@@ -1,5 +1,5 @@
+// Modal.tsx
 import React from "react";
-import Link from "next/link";
 
 interface ModalProps {
   isOpen: boolean;
@@ -20,48 +20,33 @@ const Modal: React.FC<ModalProps> = ({
   onCancel,
   onConfirm,
 }) => {
+  if (!isOpen) return null;
+
   return (
-    <>
-      {isOpen && (
-        <dialog className="modal bg-black/30" open={isOpen}>
-          <div className="modal-box bg-white">
-            <h3 className="text-lg font-bold text-black-2">{title}</h3>
-            <p className="py-4">{message}</p>
-            <div className="modal-action">
-              <form method="dialog">
-                <div className="flex flex-row gap-2">
-                  <button
-                    className="btn border-gray-700 bg-transparent text-black hover:bg-black/10"
-                    onClick={onCancel}
-                  >
-                    {modalCancel}
-                  </button>
-                  {modalConfirm === "Reset Form" ? (
-                    <button
-                      className="btn text-white hover:bg-black"
-                      onClick={onConfirm}
-                    >
-                      {modalConfirm}
-                    </button>
-                  ) : (
-                    <Link
-                      className="btn text-white hover:bg-black"
-                      href={modalConfirm}
-                      onClick={(e) => {
-                        e.preventDefault();
-                        onConfirm();
-                      }}
-                    >
-                      {modalConfirm}
-                    </Link>
-                  )}
-                </div>
-              </form>
-            </div>
-          </div>
-        </dialog>
-      )}
-    </>
+    <div className="fixed inset-0 z-50 flex items-center justify-center overflow-auto bg-black bg-opacity-50">
+      <div className="w-full max-w-lg transform overflow-hidden rounded-lg bg-white p-6 shadow-xl transition-all">
+        <h3 className="text-lg font-medium leading-6 text-gray-900">{title}</h3>
+        <div className="mt-2">
+          <p className="text-sm text-gray-500">{message}</p>
+        </div>
+        <div className="mt-4 flex justify-end">
+          <button
+            type="button"
+            className="mr-3 inline-flex justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-base font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 sm:text-sm"
+            onClick={onCancel}
+          >
+            {modalCancel}
+          </button>
+          <button
+            type="button"
+            className="inline-flex justify-center rounded-md border border-transparent bg-blue-600 px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 sm:text-sm"
+            onClick={onConfirm}
+          >
+            {modalConfirm}
+          </button>
+        </div>
+      </div>
+    </div>
   );
 };
 

@@ -4,28 +4,63 @@
 // Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
+//migrate: npx prisma migrate dev --name add-latihan-model
+//generate: npx prisma generate
+
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "postgresql"
-  url = env("POSTGRES_PRISMA_URL") // uses connection pooling
+  provider  = "postgresql"
+  url       = env("POSTGRES_PRISMA_URL") // uses connection pooling
   directUrl = env("POSTGRES_URL_NON_POOLING") // uses a direct connection
 }
 
-//enum for ProfilCategory
-enum ProfilCategory {
-  diskominfoBonebol
-  sejarahDiskominfoBonebol
-  JajaranDiskominfoBonebol
+model Latihan {
+  id      String @id @default(cuid())
+  content String
 }
 
-//Profil Model
-model Profil {
-  id String @id @default(cuid())
+model Layanan {
+  id    String @id @default(cuid())
+  image String
   title String
-  desc String
+  desc  String
+  link  String
+}
+
+model Profil {
+  id       String         @id @default(cuid())
   category ProfilCategory
-  image String?
+  title    String
+  desc     String
+}
+
+model Banner {
+  id    String @id @default(cuid())
+  image String
+  desc  String
+}
+
+model Dokumen {
+  id        String          @id @default(cuid())
+  createdAt DateTime        @default(now())
+  image     String
+  file      String
+  title     String
+  slug      String?
+  category  DokumenCategory
+}
+
+enum ProfilCategory {
+  DISKOMINFO_BONE_BOLANGO
+  SEJARAH_DISKOMINFO_BONE_BOLANGO
+  JAJARAN_DISKOMINFO_BONE_BOLANGO
+}
+
+enum DokumenCategory {
+  SK_GUBERNUR
+  SK_BUPATI
+  BONEBOL_SEPEKAN
 }

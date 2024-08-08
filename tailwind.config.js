@@ -13,7 +13,10 @@ module.exports = withMT({
     "./node_modules/preline/preline.js",
   ],
   darkMode: "class",
-  plugins: [require("daisyui", "preline/plugin")],
+  plugins: [
+    require("daisyui", "preline/plugin"),
+    require("@tailwindcss/typography"),
+  ],
   theme: {
     fontFamily: {
       satoshi: ["Satoshi", "sans-serif"],

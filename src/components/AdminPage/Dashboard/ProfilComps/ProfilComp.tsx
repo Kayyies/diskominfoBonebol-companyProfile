@@ -1,61 +1,38 @@
 "use client";
 import React from "react";
 import Breadcrumb from "../../Breadcrumbs/Breadcrumb";
-import TableDashboard from "../TableDashboard";
+import TableDashboard from "../TableDashboard/TableDashboard";
 import useRefreshData from "@/hooks/useRefreshData";
 
-// inisiasi table body
-const initialData = [
-  {
-    category: "Diskominfo Bone Bolango",
-    title: `Tugas dan Tanggung jawab dinas komunikasi dan informatika kabupaten bone bolango`,
-    desc: "Open Data Jabar merupakan portal resmi data terbuka milik Pemdaprov Jawa Barat yang berisikan data-data dari Perangkat Daerah di lingkungan Pemdaprov Jawa Barat guna memenuhi kebutuhan masyarakat untuk akses data dan informasi yang akurat dan akuntabel dengan cepat.",
-    slugLink: "/admin/profil/aba",
-  },
-  {
-    category: "Sejarah Diskominfo Bone Bolango",
-    title: `Jan 13,2023`,
-    desc: "Open Data Jabar merupakan portal resmi data terbuka milik Pemdaprov Jawa Barat yang berisikan data-data dari Perangkat Daerah di lingkungan Pemdaprov Jawa Barat guna memenuhi kebutuhan masyarakat untuk akses data dan informasi yang akurat dan akuntabel dengan cepat.",
-    slugLink: "/admin/profil/aba",
-  },
-  {
-    category: "Jajaran Diskominfo Bone Bolango",
-    title: `Jan 13,2023`,
-    desc: "Open Data Jabar merupakan portal resmi data terbuka milik Pemdaprov Jawa Barat yang berisikan data-data dari Perangkat Daerah di lingkungan Pemdaprov Jawa Barat guna memenuhi kebutuhan masyarakat untuk akses data dan informasi yang akurat dan akuntabel dengan cepat.",
-    slugLink: "/admin/profil/aba",
-  },
-  {
-    category: "Jajaran Diskominfo Bone Bolango",
-    title: `Jan 13,2023`,
-    desc: "Open Data Jabar merupakan portal resmi data terbuka milik Pemdaprov Jawa Barat yang berisikan data-data dari Perangkat Daerah di lingkungan Pemdaprov Jawa Barat guna memenuhi kebutuhan masyarakat untuk akses data dan informasi yang akurat dan akuntabel dengan cepat.",
-    slugLink: "/admin/profil/aba",
-  },
-  {
-    category: "Jajaran Diskominfo Bone Bolango",
-    title: `Jan 13,2023`,
-    desc: "Open Data Jabar merupakan portal resmi data terbuka milik Pemdaprov Jawa Barat yang berisikan data-data dari Perangkat Daerah di lingkungan Pemdaprov Jawa Barat guna memenuhi kebutuhan masyarakat untuk akses data dan informasi yang akurat dan akuntabel dengan cepat.",
-    slugLink: "/admin/profil/aba",
-  },
-];
+// Define the mapping object for ProfilCategory
+const profilCategoryMapping: { [key in ProfilCategory]: string } = {
+  DISKOMINFO_BONE_BOLANGO: "Diskominfo Bone Bolango",
+  SEJARAH_DISKOMINFO_BONE_BOLANGO: "Sejarah Diskominfo Bone Bolango",
+  JAJARAN_DISKOMINFO_BONE_BOLANGO: "Jajaran Diskominfo Bone Bolango",
+};
 
+// Function to fetch data from the API
 const fetchData = async () => {
-  // Simulate an API call to fetch data
-  return new Promise<DataItem[]>((resolve) => {
-    setTimeout(() => {
-      resolve(initialData);
-    }, 2000); // Simulate a 2 second delay
-  });
+  try {
+    const response = await fetch("/api/profil"); // Fetch data from the API
+    const data = await response.json(); // Parse the response JSON
+    // Map the category field to the human-readable format
+    return data.map((item) => ({
+      ...item,
+      category: profilCategoryMapping[item.category as ProfilCategory],
+    }));
+  } catch (error) {
+    console.error("Error fetching data:", error); // Log any errors
+    return [];
+  }
 };
 
 const Profil: React.FC = () => {
-  // inisiasi table headers
-  const headers = ["Category", "Title", "Description", "Action"];
-  const [datas, isLoading, refreshData] = useRefreshData(
-    initialData,
-    fetchData,
-  );
+  // Use the useRefreshData hook to manage data and loading state
+  const [datas, isLoading, refreshData] = useRefreshData([], fetchData);
 
-  // fungsi mengatur kapan harus ada icon sortable
+  const headers = ["Category", "Title", "Description", "Action"];
+
   const sortableIcon = (index: number) => {
     if (index === 0) {
       return true;
@@ -63,10 +40,8 @@ const Profil: React.FC = () => {
     return false;
   };
 
-  // fungsi implement icon sortable based on logic operation above
   const modifiedHeaders = headers.map((header, index) => {
     if (sortableIcon(index)) {
-      // Include icon SVG for the column
       return (
         <>
           {header}
@@ -74,21 +49,20 @@ const Profil: React.FC = () => {
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
             viewBox="0 0 24 24"
-            stroke-width="2"
+            strokeWidth="2"
             stroke="currentColor"
             aria-hidden="true"
             className="h-4 w-4"
           >
             <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
+              strokeLinecap="round"
+              strokeLinejoin="round"
               d="M8.25 15L12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9"
-            ></path>
+            />
           </svg>
         </>
       );
     }
-    // Return the header without the icon SVG
     return header;
   });
 
@@ -100,7 +74,7 @@ const Profil: React.FC = () => {
           datas={datas}
           headers={modifiedHeaders}
           sortableIcon={sortableIcon}
-          onRefresh={refreshData}
+          onRefresh={refreshData} // Pass the refreshData function directly
           isLoading={isLoading}
         />
       </div>

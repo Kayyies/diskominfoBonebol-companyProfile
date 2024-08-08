@@ -1,10 +1,27 @@
 import { Prisma } from "@prisma/client";
 
+export const getLayanan = async () => {
+  try {
+    const response = await fetch("/api/layanan");
+    const data = await response.json();
+    return data.map((item) => ({
+      ...item,
+    }));
+  } catch (error) {
+    console.error("Error fetching data:", error);
+    return;
+  }
+};
+
 export const getProfil = async () => {
   try {
-    const profil = await prisma.profil.findMany();
-    return profil;
+    const response = await fetch("/api/profil");
+    const data = await response.json();
+    return data.map((item) => ({
+      ...item,
+    }));
   } catch (error) {
-    throw new Error("Gagal fetch data profil");
+    console.error("Error fetching data:", error);
+    return;
   }
 };

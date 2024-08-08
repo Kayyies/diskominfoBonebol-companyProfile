@@ -3,27 +3,22 @@ import TambahDataPage from "../TambahDataPage/TambahDataPage";
 
 const LayananAdd: React.FC = () => {
   const inputFields = [
-    { type: "text", label: "Logo", placeholder: "Enter logo URL" },
+    { type: "file", label: "Logo", placeholder: "Enter logo URL" },
     { type: "text", label: "Title", placeholder: "Enter title" },
-    { type: "text", label: "Description", placeholder: "Enter description" },
     {
-      type: "select",
+      type: "textArea",
       label: "Description",
       placeholder: "Enter description",
-      options: ["diskominfo", "diskiminfi", "duskumunfu"],
     },
-    // Add more input fields as needed
+    { type: "text", label: "Link", placeholder: "Enter the URL" },
   ];
 
   const showTextEditor = true; // Set this to true or false as needed
+  const apiEndpoint = "/api/layanan";
 
   return (
     <>
-      <TambahDataPage
-        inputFields={inputFields}
-        showTextEditor={showTextEditor}
-        upperRootPageUrl="/admin/layanan"
-      />
+      <TambahDataPage inputFields={inputFields} apiEndpoint={apiEndpoint} />
     </>
   );
 };

@@ -55,6 +55,8 @@ import { RichTextPlugin } from "@lexical/react/LexicalRichTextPlugin";
 import { AutoFocusPlugin } from "@lexical/react/LexicalAutoFocusPlugin";
 import { ContentEditable } from "@lexical/react/LexicalContentEditable";
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
+import { createEmptyEditorState } from "lexical/LexicalEditorState";
+import { createEditorState } from "lexical";
 
 const LowPriority = 1;
 
@@ -82,16 +84,14 @@ const blockTypeToBlockName = {
 };
 
 function Divider() {
-  return <div className="bg-gray-400 mx-1 h-6 w-px" />;
+  return <div className="mx-1 h-6 w-px bg-gray-400" />;
 }
 
-function Placeholder() {
-  return (
-    <div className="text-gray-400 pointer-events-none absolute left-2.5 top-4 inline-block select-none overflow-hidden text-base font-normal">
-      Play around with the editor...
-    </div>
-  );
-}
+const Placeholder = () => (
+  <div className="pointer-events-none absolute left-2.5 top-4 inline-block select-none overflow-hidden text-base font-normal text-gray-400">
+    Play around with the editor...
+  </div>
+);
 
 function Select({ onChange, className, options, value }) {
   return (
@@ -246,7 +246,7 @@ function BlockOptionsDropdownList({
 
   return (
     <List
-      className="border-blue-gray-50 absolute z-[5] flex flex-col gap-0.5 rounded-lg border bg-white p-1"
+      className="absolute z-[5] flex flex-col gap-0.5 rounded-lg border border-blue-gray-50 bg-white p-1"
       ref={dropDownRef}
     >
       <ListItem
@@ -676,7 +676,7 @@ function FloatingLinkEditor({ editor }) {
   return (
     <div
       ref={editorRef}
-      className="border-gray-300 absolute -left-[10000px] -top-[10000px] z-[100] -mt-1.5 w-full max-w-xs rounded-lg border bg-white opacity-0 transition-opacity duration-500"
+      className="absolute -left-[10000px] -top-[10000px] z-[100] -mt-1.5 w-full max-w-xs rounded-lg border border-gray-300 bg-white opacity-0 transition-opacity duration-500"
     >
       {isEditMode ? (
         <Input
@@ -706,7 +706,7 @@ function FloatingLinkEditor({ editor }) {
         />
       ) : (
         <>
-          <div className="text-gray-900 relative box-border flex w-full items-center justify-between rounded-lg border-0 bg-white px-3 py-2 font-[inherit]">
+          <div className="relative box-border flex w-full items-center justify-between rounded-lg border-0 bg-white px-3 py-2 font-[inherit] text-gray-900">
             <Typography
               as="a"
               variant="small"
@@ -846,7 +846,7 @@ function ToolbarPlugin() {
 
   return (
     <div
-      className="bg-gray-100 m-1 flex items-center gap-0.5 rounded-lg p-1"
+      className="m-1 flex items-center gap-0.5 rounded-lg bg-gray-100 p-1"
       ref={toolbarRef}
     >
       {supportedBlockTypes.has(blockType) && (
@@ -889,7 +889,7 @@ function ToolbarPlugin() {
       {blockType === "code" ? (
         <>
           <Select
-            className="hover:bg-gray-900/10 appearance-none rounded-md bg-transparent px-2 py-1 outline-none"
+            className="appearance-none rounded-md bg-transparent px-2 py-1 outline-none hover:bg-gray-900/10"
             onChange={onCodeLanguageSelect}
             options={codeLanguges}
             value={codeLanguage}
@@ -1035,24 +1035,57 @@ const editorConfig = {
   ],
 };
 
-export function TextEditorReact() {
+const InnerTextEditor = ({ onChange, resetContent }) => {
+  const [editor] = useLexicalComposerContext();
+
+  useEffect(() => {
+    if (resetContent) {
+      editor.update(() => {
+        const emptyState = createEditorState(); // Correct way to create an empty state
+        editor.setEditorState(emptyState);
+      });
+    }
+  }, [resetContent, editor]);
+
+  useEffect(() => {
+    const handleChange = () => {
+      onChange(editor.getEditorState());
+    };
+
+    const unsubscribe = editor.registerUpdateListener(handleChange);
+
+    return () => {
+      unsubscribe();
+    };
+  }, [editor, onChange]);
+
+  return (
+    <>
+      <ToolbarPlugin />
+      <div className="relative rounded-b-lg border-opacity-5 bg-white">
+        <RichTextPlugin
+          contentEditable={
+            <ContentEditable className="lexical min-h-[280px] resize-none px-2.5 py-4 text-base caret-gray-900 outline-none" />
+          }
+          placeholder={<Placeholder />}
+          ErrorBoundary={null}
+        />
+        <AutoFocusPlugin />
+        <ListPlugin />
+        <LinkPlugin />
+      </div>
+    </>
+  );
+};
+
+const TextEditorReact = ({ onChange, resetContent }) => {
   return (
     <LexicalComposer initialConfig={editorConfig}>
-      <div className="border-gray-300 text-gray-900 relative mx-auto my-5 w-full overflow-hidden rounded-xl border bg-white text-left font-normal leading-5">
-        <ToolbarPlugin />
-        <div className="relative rounded-b-lg border-opacity-5 bg-white">
-          <RichTextPlugin
-            contentEditable={
-              <ContentEditable className="lexical caret-gray-900 min-h-[280px] resize-none px-2.5 py-4 text-base outline-none" />
-            }
-            placeholder={<Placeholder />}
-            ErrorBoundary={null}
-          />
-          <AutoFocusPlugin />
-          <ListPlugin />
-          <LinkPlugin />
-        </div>
+      <div className="relative mx-auto my-5 w-full overflow-hidden rounded-xl border border-gray-300 bg-white text-left font-normal leading-5 text-gray-900">
+        <InnerTextEditor onChange={onChange} resetContent={resetContent} />
       </div>
     </LexicalComposer>
   );
-}
+};
+
+export default TextEditorReact;

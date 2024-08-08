@@ -33,6 +33,10 @@ const useRefreshData = (
     }
   }, [fetchData]);
 
+  useEffect(() => {
+    refreshData(); // Fetch data when the component mounts
+  }, [refreshData]);
+
   return [data, isLoading, refreshData];
 };
 
