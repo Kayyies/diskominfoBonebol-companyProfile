@@ -1,7 +1,9 @@
+//action.ts
 "use server";
 
 import { z } from "zod";
 import prisma from "./db";
+import { ProfilCategory, DokumenCategory } from "@prisma/client";
 import { put } from "@vercel/blob";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
@@ -13,80 +15,65 @@ import { PDFDocument } from "pdf-lib";
 import fs from "fs";
 import { Buffer } from "buffer";
 
-// Layanan schema for zod
-const UploadSchema = z.object({
-  title: z.string().min(1),
-  image: z
-    .instanceof(File)
-    .refine((file) => file.size > 0, { message: "Image is required" })
-    .refine((file) => file.type.startsWith("image/"), {
-      message: "Only images are allowed",
-    })
-    .refine((file) => file.size < 4000000, {
-      message: "image must less than 4MB",
-    }),
-  desc: z.string().min(1),
-  link: z.string().min(1),
-});
+const extractImageUrls = (content: string): string[] => {
+  const regex = /<img[^>]+src="([^">]+)"/g;
+  let matches;
+  const urls: string[] = [];
 
-// Banner Schema for zod
-const BannerUploadSchema = z.object({
-  image: z
-    .instanceof(File)
-    .refine((file) => file.size > 0, { message: "Image is required" })
-    .refine((file) => file.type.startsWith("image/"), {
-      message: "Only images are allowed",
-    })
-    .refine((file) => file.size < 4000000, {
-      message: "image must less than 4MB",
-    }),
-  desc: z.string().min(1),
-});
+  while ((matches = regex.exec(content)) !== null) {
+    urls.push(matches[1]); // match[1] berisi URL gambar
+  }
 
-// Dokumen Schema for Zod
-enum DokumenCategory {
-  SK_GUBERNUR = "SK_GUBERNUR",
-  SK_BUPATI = "SK_BUPATI",
-  BONEBOL_SEPEKAN = "BONEBOL_SEPEKAN",
-}
-
-const DokumenUploadSchema = z.object({
-  title: z.string().min(1),
-  file: z
-    .instanceof(File)
-    .refine((file) => file.size > 0, { message: "File is required" })
-    .refine((file) => file.type === "application/pdf", {
-      message: "Only PDFs are allowed",
-    })
-    .refine((file) => file.size < 10000000, {
-      message: "File must be less than 10MB",
-    }),
-  image: z
-    .instanceof(File)
-    .refine((file) => file.size > 0, { message: "Image is required" })
-    .refine((file) => file.type.startsWith("image/"), {
-      message: "Only images are allowed",
-    })
-    .refine((file) => file.size < 4000000, {
-      message: "Image must be less than 4MB",
-    }),
-  category: z.nativeEnum(DokumenCategory),
-});
-
-// Dokumen - Extract pdf to img
-const extractFirstPageAsImage = async (
-  pdfBuffer: ArrayBuffer,
-): Promise<Uint8Array> => {
-  const pdfDoc = await PDFDocument.load(pdfBuffer);
-  const firstPage = pdfDoc.getPages()[0];
-  const singlePagePdf = await PDFDocument.create();
-  const [copiedPage] = await singlePagePdf.copyPages(pdfDoc, [0]);
-  singlePagePdf.addPage(copiedPage);
-  return await singlePagePdf.save();
+  return urls;
 };
 
+// Layanan schema for zod
+// Layanan schema for create and update
+const LayananSchema = (isEdit: boolean, existingImage?: string) =>
+  z.object({
+    title: z.string().min(1, { message: "Title is required" }),
+    image: z
+      .instanceof(File)
+      .optional() // Optional on edit
+      .refine(
+        (file) => {
+          // Skip validation for empty file if it's an edit and the image already exists
+          if (isEdit && existingImage && file?.size === 0) return true;
+
+          // Enforce that the image is required for new uploads
+          if (!isEdit) return file?.size > 0;
+
+          // For all other cases, ensure the file size is greater than 0
+          return file?.size > 0;
+        },
+        { message: "Image is required" },
+      )
+      .refine(
+        (file) => {
+          // Skip type validation for empty file in edit mode
+          if (file?.size === 0) return true;
+
+          // Only allow image types
+          return file === undefined || file.type.startsWith("image/");
+        },
+        { message: "Only images are allowed" },
+      )
+      .refine(
+        (file) => {
+          // Skip size validation for empty file in edit mode
+          if (file?.size === 0) return true;
+
+          // Validate file size (only if not empty)
+          return file === undefined || file.size < 4000000;
+        },
+        { message: "Image must be less than 4MB" },
+      ),
+    desc: z.string().min(1, { message: "Description is required" }),
+    link: z.string().min(1, { message: "Link is required" }),
+  });
+
 export const createLayanan = async (prevState: unknown, formData: FormData) => {
-  const validatedFields = UploadSchema.safeParse(
+  const validatedFields = LayananSchema.safeParse(
     Object.fromEntries(formData.entries()),
   );
 
@@ -119,8 +106,116 @@ export const createLayanan = async (prevState: unknown, formData: FormData) => {
   redirect("/admin/layanan");
 };
 
+// Layanan Update
+export const updateLayanan = async (
+  id: string,
+  prevState: unknown,
+  formData: FormData,
+) => {
+  // Get the existing Layanan from the database
+  const existingLayanan = await prisma.layanan.findUnique({
+    where: { id },
+  });
+
+  if (!existingLayanan) {
+    return { message: "Layanan not found" };
+  }
+
+  // Pass the edit flag and existing image to the Zod schema
+  const validatedFields = LayananSchema(
+    true, // isEdit = true
+    existingLayanan.image, // Existing image from database
+  ).safeParse(Object.fromEntries(formData.entries()));
+
+  if (!validatedFields.success) {
+    return {
+      error: validatedFields.error.flatten().fieldErrors,
+    };
+  }
+
+  const { title, image, desc, link } = validatedFields.data;
+
+  let imageUrl = existingLayanan.image;
+
+  // If a new image is uploaded, process it
+  if (image && image.size > 0) {
+    const { url } = await put(image.name, image, {
+      access: "public",
+      multipart: true,
+    });
+    imageUrl = url;
+  }
+
+  // Update the Layanan with the new data
+  try {
+    await prisma.layanan.update({
+      data: {
+        title,
+        image: imageUrl,
+        desc,
+        link,
+      },
+      where: { id },
+    });
+  } catch (error) {
+    console.error("Failed to update data:", error);
+    return { message: "Failed to update data" };
+  }
+
+  revalidatePath("/admin/layanan");
+  redirect("/admin/layanan");
+};
+
+//=================================================================
+//Banner
+//=================================================================
+// Banner Schema for zod
+// Zod schema for banner
+const BannerUploadSchema = (isEdit: boolean, existingImage?: string) =>
+  z.object({
+    image: z
+      .instanceof(File)
+      .optional()
+      .refine(
+        (file) => {
+          // Skip validation for empty file if it's an edit and the image already exists
+          if (isEdit && existingImage && file?.size === 0) return true;
+
+          // Enforce that the image is required for new uploads
+          if (!isEdit) return file?.size > 0;
+
+          // For all other cases, ensure the file size is greater than 0
+          return file?.size > 0;
+        },
+        { message: "Image is required" },
+      )
+      .refine(
+        (file) => {
+          // Skip type validation for empty file in edit mode
+          if (file?.size === 0) return true;
+
+          // Only allow image types
+          return file === undefined || file.type.startsWith("image/");
+        },
+        { message: "Only images are allowed" },
+      )
+      .refine(
+        (file) => {
+          // Skip size validation for empty file in edit mode
+          if (file?.size === 0) return true;
+
+          // Validate file size (only if not empty)
+          return file === undefined || file.size < 4000000;
+        },
+        { message: "Image must be less than 4MB" },
+      ),
+
+    desc: z.string().min(1, { message: "Description is required" }),
+  });
+
+// Banner Create
 export const createBanner = async (prevState: unknown, formData: FormData) => {
-  const validatedFields = BannerUploadSchema.safeParse(
+  const validatedFields = BannerUploadSchema(false).safeParse(
     Object.fromEntries(formData.entries()),
   );
 
@@ -131,8 +226,6 @@ export const createBanner = async (prevState: unknown, formData: FormData) => {
   }
 
   const { image, desc } = validatedFields.data;
-
-  console.log("Validated data", { image, desc });
 
   const { url } = await put(image.name, image, {
     access: "public",
@@ -153,65 +246,144 @@ export const createBanner = async (prevState: unknown, formData: FormData) => {
   revalidatePath("/admin/banner");
   redirect("/admin/banner");
 };
+// Banner Update
+export const updateBanner = async (
+  id: string,
+  prevState: unknown,
+  formData: FormData,
+) => {
+  // Get the existing banner from the database
+  const existingBanner = await prisma.banner.findUnique({
+    where: { id },
+  });
 
-// export const createDokumen = async (prevState: unknown, formData: FormData) => {
-//   const validatedFields = DokumenUploadSchema.safeParse(
-//     Object.fromEntries(formData.entries()),
-//   );
+  if (!existingBanner) {
+    return { message: "Banner not found" };
+  }
 
-//   if (!validatedFields.success) {
-//     return {
-//       error: validatedFields.error.flatten().fieldErrors,
-//     };
-//   }
+  // Pass the edit flag and existing image to the Zod schema
+  const validatedFields = BannerUploadSchema(
+    true,
+    existingBanner.image,
+  ).safeParse(Object.fromEntries(formData.entries()));
 
-//   const { title, category, file } = validatedFields.data;
+  if (!validatedFields.success) {
+    return {
+      error: validatedFields.error.flatten().fieldErrors,
+    };
+  }
 
-//   // Read file data as ArrayBuffer
-//   const pdfBuffer = await file.arrayBuffer();
+  const { image, desc } = validatedFields.data;
 
-//   try {
-//     // Extract the first page as an image buffer
-//     const imageBuffer = await extractFirstPageAsImage(pdfBuffer);
+  let imageUrl = existingBanner.image;
 
-//     // Save the image to a file or upload it
-//     const imagePath = `/uploads/${file.name}-cover.pdf`;
-//     fs.writeFileSync(imagePath, Buffer.from(imageBuffer));
+  // If a new image is uploaded, process it
+  if (image && image.size > 0) {
+    const { url } = await put(image.name, image, {
+      access: "public",
+      multipart: true,
+    });
+    imageUrl = url;
+  }
 
-//     // Upload the original PDF and get the URL
-//     const { url: fileUrl } = await put(file.name, Buffer.from(pdfBuffer), {
-//       access: "public",
-//       multipart: true,
-//     });
+  // Update the banner with the new data
+  try {
+    await prisma.banner.update({
+      data: {
+        image: imageUrl,
+        desc,
+      },
+      where: { id },
+    });
+  } catch (error) {
+    console.error("Failed to update data:", error);
+    return { message: "Failed to update data" };
+  }
 
-//     // Save the image URL as well
-//     const { url: imageUrl } = await put(
-//       `${file.name}-cover.pdf`,
-//       Buffer.from(imageBuffer),
-//       {
-//         access: "public",
-//         multipart: true,
-//       },
-//     );
+  revalidatePath("/admin/banner");
+  redirect("/admin/banner");
+};
 
-//     // Save the document info to the database
-//     await prisma.dokumen.create({
-//       data: {
-//         title,
-//         file: fileUrl,
-//         image: imageUrl,
-//         category,
-//         createdAt: new Date(),
-//       },
-//     });
+//=================================================================
+// Dokumen
+//=================================================================
+// Dokumen Schema for Zod
+// Dokumen Schema for Zod
+const DokumenUploadSchema = (
+  isEdit: boolean,
+  existingImage?: string,
+  existingFile?: string,
+) =>
+  z.object({
+    title: z.string().min(1, { message: "Nama dokumen diperlukan" }),
 
-//     revalidatePath("/admin/dokumen");
-//     redirect("/admin/dokumen");
-//   } catch (error) {
-//     return { message: "Failed to create document" };
-//   }
-// };
+    // Schema untuk file dokumen
+    file: z
+      .instanceof(File)
+      .optional() // Optional jika dalam mode edit
+      .refine(
+        (file) => {
+          // Jika sedang edit dan file tidak di-upload, izinkan menggunakan file yang sudah ada
+          if (isEdit && existingFile && !file) return true;
 
+          // File diperlukan untuk create
+          if (!isEdit) return file?.size > 0;
+
+          return file?.size > 0;
+        },
+        { message: "File dokumen diperlukan" },
+      )
+      .refine(
+        (file) => {
+          if (file?.size === 0) return true;
+          return file === undefined || file.type === "application/pdf";
+        },
+        { message: "Hanya file PDF yang diperbolehkan" },
+      )
+      .refine(
+        (file) => {
+          if (file?.size === 0) return true;
+          return file === undefined || file.size < 10000000;
+        },
+        { message: "File harus kurang dari 10MB" },
+      ),
+
+    // Schema untuk image
+    image: z
+      .instanceof(File)
+      .optional() // Optional jika dalam mode edit
+      .refine(
+        (file) => {
+          // Jika sedang edit dan image tidak di-upload, izinkan menggunakan image yang sudah ada
+          if (isEdit && existingImage && !file) return true;
+
+          // Image diperlukan untuk create
+          if (!isEdit) return file?.size > 0;
+
+          return file?.size > 0;
+        },
+        { message: "Cover dokumen diperlukan" },
+      )
+      .refine(
+        (file) => {
+          if (file?.size === 0) return true;
+          return file === undefined || file.type.startsWith("image/");
+        },
+        { message: "Hanya file gambar yang diperbolehkan" },
+      )
+      .refine(
+        (file) => {
+          if (file?.size === 0) return true;
+          return file === undefined || file.size < 4000000;
+        },
+        { message: "Cover dokumen harus kurang dari 4MB" },
+      ),
+
+    // Kategori dokumen
+    category: z.nativeEnum(DokumenCategory, { message: "Kategori diperlukan" }),
+  });
+
+// Dokumen Create
 export const createDokumen = async (prevState: unknown, formData: FormData) => {
   console.log("createDokumen called");
   const validatedFields = DokumenUploadSchema.safeParse(
@@ -262,4 +434,156 @@ export const createDokumen = async (prevState: unknown, formData: FormData) => {
 
   revalidatePath("/admin/dokumen");
   redirect("/admin/dokumen");
+};
+
+export const updateDokumen = async (
+  id: string,
+  prevState: unknown,
+  formData: FormData,
+) => {
+  // Fetch dokumen existing dari database
+  const existingDokumen = await prisma.dokumen.findUnique({
+    where: { id },
+  });
+
+  if (!existingDokumen) {
+    return { message: "Dokumen tidak ditemukan" };
+  }
+
+  // Validasi form menggunakan Zod schema
+  const validatedFields = DokumenUploadSchema(
+    true, // mode edit
+    existingDokumen.image, // existing image
+    existingDokumen.file, // existing file
+  ).safeParse(Object.fromEntries(formData.entries()));
+
+  if (!validatedFields.success) {
+    return {
+      error: validatedFields.error.flatten().fieldErrors,
+    };
+  }
+
+  const { title, image, file, category } = validatedFields.data;
+
+  let imageUrl = existingDokumen.image;
+  let fileUrl = existingDokumen.file;
+
+  // Jika ada image baru yang di-upload
+  if (image && image.size > 0) {
+    const { url } = await put(image.name, image, {
+      access: "public",
+      multipart: true,
+    });
+    imageUrl = url;
+  }
+
+  // Jika ada file dokumen baru yang di-upload
+  if (file && file.size > 0) {
+    const { url } = await put(file.name, file, {
+      access: "public",
+      multipart: true,
+    });
+    fileUrl = url;
+  }
+
+  // Update dokumen dengan data yang baru
+  try {
+    await prisma.dokumen.update({
+      where: { id },
+      data: {
+        title,
+        image: imageUrl,
+        file: fileUrl,
+        category,
+      },
+    });
+  } catch (error) {
+    console.error("Failed to update data:", error);
+    return { message: "Gagal memperbarui data dokumen" };
+  }
+
+  // Revalidate dan redirect ke halaman dokumen
+  revalidatePath("/admin/dokumen");
+  redirect("/admin/dokumen");
+};
+
+// Profil Schema for Zod
+const ProfilUploadSchema = z.object({
+  category: z.nativeEnum(ProfilCategory),
+  title: z.string().min(1, { message: "Title is required" }),
+  content: z
+    .string()
+    .min(1, { message: "Content is required" }) // Validasi konten HTML yang dihasilkan
+    .refine((value) => value.trim().length > 0, {
+      message: "Content cannot be empty",
+    }),
+});
+
+export const createProfil = async (prevState: unknown, formData: FormData) => {
+  console.log("createProfil  called");
+
+  // Validasi form menggunakan Zod
+  const validatedFields = ProfilUploadSchema.safeParse(
+    Object.fromEntries(formData.entries()),
+  );
+
+  if (!validatedFields.success) {
+    console.log(
+      "Validation failed:",
+      validatedFields.error.flatten().fieldErrors,
+    );
+    return {
+      error: validatedFields.error.flatten().fieldErrors,
+    };
+  }
+
+  const { category, title, content } = validatedFields.data;
+  console.log("validated data", { category, title, content });
+
+  // Ambil URL gambar dari konten
+  const imageUrls = extractImageUrls(content);
+
+  // Base URL untuk gambar (sesuaikan dengan URL server yang sesuai)
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
+
+  // Validasi setiap URL gambar
+  for (let url of imageUrls) {
+    // Tambahkan base URL jika gambar menggunakan URL relatif
+    if (!url.startsWith("http")) {
+      url = `${baseUrl}${url}`;
+    }
+
+    console.log("Checking URL:", url);
+    try {
+      const response = await fetch(url, { method: "HEAD" });
+      if (!response.ok) {
+        throw new Error(
+          `Gambar dengan URL ${url} tidak valid atau tidak bisa diakses.`,
+        );
+      }
+    } catch (error) {
+      console.log("Error during image validation:", error);
+      return { error: `Error saat memvalidasi URL gambar: ${url}` };
+    }
+  }
+
+  console.log("Image validation passed, proceeding to save data.");
+
+  // Jika semua URL gambar valid, lanjutkan menyimpan ke database
+  try {
+    await prisma.profil.create({
+      data: {
+        category,
+        title,
+        content,
+      },
+    });
+    console.log("Document created in database");
+  } catch (error) {
+    console.error("Error occurred while saving to the database:", error);
+    return { message: "Failed to create data" };
+  }
+
+  revalidatePath("/admin/profil");
+  redirect("/admin/profil");
 };

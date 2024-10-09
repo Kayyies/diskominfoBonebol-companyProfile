@@ -4,12 +4,12 @@ import { ResponsibilityData } from "@/data/ResponsibilityData";
 
 function Responsibility() {
   return (
-    <div className="3xl:px-[400px] container mx-auto mb-20 xl:px-40">
+    <div className="container mx-auto mb-20 xl:px-40 3xl:px-[400px]">
       <div className="flex flex-row justify-between gap-5">
         {ResponsibilityData.map((res, index) => (
           <div
             key={index}
-            className={`w-card flex gap-2 ${
+            className={`flex w-card gap-2 ${
               index < ResponsibilityData.length - 1
                 ? "border-gray border-r-2 pr-2"
                 : ""

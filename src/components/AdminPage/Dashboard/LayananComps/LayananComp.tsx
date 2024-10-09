@@ -63,6 +63,7 @@ const LayananComp: React.FC = () => {
           sortableIcon={sortableIcon}
           onRefresh={refreshData}
           isLoading={isLoading}
+          section="layanan"
         />
       </div>
     </>

@@ -1,4 +1,6 @@
-import { Prisma } from "@prisma/client";
+//@/lib/data"
+
+import { prisma } from "@/lib/prisma";
 
 export const getLayanan = async () => {
   try {
@@ -23,5 +25,38 @@ export const getProfil = async () => {
   } catch (error) {
     console.error("Error fetching data:", error);
     return;
+  }
+};
+
+export const getBannerById = async (id: string) => {
+  try {
+    const item = await prisma?.banner.findUnique({
+      where: { id },
+    });
+    return item;
+  } catch (error) {
+    throw new Error("Failed to fetch data");
+  }
+};
+
+export const getLayananById = async (id: string) => {
+  try {
+    const item = await prisma?.layanan.findUnique({
+      where: { id },
+    });
+    return item;
+  } catch (error) {
+    throw new Error("Failed to fetch data");
+  }
+};
+
+export const getDokumenById = async (id: string) => {
+  try {
+    const item = await prisma?.dokumen.findUnique({
+      where: { id },
+    });
+    return item;
+  } catch (error) {
+    throw new Error("Failed to fetch data");
   }
 };

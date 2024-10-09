@@ -5,6 +5,7 @@ import React from "react";
 import Breadcrumb from "../../Breadcrumbs/Breadcrumb";
 import TableDashboard from "../TableDashboard/TableDashboard";
 import useRefreshData from "@/hooks/useRefreshData";
+import { useRouter } from "next/navigation";
 
 const fetchData = async () => {
   try {
@@ -22,8 +23,8 @@ const fetchData = async () => {
 const BannerAdmin: React.FC = () => {
   //inisiasi table headers
   const headers = ["Image", "Description", "Action"];
-
   const [datas, isLoading, refreshData] = useRefreshData([], fetchData);
+  const router = useRouter(); // Inisiasi router untuk navigasi
 
   //fungsi mengatur kapan harus ada icon sortable
   const sortableIcon = (index: number) => {
@@ -72,6 +73,7 @@ const BannerAdmin: React.FC = () => {
           sortableIcon={sortableIcon}
           onRefresh={refreshData}
           isLoading={isLoading}
+          section="banner"
         />
       </div>
     </>

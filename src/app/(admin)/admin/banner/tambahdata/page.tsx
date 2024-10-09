@@ -1,6 +1,6 @@
 import { Metadata } from "next";
 import DefaultLayout from "@/components/AdminPage/Layouts/DefaultLayout";
-import BannerAdd from "@/components/AdminPage/Dashboard/BannerComps/banner-add";
+import { BannerAdd } from "@/components/AdminPage/Dashboard/BannerComps/banner-form";
 
 export const metadata: Metadata = {
   title: "Banner Add Data | Diskominfo Bone Bolango",

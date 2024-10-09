@@ -19,4 +19,5 @@ export interface Props {
   ) => JSX.Element;
   onRefresh: () => void;
   isLoading: boolean;
+  section: string;
 }

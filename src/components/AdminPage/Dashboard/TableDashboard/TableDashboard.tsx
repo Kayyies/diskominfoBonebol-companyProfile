@@ -24,6 +24,7 @@ const TableDashboard: React.FC<Props> = ({
   sortableIcon,
   onRefresh,
   isLoading,
+  section,
 }) => {
   const pathname = usePathname();
   const tambahData = `${pathname}/tambahdata`;
@@ -97,7 +98,7 @@ const TableDashboard: React.FC<Props> = ({
           <tbody>
             {paginatedData.map((data, index) => (
               <tr key={index}>
-                <DataCell data={data} />
+                <DataCell data={data} section={section} />
               </tr>
             ))}
           </tbody>

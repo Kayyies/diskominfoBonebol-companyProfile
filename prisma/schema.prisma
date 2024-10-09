@@ -34,7 +34,7 @@ model Profil {
   id       String         @id @default(cuid())
   category ProfilCategory
   title    String
-  desc     String
+  content  String
 }
 
 model Banner {

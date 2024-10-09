@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useState } from "react";
 import { useEditor, EditorContent, isActive } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
@@ -5,12 +7,13 @@ import Bold from "@tiptap/extension-bold";
 import Italic from "@tiptap/extension-italic";
 import Underline from "@tiptap/extension-underline";
 import TextAlign from "@tiptap/extension-text-align";
-import Heading from "@tiptap/extension-heading";
+import { Heading, Level } from "@tiptap/extension-heading";
 import BulletList from "@tiptap/extension-bullet-list";
 import OrderedList from "@tiptap/extension-ordered-list";
 import ListItem from "@tiptap/extension-list-item";
 import Blockquote from "@tiptap/extension-blockquote";
 import Image from "@tiptap/extension-image";
+import { z } from "zod";
 
 //icons
 import {
@@ -31,7 +34,21 @@ import {
 import { MdTextFields } from "react-icons/md";
 import { TbBlockquote } from "react-icons/tb";
 
-const Tiptap = () => {
+//zod validation
+const ImageUploadSchema = z.object({
+  image: z
+    .instanceof(File)
+    .refine((file) => file.size <= 5 * 1024 * 1024, {
+      message: "File size exceeds the 5MB limit.",
+    })
+    .refine((file) => file.type.startsWith("image/"), {
+      message: "Only image files are allowed.",
+    }),
+});
+
+const Tiptap = ({ editorRef, onChange  }) => {
+  const [errorMessage, setErrorMessage] = useState("");
+
   const editor = useEditor({
     extensions: [
       StarterKit,
@@ -46,7 +63,6 @@ const Tiptap = () => {
       OrderedList,
       ListItem,
       Image.configure({
-        allowBase64: true,
         inline: true,
       }),
       Blockquote,
@@ -67,7 +83,17 @@ const Tiptap = () => {
       },
     },
     content: "<p>Hello World! 🌎️</p>",
+    onUpdate: ({ editor }) => {
+      // Setiap kali konten Tiptap berubah, panggil onChange untuk memicu pembaruan di luar
+      const html = editor.getHTML();
+      onChange(html); // Update state dari luar dengan HTML konten Tiptap
+    },
   });
+
+  //editor ref for parent components
+  if (editor && editorRef) {
+    editorRef.current = editor;
+  }
 
   const [selectedOption, setSelectedOption] = useState("Normal Text");
   const [isOpen, setIsOpen] = useState(false);
@@ -76,38 +102,50 @@ const Tiptap = () => {
     return null;
   }
 
-  const applyHeading = (level: number, text: string) => {
+  const applyHeading = (level: Level, text: string) => {
     editor.chain().focus().toggleHeading({ level }).run();
     setSelectedOption(text); // Update with the correct text
     setIsOpen(false);
   };
 
-  //Default tiptap add image (baseURL)
-  const addImage = () => {
-    const url = prompt("Masukan URL dari gambar");
-    if (url) {
-      editor.chain().focus().setImage({ src: url }).run();
+  //Default tiptap add image
+
+  const uploadImageToServer = async (file) => {
+    const formData = new FormData();
+    formData.append("image", file); // Make sure "image" matches the field in the backend
+
+    try {
+      const response = await fetch("/api/uploadImage", {
+        method: "POST",
+        body: formData,
+      });
+
+      const data = await response.json();
+      return data.url; // Return the image URL from server
+    } catch (error) {
+      console.error("Error uploading image:", error);
+      return null;
     }
   };
 
-  //handleImageUpload Function: This function reads the selected image file-
-  //and converts it to a base64 data URL.
-  //Once converted, it uses Tiptap's setImage method-
-  //to insert the image into the editor.
-  const handleImageUpload = (event) => {
+  const handleImageUpload = async (event) => {
     const file = event.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = () => {
-        const base64URL = reader.result;
-        editor.chain().focus().setImage({ src: base64URL }).run();
-      };
-      reader.readAsDataURL(file);
+    if (file && editor) {
+      const imageUrl = await uploadImageToServer(file);
+      if (imageUrl) {
+        editor.chain().focus().setImage({ src: imageUrl }).run();
+        setErrorMessage(""); // Clear any previous errors
+      }
     }
   };
 
   const handleButtonClick = (event) => {
     event.preventDefault();
+  };
+
+  const handleImageClick = (event) => {
+    event.preventDefault();
+    document.getElementById("image-upload").click();
   };
 
   return (
@@ -291,11 +329,7 @@ const Tiptap = () => {
           {/* Image */}
           <div>
             <button
-              // onClick={addImage}
-              onClick={(e) => {
-                handleButtonClick(e);
-                document.getElementById("image-upload").click();
-              }}
+              onClick={handleImageClick}
               className="rounded-lg p-2 transition-all hover:bg-blue-gray-800"
               disabled={!editor}
             >
@@ -304,15 +338,21 @@ const Tiptap = () => {
             <input
               type="file"
               id="image-upload"
-              style={{ display: "none" }}
               accept="image/*"
               onChange={handleImageUpload}
+              style={{ display: "none" }}
             />
           </div>
         </div>
       </div>
 
       <EditorContent editor={editor} />
+      {/* Tampilkan pesan error jika ada */}
+      {errorMessage && (
+        <div className="text-red-500 mt-2">
+          <p>{errorMessage}</p>
+        </div>
+      )}
     </div>
   );
 };

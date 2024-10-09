@@ -78,6 +78,7 @@ const Profil: React.FC = () => {
           sortableIcon={sortableIcon}
           onRefresh={refreshData}
           isLoading={isLoading}
+          section="dokumen"
         />
       </div>
     </>

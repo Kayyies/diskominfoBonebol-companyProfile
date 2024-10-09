@@ -1,14 +1,23 @@
+//DataCell.tsx
 import React from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { DataItem } from "./types";
 import { MdEdit } from "react-icons/md";
+import { useRouter } from "next/navigation";
 
 interface DataCellProps {
   data: DataItem;
+  section: string;
 }
 
-const DataCell: React.FC<DataCellProps> = ({ data }) => {
+const DataCell: React.FC<DataCellProps> = ({ data, section }) => {
+  const router = useRouter();
+  const handleEdit = () => {
+    const id = data.id;
+    router.push(`/admin/${section}/editdata/${id}`);
+  };
+
   return (
     <>
       {Object.keys(data).map((key, dataIndex) => {
@@ -68,22 +77,8 @@ const DataCell: React.FC<DataCellProps> = ({ data }) => {
         <button
           className="flex select-none items-center gap-3 rounded-lg bg-transparent px-3 py-3 text-center align-middle font-sans text-xs font-bold text-black transition-all duration-200 hover:bg-gray-200"
           type="button"
-          onClick={() => console.log("Edit button clicked")}
+          onClick={handleEdit}
         >
-          {/* <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            strokeWidth="2"
-            stroke="currentColor"
-            className="h-5 w-5"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M12 4.75l7.25 7.25-7.25 7.25M4.75 12L12 4.75 12 4.75"
-            />
-          </svg> */}
           <MdEdit />
         </button>
       </td>
