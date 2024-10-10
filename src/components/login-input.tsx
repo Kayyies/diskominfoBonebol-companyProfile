@@ -16,18 +16,22 @@ export const InputUsername: React.FC<InputUsernameProps> = ({
 }) => {
   return (
     <div className="flex flex-col gap-3">
-      <label htmlFor="">Username</label>
-      <div>
-        <span className="absolute inset-y-0 left-0 flex items-center pl-3">
-          <FaUser className="text-gray-400" />
-          <div className="mx-3 h-6 w-[1px] bg-gray-600"></div>{" "}
+      <label htmlFor="username">Masukan Username</label>
+      <div className="relative">
+        {/* Icon FaUser di sebelah kiri */}
+        <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">
+          <FaUser />
         </span>
+        {/* Garis vertikal setelah ikon */}
+        <span className="absolute left-12 top-1/2 h-6 w-[1px] -translate-y-1/2 bg-gray-500"></span>
+        {/* Input field */}
         <input
           type="text"
+          id="username"
           placeholder="Username"
           value={value}
           onChange={onChange}
-          className="rounded-md bg-gray-800 px-8 py-4 text-white placeholder-gray-400"
+          className="w-full rounded-md bg-gray-800 px-14 py-4 text-white placeholder-gray-400" // Menambah padding kiri untuk ikon
         />
       </div>
     </div>
@@ -54,19 +58,25 @@ export const InputPassword: React.FC<InputPasswordProps> = ({
     <div className="flex flex-col gap-3">
       <label htmlFor="password">Masukan Password</label>
       <div className="relative">
+        {/* Icon FaRegEye di sebelah kiri */}
+        <span className="absolute left-4 top-1/2 -translate-y-1/2 cursor-pointer text-gray-400">
+          {showPassword ? (
+            <FaRegEyeSlash onClick={togglePasswordVisibility} />
+          ) : (
+            <FaRegEye onClick={togglePasswordVisibility} />
+          )}
+        </span>
+        {/* Garis vertikal setelah ikon */}
+        <span className="absolute left-12 top-1/2 h-6 w-[1px] -translate-y-1/2 bg-gray-500"></span>
+        {/* Input field */}
         <input
           type={showPassword ? "text" : "password"}
+          id="password"
           placeholder="Enter your password"
           value={value}
           onChange={onChange}
-          className="w-full rounded-md bg-gray-800 px-8 py-4 text-white placeholder-gray-400"
+          className="w-full rounded-md bg-gray-800 px-14 py-4 text-white placeholder-gray-400" // Menambah padding kiri untuk ikon
         />
-        <span
-          className="absolute right-4 top-4 cursor-pointer text-gray-400"
-          onClick={togglePasswordVisibility}
-        >
-          {showPassword ? <FaRegEyeSlash /> : <FaRegEye />}
-        </span>
       </div>
     </div>
   );
