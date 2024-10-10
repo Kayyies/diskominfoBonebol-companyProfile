@@ -4,7 +4,7 @@ function JumbotronNew({ title, descColor, descNormal, subdesc }) {
       <div
         className="py-10 w-full h-[480px]"
         style={{
-          backgroundImage: "url(assets/dividerBg.png)",
+          backgroundImage: "url(/assets/dividerBg.png)",
           backgroundPosition: "center top",
           backgroundSize: "cover",
         }}

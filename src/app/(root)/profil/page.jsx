@@ -46,7 +46,7 @@ const ProfilPage = () => {
                     title="🙆🏻‍♂️ Profil"
                     descColor="Kenalan"
                     descNormal="sama Diskominfo Bonebol kuy!"
-                    subdesc="*kuy adalah slang/bahasa gaul dari ‘yuk’ "
+                    subdesc="*kuy adalah slang/bahasa gaul dari ‘yuk’"
                 />
             </div>
             <div
