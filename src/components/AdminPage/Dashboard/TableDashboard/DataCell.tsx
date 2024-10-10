@@ -22,11 +22,25 @@ const DataCell: React.FC<DataCellProps> = ({ data, section }) => {
     <>
       {Object.keys(data).map((key, dataIndex) => {
         if (key === "id") return null;
-        const value = data[key as keyof DataItem];
+        if (section === "user" && key === "password") return null;
+        if (section === "user" && key === "updatedAt") return null;
+        if (section === "user" && key === "isActive") return null;
 
+        const value = data[key as keyof DataItem];
         // Convert URL to string if value is URL
         const stringValue = value instanceof URL ? value.toString() : value;
-
+        if (section === "user" && key === "createdAt") {
+          const formattedDate = new Date(stringValue)
+            .toISOString()
+            .split("T")[0]; // Ubah format menjadi yyyy-mm-dd
+          return (
+            <td key={dataIndex} className="p-4">
+              <p className="block font-sans text-sm font-normal leading-normal text-blue-gray-900 antialiased">
+                {formattedDate}
+              </p>
+            </td>
+          );
+        }
         return (
           <td key={dataIndex} className="p-4">
             <div className="flex max-h-10 max-w-50 flex-col overflow-hidden">

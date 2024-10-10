@@ -237,14 +237,13 @@ const Sidebar = ({
               <ul className="mb-6 flex flex-col gap-1.5">
                 <li>
                   <button
-                    onClick={() => handleNavigation("/admin/chart")}
+                    onClick={() => handleNavigation("/admin/user")}
                     className={`hover:bg-graydark group relative flex items-center gap-2.5 rounded-sm px-4 py-2 font-medium text-bodydark1 duration-300 ease-in-out dark:hover:bg-meta-4 ${
-                      pathname === "/admin/chart" &&
-                      "bg-graydark dark:bg-meta-4"
+                      pathname === "/admin/user" && "bg-graydark dark:bg-meta-4"
                     }`}
                   >
                     <MdAdminPanelSettings />
-                    Admin
+                    User
                   </button>
                 </li>
               </ul>

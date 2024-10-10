@@ -1,16 +1,16 @@
 import { Metadata } from "next";
 import DefaultLayout from "@/components/AdminPage/Layouts/DefaultLayout";
-import { LayananAdd } from "@/components/AdminPage/Dashboard/LayananComps/layanan-form";
+import { UserAdd } from "@/components/AdminPage/Dashboard/userComps/user-form";
 
 export const metadata: Metadata = {
-  title: "Layanan | Diskominfo Bone Bolango",
+  title: "User | Diskominfo Bone Bolango",
 };
 
-export default function LayananPage() {
+export default function UserPage() {
   return (
     <>
       <DefaultLayout>
-        <LayananAdd />
+        <UserAdd />
       </DefaultLayout>
     </>
   );

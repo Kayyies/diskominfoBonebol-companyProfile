@@ -37,6 +37,7 @@
     "@tiptap/starter-kit": "^2.4.0",
     "@vercel/blob": "^0.23.4",
     "apexcharts": "^3.45.2",
+    "bcryptjs": "^2.4.3",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.0",
     "embla-carousel-react": "^8.0.0",
@@ -46,6 +47,7 @@
     "lexical": "^0.14.5",
     "lucide-react": "^0.363.0",
     "next": "^14.1.4",
+    "next-auth": "^4.24.8",
     "pdf-lib": "^1.17.1",
     "preline": "^2.1.0",
     "react": "^18.2.0",
@@ -72,7 +74,7 @@
     "postcss": "^8",
     "prettier": "^3.2.5",
     "prettier-plugin-tailwindcss": "^0.5.11",
-    "prisma": "^5.18.0",
+    "prisma": "^5.20.0",
     "typescript": "^5"
   }
 }

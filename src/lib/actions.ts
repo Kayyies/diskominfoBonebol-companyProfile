@@ -3,11 +3,12 @@
 
 import { z } from "zod";
 import prisma from "./db";
-import { ProfilCategory, DokumenCategory } from "@prisma/client";
+import { ProfilCategory, DokumenCategory, Role } from "@prisma/client";
 import { put } from "@vercel/blob";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import slugify from "slugify";
+import { hash } from "bcryptjs"; // bcryptjs untuk hash password
 import { generateDateTimeString } from "./generatedTimes";
 
 // PDF to image (PDF-LIB)
@@ -308,7 +309,6 @@ export const updateBanner = async (
 // Dokumen
 //=================================================================
 // Dokumen Schema for Zod
-// Dokumen Schema for Zod
 const DokumenUploadSchema = (
   isEdit: boolean,
   existingImage?: string,
@@ -507,6 +507,9 @@ export const updateDokumen = async (
   redirect("/admin/dokumen");
 };
 
+//=================================================================
+// Dokumen
+//=================================================================
 // Profil Schema for Zod
 const ProfilUploadSchema = z.object({
   category: z.nativeEnum(ProfilCategory),
@@ -586,4 +589,118 @@ export const createProfil = async (prevState: unknown, formData: FormData) => {
 
   revalidatePath("/admin/profil");
   redirect("/admin/profil");
+};
+
+//=================================================================
+// User
+//=================================================================
+const UserSchema = (isEdit: boolean) =>
+  z.object({
+    username: z
+      .string()
+      .min(3, { message: "Username harus memiliki minimal 3 karakter" })
+      .nonempty({ message: "Username harus diisi" }),
+
+    password: z
+      .string()
+      .min(6, { message: "Password harus memiliki minimal 6 karakter" })
+      .nonempty({ message: "Password harus diisi" })
+      .optional()
+      .refine((value) => isEdit || value, {
+        message: "Password harus diisi pada form tambah user",
+      }),
+
+    role: z.nativeEnum(Role, {
+      errorMap: () => ({ message: "Role harus dipilih" }),
+    }),
+  });
+
+export const createUser = async (prevState: unknown, formData: FormData) => {
+  // Validasi input form dengan Zod UserSchema
+  const validatedFields = UserSchema(false).safeParse(
+    Object.fromEntries(formData.entries()),
+  );
+  console.log("formData entries:", Array.from(formData.entries()));
+
+  if (!validatedFields.success) {
+    return {
+      error: validatedFields.error.flatten().fieldErrors,
+    };
+  }
+
+  const { username, password, role } = validatedFields.data;
+
+  // Hash password sebelum menyimpan ke database
+  const hashedPassword = await hash(password, 10);
+
+  try {
+    // Simpan user baru ke dalam database
+    await prisma.user.create({
+      data: {
+        username,
+        password: hashedPassword,
+        role,
+      },
+    });
+  } catch (error) {
+    console.error("Error occurred while creating user:", error);
+    return { message: "Failed to create user" };
+  }
+
+  // Revalidate dan redirect setelah berhasil
+  revalidatePath("/admin/user");
+  redirect("/admin/user");
+};
+
+export const updateUser = async (
+  id: string,
+  prevState: unknown,
+  formData: FormData,
+) => {
+  // Ambil data user dari database berdasarkan ID
+  const existingUser = await prisma.user.findUnique({
+    where: { id },
+  });
+
+  if (!existingUser) {
+    return { message: "User not found" };
+  }
+
+  // Validasi input form dengan Zod UserSchema
+  const validatedFields = UserSchema(true).safeParse(
+    Object.fromEntries(formData.entries()),
+  );
+
+  if (!validatedFields.success) {
+    return {
+      error: validatedFields.error.flatten().fieldErrors,
+    };
+  }
+
+  const { username, password, role } = validatedFields.data;
+
+  // Hash password hanya jika password baru diisi
+  let hashedPassword = existingUser.password;
+  if (password) {
+    hashedPassword = await hash(password, 10);
+  }
+
+  try {
+    // Update data user di database
+    await prisma.user.update({
+      where: { id },
+      data: {
+        username,
+        password: hashedPassword,
+        role,
+      },
+    });
+  } catch (error) {
+    console.error("Error occurred while updating user:", error);
+    return { message: "Failed to update user" };
+  }
+
+  // Revalidate dan redirect setelah berhasil
+  revalidatePath("/admin/user");
+  redirect("/admin/user");
 };
