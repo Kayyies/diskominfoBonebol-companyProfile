@@ -109,7 +109,7 @@ function BeritaPage() {
                 subdesc="Mulai dari berita, kabar, informasi dan lain-lain!"
             />
             <div
-                className="-mt-1"
+                className="-mt-1 pb-10"
                 style={{
                     background: "linear-gradient(#EDF1FD, #F0F3FD, #F9F9F9, #FFFFFF)",
                 }}

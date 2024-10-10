@@ -30,7 +30,7 @@ const Navbar = () => {
     return (
         <div className="sticky top-0 z-50">
             <div className={`bg-white w-full transition-all ${isScrolled ? "py-3 shadow-sm" : ""}`}>
-                <div className="navbar container mx-auto px-10 lg:px-40 xl:px-0 3xl:px-[400px]">
+                <div className="navbar container mx-auto px-10 lg:px-40 xl:px-10 2xl:px-40">
                     <div className="navbar-start">
                         <Link href="/">
                             <Image src="/diskominfo.png" width={150} height={150} alt="logo" />
