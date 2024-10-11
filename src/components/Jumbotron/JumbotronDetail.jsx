@@ -1,6 +1,10 @@
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
-function JumbotronNew({ title, author, date }) {
+function JumbotronDetail({ title, author, category, date }) {
+    let pathName = usePathname();
+    pathName = pathName.split("/").slice(0, -1).join("");
+
     const dateFormat = new Date(date);
     date = dateFormat.toLocaleDateString("id-ID", {
         day: "numeric",
@@ -17,8 +21,8 @@ function JumbotronNew({ title, author, date }) {
                     backgroundSize: "cover",
                 }}
             >
-                <div className="mt-10 xl:mt-16 container mx-auto px-6 lg:px-40">
-                    <Link href={"/berita"} className="inline-flex items-center gap-2 mb-2 xl:mb-4 text-xs xl:text-sm text-gray-400 hover:text-[38BDF8] transition-all">
+                <div className="mt-10 xl:mt-16 container mx-auto px-6 lg:px-30 2xl:px-48">
+                    <Link href={`/${pathName}`} className="inline-flex items-center gap-2 mb-2 xl:mb-4 text-xs xl:text-sm text-gray-400 hover:text-[38BDF8] transition-all">
                         <span className="text-base xl:text-xl pb-0.5">&lsaquo;</span>
                         <span>Kembali</span>
                     </Link>
@@ -27,7 +31,9 @@ function JumbotronNew({ title, author, date }) {
                             {title}
                         </h1>
                         <div className="flex flex-col gap-2">
-                            <span className="text-xs xl:text-base">✏️ {author}</span>
+                            {
+                                pathName === "berita" ? <span className="text-xs xl:text-base">✏️ {author}</span> : <span className="text-xs xl:text-base">🏷️ {category}</span>
+                            }
                             <span className="text-xs xl:text-base">🗓️ {date}</span>
                         </div>
                     </div>
@@ -37,4 +43,4 @@ function JumbotronNew({ title, author, date }) {
     );
 }
 
-export default JumbotronNew;
+export default JumbotronDetail;

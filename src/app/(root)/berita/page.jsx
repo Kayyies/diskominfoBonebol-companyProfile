@@ -17,7 +17,7 @@ function BeritaPage() {
     const [searchQuery, setSearchQuery] = useState(""); // State untuk pencarian
     const [filteredNews, setFilteredNews] = useState([]); // State untuk berita yang difilter
     const [pageSize, setPageSize] = useState(DEFAULT_PAGE_SIZE); // Ukuran halaman saat ini
-    const [sortOrder, setSortOrder] = useState("Tebaru"); // Urutan default
+    const [sortOrder, setSortOrder] = useState("Terbaru"); // Urutan default
 
     useEffect(() => {
         const fetchNews = async () => {
@@ -114,15 +114,15 @@ function BeritaPage() {
                     background: "linear-gradient(#EDF1FD, #F0F3FD, #F9F9F9, #FFFFFF)",
                 }}
             >
-                <div className="container mx-auto px-6 lg:px-48">
+                <div className="container mx-auto px-6 xl:px-48">
                     <div className="flex flex-col gap-8">
                         <div className="form-control">
                             <input
                                 type="text"
-                                placeholder="Search"
+                                placeholder="Cari Berita yang kamu kepo!"
                                 value={searchQuery}
                                 onChange={handleSearchChange}
-                                className="input input-bordered w-full md:w-auto"
+                                className="input input-bordered rounded w-full md:w-auto"
                             />
                         </div>
 

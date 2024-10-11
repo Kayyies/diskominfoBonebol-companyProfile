@@ -9,7 +9,7 @@ function JumbotronNew({ title, descColor, descNormal, subdesc }) {
           backgroundSize: "cover",
         }}
       >
-        <div className="mt-7 container mx-auto lg:px-40">
+        <div className="mt-7 container mx-auto px-6 lg:px-30 2xl:px-48">
           <div className="flex flex-col gap-5 justify-center items-center text-center">
             <span className="border-[0C62F7] border rounded-xl inline-block px-4 py-2 text-sm text-gray-900 max-w-fit font-semibold">
                 {title}
