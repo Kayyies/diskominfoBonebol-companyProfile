@@ -4,6 +4,7 @@ import Hero from "@/components/Beranda/Hero";
 import HeroImage from "@/components/Beranda/HeroImage";
 import LayananSection from "@/components/Beranda/LayananKami/LayananSection";
 import Responsibility from "@/components/Beranda/Responsibility/Responsibility";
+import TugasKami from "@/components/tugas-kami";
 import { Metadata } from "next";
 
 function page() {
@@ -26,12 +27,13 @@ function page() {
         </div>
       </div>
       <Responsibility />
+      <TugasKami />
       <SectionBerandaBerita />
       <BannerSection />
       <LayananSection />
       {/* Embed YouTube video */}
       <div
-        className="border-darkPrimary container mx-auto mt-32 border-y-2 border-opacity-10 py-20 dark:border-white dark:border-opacity-10"
+        className="border-darkPrimary mx-auto mt-32 border-y-2 border-opacity-10 py-20 dark:border-white dark:border-opacity-10"
         style={{
           backgroundImage: "url(/gridYoutube.png)",
           backgroundRepeat: "repeat-x",
