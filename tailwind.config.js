@@ -75,6 +75,9 @@ module.exports = withMT({
         success: "#219653",
         danger: "#D34053",
         warning: "#FFA70B",
+        "[0C1124]": "#0C1124",
+        "[0C62F7]": "#0C62F7",
+        "[38BDF8]": "#38BDF8",
       },
       fontSize: {
         "title-xxl": ["44px", "55px"],

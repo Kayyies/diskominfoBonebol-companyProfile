@@ -1,6 +1,6 @@
 export const footerItem = [
   {
-    title: "Diskominfo Bonebol",
+    title: "About",
     tautans: [
       {
         name: "Tentang Kami",
@@ -17,7 +17,7 @@ export const footerItem = [
     ],
   },
   {
-    title: "Telusuri Layanan Kami",
+    title: "Help",
     tautans: [
       {
         name: "Open Data",
@@ -38,7 +38,7 @@ export const footerItem = [
     ],
   },
   {
-    title: "Instagram yang kami kelola",
+    title: "Ikuti Kami",
     tautans: [
       {
         name: "@diskominfobonebol",
