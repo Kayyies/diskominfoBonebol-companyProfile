@@ -17,11 +17,6 @@ datasource db {
   directUrl = env("POSTGRES_URL_NON_POOLING") // uses a direct connection
 }
 
-model Latihan {
-  id      String @id @default(cuid())
-  content String
-}
-
 model Layanan {
   id    String @id @default(cuid())
   image String
@@ -51,6 +46,22 @@ model Dokumen {
   title     String
   slug      String?
   category  DokumenCategory
+}
+
+model User {
+  id        String   @id @default(cuid())
+  username  String   @unique
+  password  String
+  role      Role     @default(USER)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  isActive  Boolean  @default(true) // Menunjukkan apakah akun pengguna aktif
+}
+
+enum Role {
+  USER
+  ADMIN
+  SUPERADMIN
 }
 
 enum ProfilCategory {

@@ -71,6 +71,7 @@ export const InputText = ({
           placeholder={placeholder}
           className="mt-2 block w-full appearance-none rounded border border-blue-gray-300 bg-white px-4 py-3 pr-8 leading-tight text-blue-gray-700 transition-all focus:border-gray-500 focus:bg-white focus:outline-none"
         />
+        {error && <p className="text-red-500 mt-2 text-sm">{error}</p>}
       </div>
     </div>
   );

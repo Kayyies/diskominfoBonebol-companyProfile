@@ -1,16 +1,16 @@
 function Hero() {
   return (
-    <div className="container mx-auto px-10 xl:px-40 leading-3 justify-center items-center text-center flex flex-col gap-3 xl:gap-5">
-      <p className="text-2xl xl:text-6xl max-w-5xl font-bold xl:pt-16">
-        <span className="bg-gradient-to-r from-blue-500 via-blue-400 to-blue-400 text-transparent bg-clip-text">
+    <div className="container mx-auto flex flex-col items-center justify-center gap-3 px-10 text-center leading-3 xl:gap-5 xl:px-40">
+      <p className="max-w-5xl text-2xl font-bold text-[#070404] dark:text-white xl:pt-16 xl:text-6xl">
+        <span className="bg-gradient-to-r from-blue-500 via-blue-400 to-blue-400 bg-clip-text text-transparent">
           Diskominfo
         </span>{" "}
         Bone Bolango Akurat, Informatif, Serta Melayani{" "}
-        <span className="bg-gradient-to-r from-blue-500 via-blue-400 to-blue-400 text-transparent bg-clip-text">
+        <span className="bg-gradient-to-r from-blue-500 via-blue-400 to-blue-400 bg-clip-text text-transparent">
           Sepenuh Hati
         </span>
       </p>
-      <div className="text-base xl:text-lg">
+      <div className="text-[#070404] dark:text-white xl:text-lg">
         Temukan informasi publik terkini dari <br /> Dinas Komunikasi &
         Informatika Kabupaten Bone Bolango
       </div>
