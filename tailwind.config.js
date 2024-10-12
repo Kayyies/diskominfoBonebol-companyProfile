@@ -14,8 +14,8 @@ module.exports = withMT({
   ],
   darkMode: "class",
   plugins: [
-    require("daisyui", "preline/plugin"),
-    require("@tailwindcss/typography"),
+    require("@tailwindcss/typography"), // Plugin typography
+    require("daisyui"), // Plugin DaisyUI
   ],
   theme: {
     fontFamily: {
@@ -37,6 +37,11 @@ module.exports = withMT({
         news2: "400px",
       },
       colors: {
+        lightTheme: "#F5F4F4", // Warna background untuk light mode
+        darkTheme: "#0C1124", // Warna background untuk dark mode
+        darkPrimary: "#0C1124",
+        darkSecondary: "#1E293B",
+        darkAccent: "#CBD5E1",
         current: "currentColor",
         transparent: "transparent",
         white: "#FFFFFF",
@@ -344,6 +349,6 @@ module.exports = withMT({
     },
   },
   daisyui: {
-    themes: ["light", "dark", "cupcake"],
+    themes: [],
   },
 });

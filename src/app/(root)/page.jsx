@@ -13,6 +13,9 @@ function page() {
         className="hero"
         style={{
           backgroundImage: "url(/grid.png)",
+          backgroundRepeat: "no-repeat",
+          backgroundPosition: "center",
+          backgroundSize: "contain",
         }}
       >
         <div className="hero-content flex flex-col text-center">
@@ -27,17 +30,29 @@ function page() {
       <BannerSection />
       <LayananSection />
       {/* Embed YouTube video */}
-      <div className="container mx-auto mt-32 h-[240px] w-full px-40 lg:h-[480px] ">
-        <iframe
-          className="h-full w-full"
-          src="https://www.youtube.com/embed/XvHcaIbST_A?si=wrKDkoExECL57Mcg"
-          title="YouTube video player"
-          frameBorder="0"
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-          allowFullScreen
-        ></iframe>
+      <div
+        className="border-darkPrimary container mx-auto mt-32 border-y-2 border-opacity-10 py-20 dark:border-white dark:border-opacity-10"
+        style={{
+          backgroundImage: "url(/gridYoutube.png)",
+          backgroundRepeat: "repeat-x",
+          backgroundPosition: "center",
+          backgroundSize: "cover",
+        }}
+      >
+        {/* youtube embed */}
+        <div className="h-[240px] w-full lg:h-[480px]">
+          <iframe
+            className="h-full w-full"
+            src="https://www.youtube.com/embed/XvHcaIbST_A?si=wrKDkoExECL57Mcg"
+            title="YouTube video player"
+            frameBorder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            allowFullScreen
+          ></iframe>
+        </div>
       </div>
     </div>
   );
 }
+
 export default page;

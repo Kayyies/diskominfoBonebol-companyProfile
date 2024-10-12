@@ -5,8 +5,8 @@ import Image from "next/image";
 
 export default function Footer() {
   return (
-    <div className="bg-[#EDF1FD] pt-12">
-      <footer className="container mx-auto px-40 footer bg-[#EDF1FD] text-base-content">
+    <div className="bg-gradient-to-b from-[#F5F4F4] to-[#EDF1FD] pt-12 dark:bg-gradient-to-b dark:from-[#0c1124] dark:via-[#1D2956] dark:to-[#2E418A]">
+      <footer className="container footer mx-auto px-40 dark:text-white">
         <aside className="flex flex-col gap-4">
           <Image
             src="/diskominfo.png"
@@ -34,7 +34,7 @@ export default function Footer() {
             {item.tautans.map((tautan, index) => (
               <div key={index} className="flex flex-col pb-1">
                 <a
-                  className="text-gray-500 font-medium hover:text-blue-400 transition-all"
+                  className="font-medium  transition-all hover:text-blue-400"
                   href={tautan.url}
                 >
                   {tautan.name}
@@ -46,25 +46,23 @@ export default function Footer() {
 
         {/* bottom image */}
       </footer>
-      <div className="container mx-auto px-40 mt-36 pb-16 flex justify-between items-center">
+      <div className="text-bluePrimary container mx-auto mt-36 flex items-center justify-between px-40 pb-16 dark:text-white">
         <div>
-          <p className="text-gray-500 font-semibold text-md pb-5 uppercase">
-            Layanan Kami
-          </p>
-          <div className="flex gap-5 items-center">
+          <p className="text-md pb-5 font-semibold uppercase ">Layanan Kami</p>
+          <div className="flex items-center gap-5">
             <Image src="/logoFooter1.png" alt="aa" width={150} height={100} />
             <Image src="/logoFooter2.png" alt="aa" width={160} height={100} />
             <Image src="/logoFooter3.png" alt="aa" width={200} height={100} />
           </div>
         </div>
         <div>
-          <p className="text-gray-500 font-semibold text-md pb-5 uppercase">
+          <p className="text-md pb-5 font-semibold uppercase">
             Portal Resmi Bone Bolango
           </p>
           <Image src="/logoFooter4.png" alt="aa" width={50} height={100} />
         </div>
       </div>
-      <p className="container mx-auto text-xs text-center pb-5 text-gray-500">
+      <p className="text-bluePrimary container mx-auto pb-5 text-center text-xs dark:text-white">
         Made with love ❤️ by Zulhamd Kayyies Podungge
       </p>
     </div>

@@ -1,20 +1,44 @@
+"use client";
+
+import { useEffect, useState } from "react";
 import Banner from "./Banner";
 
 function BannerSection() {
+  const [backgroundImage, setBackgroundImage] = useState("karawoLight.png");
+
+  // Function to update background image based on theme
+  const updateBackgroundImage = () => {
+    const isDarkMode = document.documentElement.classList.contains("dark");
+    setBackgroundImage(isDarkMode ? "karawoDark.png" : "karawoLight.png");
+  };
+
+  // UseEffect to handle initial load and theme changes
+  useEffect(() => {
+    // Set the initial background based on the current theme
+    updateBackgroundImage();
+
+    // Listen for theme change events
+    window.addEventListener("themeChange", updateBackgroundImage);
+
+    // Clean up event listener when component unmounts
+    return () => {
+      window.removeEventListener("themeChange", updateBackgroundImage);
+    };
+  }, []);
+
   return (
-    <div className="mb-40">
+    <div className="relative mb-40">
       <div
-        className="pt-[71px] pb-40 mt-20 mb-20 bg-blue-600"
+        className="relative mb-20 mt-20 bg-[#2563EB] pb-40 pt-[71px] dark:bg-[#202848]"
         style={{
-          backgroundImage: "url(blueBase.png)",
-          backgroundRepeat: "no-repeat ",
+          backgroundImage: `url(${backgroundImage})`, // Dynamically adjust background image
+          backgroundRepeat: "no-repeat",
           backgroundPosition: "center",
-          margin: "0 auto",
-          maxWidth: "container",
+          backgroundSize: "contain",
         }}
       >
-        <div className="container mx-auto px-40">
-          <p className="text-center text-white text-3xl font-bold pb-10">
+        <div className="container relative z-10 mx-auto px-40">
+          <p className="pb-10 text-center text-3xl font-bold text-black dark:text-white">
             Banner
           </p>
           <Banner />
@@ -23,4 +47,5 @@ function BannerSection() {
     </div>
   );
 }
+
 export default BannerSection;
