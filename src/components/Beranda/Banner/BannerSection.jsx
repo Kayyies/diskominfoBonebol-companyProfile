@@ -29,7 +29,7 @@ function BannerSection() {
   return (
     <div className="relative mb-40">
       <div
-        className="relative mb-20 mt-20 bg-[#2563EB] pb-40 pt-[71px] dark:bg-[#202848]"
+        className="relative mb-20 mt-20 bg-[#2563EB] pb-40 pt-[71px] dark:bg-[#202848] md:pt-10"
         style={{
           backgroundImage: `url(${backgroundImage})`, // Dynamically adjust background image
           backgroundRepeat: "no-repeat",
