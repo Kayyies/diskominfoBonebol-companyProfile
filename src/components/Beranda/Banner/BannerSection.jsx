@@ -37,10 +37,7 @@ function BannerSection() {
           backgroundSize: "contain",
         }}
       >
-        <div className="container relative z-10 mx-auto px-40">
-          <p className="pb-10 text-center text-3xl font-bold text-black dark:text-white">
-            Banner
-          </p>
+        <div className="container relative z-10 mx-auto px-40 py-20">
           <Banner />
         </div>
       </div>
