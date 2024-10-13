@@ -1,47 +1,98 @@
 "use client";
-import { useState } from "react";
+
+import { useState, useEffect, useCallback } from "react";
 import CarouselImage from "@/data/CarouselImage";
 import Image from "next/image";
+import { FaArrowRight, FaArrowLeft } from "react-icons/fa";
 
 export default function Banner() {
-  const [currentSlide, setCurrentSlide] = useState(1);
+    const [currentSlide, setCurrentSlide] = useState(0);
 
-  const goToSlide = (newSlide) => {
-    setCurrentSlide(newSlide);
-  };
+    // Fungsi untuk langsung menuju slide tertentu
+    const goToSlide = useCallback((newSlide) => {
+        setCurrentSlide(newSlide);
+    }, []);
 
-  const nextSlide = () => {
-    const next = currentSlide === CarouselImage.length ? 1 : currentSlide + 1;
-    goToSlide(next);
-  };
+    // Fungsi untuk berpindah ke slide berikutnya
+    const nextSlide = useCallback(() => {
+        setCurrentSlide((prevSlide) =>
+            prevSlide === CarouselImage.length - 1 ? 0 : prevSlide + 1
+        );
+    }, []);
 
-  const prevSlide = () => {
-    const prev = currentSlide === 1 ? CarouselImage.length : currentSlide - 1;
-    goToSlide(prev);
-  };
+    // Fungsi untuk kembali ke slide sebelumnya
+    const prevSlide = useCallback(() => {
+        setCurrentSlide((prevSlide) =>
+            prevSlide === 0 ? CarouselImage.length - 1 : prevSlide - 1
+        );
+    }, []);
 
-  return (
-    <div className="">
-      <div className="carousel w-full relative rounded-lg shadow-xl">
-        {CarouselImage.map((image, index) => (
-          <div
-            key={`slide${index + 1}`}
-            className={`carousel-item relative w-full ${
-              index + 1 === currentSlide ? "block" : "hidden"
-            }`}
-          >
-            <Image src={image} className="w-full" alt={`slide${index + 1}`} />
-            <div className="absolute flex justify-between transform -translate-y-1/2 left-5 right-5 top-1/2">
-              <button onClick={prevSlide} className="btn btn-circle">
-                ❮
-              </button>
-              <button onClick={nextSlide} className="btn btn-circle">
-                ❯
-              </button>
+    // Auto-slide setiap 5 detik
+    useEffect(() => {
+        const interval = setInterval(() => {
+            nextSlide();
+        }, 5000); // 5000ms = 5 detik
+        return () => clearInterval(interval);
+    }, [nextSlide]);
+
+    return (
+        <div className="w-full relative rounded-lg shadow-xl overflow-hidden">
+            {/* Kontainer Slides */}
+            <div
+                className="flex transition-transform duration-500 ease-in-out"
+                style={{ transform: `translateX(-${currentSlide * 100}%)` }}
+            >
+                {CarouselImage.map((image, index) => (
+                    <div key={`slide${index + 1}`} className="w-full flex-shrink-0 relative">
+                        <Image
+                            src={image}
+                            className="w-full h-auto object-cover"
+                            alt={`slide${index + 1}`}
+                            layout="responsive"
+                            width={1600} // Sesuaikan dengan ukuran gambar Anda
+                            height={900} // Sesuaikan dengan ukuran gambar Anda
+                        />
+                    </div>
+                ))}
             </div>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
+
+            {/* Tombol Navigasi */}
+            <div className="absolute inset-0 flex justify-between items-center px-4">
+                <button
+                    onClick={prevSlide}
+                    className="btn btn-circle hover:bg-[#38BDF8] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#38BDF8]"
+                    aria-label="Tombol Sebelumnya"
+                >
+                    <FaArrowLeft />
+                </button>
+                <button
+                    onClick={nextSlide}
+                    className="btn btn-circle hover:bg-[#38BDF8] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#38BDF8]"
+                    aria-label="Tombol Berikutnya"
+                >
+                    <FaArrowRight />
+                </button>
+            </div>
+
+            {/* Pagination Dots */}
+            <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2">
+                {CarouselImage.map((_, index) => (
+                    <button
+                        key={index}
+                        onClick={() => goToSlide(index)}
+                        className={`h-3 w-3 border border-black rounded-full ${currentSlide === index ? "bg-[#38BDF8]" : "bg-transparent"
+                            } focus:outline-none focus-visible:ring-2 focus-visible:ring-[#38BDF8]`}
+                        aria-label={`Pergi ke slide ${index + 1}`}
+                        role="button"
+                        tabIndex="0"
+                        onKeyPress={(e) => {
+                            if (e.key === "Enter" || e.key === " ") {
+                                goToSlide(index);
+                            }
+                        }}
+                    ></button>
+                ))}
+            </div>
+        </div>
+    );
 }
