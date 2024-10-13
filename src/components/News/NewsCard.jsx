@@ -24,16 +24,14 @@ export default function NewsCard({ article }) {
         <div className="w-fit">
           <Image
             src={image} // default image jika tidak ada
-            width={500}
-            height={500}
+            width={150}
+            height={150}
             alt={article.title}
             className="aspect-square rounded object-cover"
           />
         </div>
         <div className="flex w-full flex-col gap-2">
-          <h1 className="text-darkPrimary line-clamp-2 text-lg font-bold dark:text-white">
-            {article.title}
-          </h1>
+          <h1 className="line-clamp-2 text-lg font-bold">{article.title}</h1>
           <p className="line-clamp-2 hidden text-xs lg:line-clamp-1 lg:block">
             {article.description}
           </p>
