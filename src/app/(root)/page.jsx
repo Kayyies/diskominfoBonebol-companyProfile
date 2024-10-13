@@ -67,14 +67,16 @@ function page() {
         <NewsRecom />
       </div>
       <BannerSection />
-      <div>
-        <TitleFirst
-          title="🖥️ Website & Aplikasi"
-          descNormal="Seluruh daftar website"
-          descColor="layanan kami"
-          subdesc="sebagai wujud misi pengembangan web & aplikasi"
-        />
-        <LayananSection />
+      <div className="bg-[url('/mesh-for-layananLight.png')] bg-contain bg-left-bottom bg-no-repeat dark:bg-[url('/mesh-for-layananDark.png')]">
+        <div className="container relative mx-auto px-6 lg:px-30 2xl:px-48 -mt-20">
+            <TitleFirst
+            title="🖥️ Website & Aplikasi"
+            descNormal="Seluruh daftar website"
+            descColor="layanan kami"
+            subdesc="sebagai wujud misi pengembangan web & aplikasi"
+            />
+            <LayananSection />
+        </div>
       </div>
       {/* Embed YouTube video */}
       <div

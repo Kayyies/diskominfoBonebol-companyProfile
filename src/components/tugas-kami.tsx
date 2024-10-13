@@ -17,8 +17,8 @@ export const TugasKami = ({ title, subtitle, image }) => {
         {/* image */}
         <Image
           src={image}
-          width={100}
-          height={100}
+          width={5000}
+          height={5000}
           alt="gambar"
           className="absolute bottom-0 left-0 z-1 h-auto w-full object-contain"
           onContextMenu={disableRightClick}
@@ -28,7 +28,7 @@ export const TugasKami = ({ title, subtitle, image }) => {
           width={500}
           height={500}
           alt="gambar"
-          className="w- absolute bottom-0 left-0 z-0 h-auto object-contain"
+          className="w-full absolute bottom-0 left-0 z-0 h-auto object-contain"
           onContextMenu={disableRightClick}
         />
       </div>

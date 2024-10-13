@@ -36,4 +36,20 @@ export const LayKamData = [
     title: "GIS Bone Bolango",
     desc: "Open Data Bone Bolango adalah portal terintegrasi untuk pengelolaan, keterbukaan, dan kemudahan akses data bagi warga dan pemerintah Bone Bolango. Jenis data yang disajikan yakni dataset, visualisasi, dan indikator kinerja.",
   },
+
+  {
+    logo: gisbonebol,
+    title: "Test Other Item #1",
+    desc: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc vulputate libero et velit interdum, ac aliquet odio mattis. Nunc vulputate libero et velit interdum, ac aliquet odio mattis. Nunc vulputate libero et velit interdum, ac aliquet odio mattis.",
+  },
+  {
+    logo: gisbonebol,
+    title: "Test Other Item #2",
+    desc: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc vulputate libero et velit interdum, ac aliquet odio mattis. Nunc vulputate libero et velit interdum, ac aliquet odio mattis. Nunc vulputate libero et velit interdum, ac aliquet odio mattis.",
+  },
+  {
+    logo: gisbonebol,
+    title: "Test Other Item #3",
+    desc: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc vulputate libero et velit interdum, ac aliquet odio mattis. Nunc vulputate libero et velit interdum, ac aliquet odio mattis. Nunc vulputate libero et velit interdum, ac aliquet odio mattis.",
+  },
 ];
