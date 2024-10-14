@@ -7,7 +7,7 @@ import LayananSection from "@/components/Beranda/LayananKami/LayananSection";
 import NewsRecom from "@/components/News/NewsRecom";
 import { TitleFirst, TitleLast } from "@/components/title-landingpage";
 import { TugasKami } from "@/components/tugas-kami";
-import { motion } from "framer-motion";
+import TugasKamiSection from "@/components/TugasKamiSection";
 
 function page() {
   return (
@@ -29,66 +29,18 @@ function page() {
         </div>
       </div>
       {/* Tugas Kami */}
-      <div className="mx-auto mb-20">
-        <TitleFirst
-          title="💼Tugas Kami"
-          descNormal="Apa saja yang menjadi"
-          descColor="tugas kami"
-          subdesc="diskominfo bonebol membagi tugasnya menjadi tiga tugas utama:"
-        />
-
-        <div className="flex flex-row flex-nowrap space-x-5">
-          <motion.div
-            className="w-1/3"
-            initial={{ opacity: 0, y: 100 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-          >
-            <TugasKami
-              title="Penyebaran"
-              subtitle="Informasi Publik"
-              image="/tugas-infoDark.png"
-            />
-          </motion.div>
-
-          <motion.div
-            className="w-1/3"
-            initial={{ opacity: 0, y: 100 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-          >
-            <TugasKami
-              title="Pengembangan"
-              subtitle="Web dan Aplikasi"
-              image="/tugas-webDark.png"
-            />
-          </motion.div>
-
-          <motion.div
-            className="w-1/3"
-            initial={{ opacity: 0, y: 100 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7 }}
-          >
-            <TugasKami
-              title="Tanggung Jawab"
-              subtitle="Jaringan dan CCTV"
-              image="/tugas-jaringanDark.png"
-            />
-          </motion.div>
-        </div>
-      </div>
+      <TugasKamiSection />
 
       {/* Sambutan Kepala dinas */}
       <div className="mx-auto mb-20 flex w-[1400px] flex-col gap-10">
         {/* image */}
-        <div className="h-[500px]  bg-[url(/assets/kadis.png)] bg-cover bg-center">
+        <div className="h-[500px] rounded-lg bg-[url(/assets/kadis.png)] bg-cover bg-center">
           <div className="h-[500px] bg-gradient-to-r from-[#0C1124]/60 from-45% to-[#0C1124]/80">
             <div className="h-[500px] bg-[url(/assets/gridSambutan.png)] bg-cover bg-center"></div>
           </div>
         </div>
         {/* text */}
-        <div className="mx-auto flex w-[1150px] flex-row gap-10 leading-loose tracking-wide text-white">
+        <div className="text-darkPrimary mx-auto flex w-[1150px] flex-row gap-10 leading-loose tracking-wide dark:text-white">
           {/* text kiri */}
           <p className="w-3/12 pt-5 font-light">
             <span className="text-textAccent font-bold">
@@ -100,17 +52,16 @@ function page() {
           {/* text kanan */}
           <h1 className="w-9/12 text-4xl font-extralight leading-loose tracking-wide">
             Dengan menyebut nama Tuhan yang Maha Esa, saya sebagai{" "}
-            <span className="text-textAccent font-bold">kepala dinas</span>,
-            mewakili jajaran{" "}
+            <span className="text-textAccent font-bold">Kepala Dinas</span>,
+            mewakili jajaran Dinas Komunikasi dan Informatika Bone Bolango{" "}
             <span className="text-textAccent font-bold">
-              Dinas Komunikasi dan Informatika Bone Bolango
-            </span>
-            menyambut teman-teman pada halaman resmi kami. Semoga segala
-            informasi seputar dinas kami tersampaikan dengan tuntas kepada
-            teman-teman 🙏🏻
+              menyambut teman-teman pada halaman resmi kami.
+            </span>{" "}
+            Semoga segala informasi seputar dinas kami tersampaikan dengan
+            tuntas kepada teman-teman 🙏🏻
           </h1>
         </div>
-        <div className="rounded-lg border border-white/20"></div>
+        <div className="border-darkPrimary/20 rounded-lg border border-black/30 dark:border-white/30"></div>
       </div>
 
       {/* Informasi Publikasi */}
