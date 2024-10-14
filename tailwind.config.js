@@ -41,6 +41,7 @@ module.exports = withMT({
         darkTheme: "#0C1124", // Warna background untuk dark mode
         darkPrimary: "#0C1124",
         darkSecondary: "#1E293B",
+        textAccent: "#38BDF8",
         darkAccent: "#CBD5E1",
         bgIcon: "#EAE8E8",
         current: "currentColor",
