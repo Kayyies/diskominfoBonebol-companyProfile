@@ -1,14 +1,13 @@
+"use client";
+
 import BannerSection from "@/components/Beranda/Banner/BannerSection";
-import SectionBerandaBerita from "@/components/Beranda/Berita/SectionBerandaBerita";
 import Hero from "@/components/Beranda/Hero";
 import HeroImage from "@/components/Beranda/HeroImage";
 import LayananSection from "@/components/Beranda/LayananKami/LayananSection";
-import Responsibility from "@/components/Beranda/Responsibility/Responsibility";
-import JumbotronNew from "@/components/Jumbotron/JumbotronNew";
 import NewsRecom from "@/components/News/NewsRecom";
 import { TitleFirst, TitleLast } from "@/components/title-landingpage";
 import { TugasKami } from "@/components/tugas-kami";
-import { Metadata } from "next";
+import { motion } from "framer-motion";
 
 function page() {
   return (
@@ -37,22 +36,46 @@ function page() {
           descColor="tugas kami"
           subdesc="diskominfo bonebol membagi tugasnya menjadi tiga tugas utama:"
         />
+
         <div className="flex flex-row flex-nowrap space-x-5">
-          <TugasKami
-            title="Penyebaran"
-            subtitle="Informasi Publik"
-            image="/tugas-infoDark.png"
-          />
-          <TugasKami
-            title="Pengembangan"
-            subtitle="Web dan Aplikasi"
-            image="/tugas-webDark.png"
-          />
-          <TugasKami
-            title="Tanggung Jawab"
-            subtitle="Jaringan dan CCTV"
-            image="/tugas-jaringanDark.png"
-          />
+          <motion.div
+            className="w-1/3"
+            initial={{ opacity: 0, y: 100 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+          >
+            <TugasKami
+              title="Penyebaran"
+              subtitle="Informasi Publik"
+              image="/tugas-infoDark.png"
+            />
+          </motion.div>
+
+          <motion.div
+            className="w-1/3"
+            initial={{ opacity: 0, y: 100 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+          >
+            <TugasKami
+              title="Pengembangan"
+              subtitle="Web dan Aplikasi"
+              image="/tugas-webDark.png"
+            />
+          </motion.div>
+
+          <motion.div
+            className="w-1/3"
+            initial={{ opacity: 0, y: 100 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7 }}
+          >
+            <TugasKami
+              title="Tanggung Jawab"
+              subtitle="Jaringan dan CCTV"
+              image="/tugas-jaringanDark.png"
+            />
+          </motion.div>
         </div>
       </div>
 
@@ -68,14 +91,14 @@ function page() {
       </div>
       <BannerSection />
       <div className="bg-[url('/mesh-for-layananLight.png')] bg-contain bg-left-bottom bg-no-repeat dark:bg-[url('/mesh-for-layananDark.png')]">
-        <div className="container relative mx-auto px-6 lg:px-30 2xl:px-48 -mt-20">
-            <TitleFirst
+        <div className="container relative mx-auto -mt-20 px-6 lg:px-30 2xl:px-48">
+          <TitleFirst
             title="🖥️ Website & Aplikasi"
             descNormal="Seluruh daftar website"
             descColor="layanan kami"
             subdesc="sebagai wujud misi pengembangan web & aplikasi"
-            />
-            <LayananSection />
+          />
+          <LayananSection />
         </div>
       </div>
       {/* Embed YouTube video */}

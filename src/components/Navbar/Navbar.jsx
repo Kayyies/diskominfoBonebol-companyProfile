@@ -5,13 +5,15 @@ import Link from "next/link";
 import { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
 import { NavItem } from "@/data/NavItem";
-import { IoIosArrowDown } from "react-icons/io";
-import { FaMoon, FaSun } from "react-icons/fa6"; // Import moon and sun icons for dark mode
 import { RiMoonClearLine, RiSunLine } from "react-icons/ri";
+import { IoIosArrowDown } from "react-icons/io";
+import { NavMenuItem } from "./NavItem";
 
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  let menuCloseTimeout; // Timeout untuk delay penutupan mega menu
   const pathName = usePathname();
 
   useEffect(() => {
@@ -53,6 +55,26 @@ const Navbar = () => {
     window.dispatchEvent(new Event("themeChange"));
   };
 
+  // Fungsi untuk membuka menu
+  const openMenu = () => {
+    clearTimeout(menuCloseTimeout); // Hapus timeout jika ada
+    setIsMenuOpen(true); // Tampilkan menu
+  };
+
+  // Fungsi untuk menutup menu dengan delay 1 detik
+  const closeMenuWithDelay = () => {
+    menuCloseTimeout = setTimeout(() => {
+      setIsMenuOpen(false); // Sembunyikan menu setelah delay 1 detik
+    }, 100); // Delay 1 detik (1000ms)
+  };
+
+  // Hapus timeout saat unmount komponen agar tidak ada memory leak
+  useEffect(() => {
+    return () => {
+      clearTimeout(menuCloseTimeout);
+    };
+  }, []);
+
   return (
     <div className="sticky top-3 z-50">
       <div
@@ -75,35 +97,79 @@ const Navbar = () => {
           <div className="navbar-end flex w-full items-center dark:text-white">
             <div className="hidden xl:flex">
               <ul className="menu menu-horizontal px-1">
-                {NavItem.map((item, i) => {
-                  return (
-                    <li key={i}>
-                      <Link href={item.url}>
-                        <span
-                          className={`${
-                            pathName === item.url
-                              ? "font-bold text-[0C62F7]"
-                              : ""
-                          }`}
-                        >
-                          {item.label}
-                        </span>
-                      </Link>
-                    </li>
-                  );
-                })}
+                {NavItem.map((item, i) => (
+                  <li key={i}>
+                    <Link href={item.url}>
+                      <span
+                        className={`${
+                          pathName === item.url ? "font-bold text-[0C62F7]" : ""
+                        }`}
+                      >
+                        {item.label}
+                      </span>
+                    </Link>
+                  </li>
+                ))}
               </ul>
 
-              {/* Layanan Kami Dropdown */}
-              <div className="dropdown dropdown-end ml-6">
-                <div tabIndex={0} role="button" className="btn btn-ghost">
+              {/* Layanan Kami Dropdown with Hover */}
+              <div
+                className="group relative ml-6"
+                onMouseEnter={openMenu}
+                onMouseLeave={closeMenuWithDelay}
+              >
+                <button className="btn btn-ghost">
                   Layanan Kami <IoIosArrowDown />
-                </div>
+                </button>
+
+                {/* Mega Menu */}
                 <div
-                  tabIndex={0}
-                  className="menu dropdown-content z-[1] mt-4 flex w-[1216px] flex-row flex-wrap gap-5 rounded-box bg-base-100 shadow"
+                  className={`
+                    pointer-events-none absolute right-5 z-50 mt-3 w-[1060px] scale-95 transform rounded-lg
+                    p-6 opacity-0 shadow-lg transition-all duration-300 ease-in-out
+                    ${isMenuOpen ? "pointer-events-auto scale-100 opacity-100" : ""}
+                    bg-white/10 shadow-md backdrop-blur-lg
+                  `}
                 >
-                  <p>hai</p>
+                  <div className="relative flex flex-row flex-wrap items-center gap-x-2 gap-y-5">
+                    {/* Example Items */}
+                    <NavMenuItem
+                      title="Berita Bone Bolango"
+                      desc="Berita akurat seputar bone bolango"
+                      href="https://berita.bonebolangokab.go.id/"
+                      image="beritabonebol"
+                    />
+                    <NavMenuItem
+                      title="Cloud Bone Bolango"
+                      desc="Penyimpanan Cloud Bone Bolango"
+                      href=""
+                      image="cloudbonebol"
+                    />
+                    <NavMenuItem
+                      title="Email Bone Bolango"
+                      desc="Email resmi OPD Bone Bolango"
+                      href=""
+                      image="emailbonebol"
+                    />
+                    <NavMenuItem
+                      title="Open Data Bone Bolango"
+                      desc="Data resmi OPD Bone Bolango"
+                      href=""
+                      image="opendatabonebol"
+                    />
+                    <NavMenuItem
+                      title="PPID Bone Bolango"
+                      desc="Portal data terbuka resmi bone bolango"
+                      href=""
+                      image="ppidbonebol"
+                    />
+                    <NavMenuItem
+                      title="GIS Bone Bolango"
+                      desc="Sistem Informasi Geografis Bonebol"
+                      href=""
+                      image="gisbonebol"
+                    />
+                  </div>
                 </div>
               </div>
 
@@ -112,7 +178,7 @@ const Navbar = () => {
                 onClick={toggleDarkMode}
                 className="ml-4 rounded-full text-[#38BDF8]"
               >
-                {isDarkMode ? <RiMoonClearLine /> : <RiSunLine />}
+                {isDarkMode ? <RiSunLine /> : <RiMoonClearLine />}
               </button>
             </div>
           </div>

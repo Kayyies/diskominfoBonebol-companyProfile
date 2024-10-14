@@ -42,6 +42,7 @@ module.exports = withMT({
         darkPrimary: "#0C1124",
         darkSecondary: "#1E293B",
         darkAccent: "#CBD5E1",
+        bgIcon: "#EAE8E8",
         current: "currentColor",
         transparent: "transparent",
         white: "#FFFFFF",
