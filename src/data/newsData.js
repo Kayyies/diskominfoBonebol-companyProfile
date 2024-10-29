@@ -39,7 +39,55 @@ const newsData = [
     link: "/berita/aba",
     author: "Azwar mata satu",
     title:
-      "Bupati Merlan Nilai Program Pra Pensiun BSI Gorontalo Baik Untuk ASN Bone Bolango",
+      "4Bupati Merlan Nilai Program Pra Pensiun BSI Gorontalo Baik Untuk ASN Bone Bolango",
+    content:
+      "Cerita aja sih — Sekiranya sudah hampir 4 tahun saya menjadi seorang front-end engineer penuh waktu, lebih tepatnya saat pertama kali saya bergabung di perusahaan rintisan Kredibel. Sebelumnya saya seorang lebih tepatnya saat pertama kali saya bergabung di perusahaan rintisan Kredibel. Sebelumnya saya seorang",
+    category: "Bupati",
+    date: "20 Agustus 2024",
+    image: "beritaImage.png",
+  },
+  {
+    id: 5,
+    link: "/berita/aba",
+    author: "Azwar mata satu",
+    title:
+      "5Bupati Merlan Nilai Program Pra Pensiun BSI Gorontalo Baik Untuk ASN Bone Bolango",
+    content:
+      "Cerita aja sih — Sekiranya sudah hampir 4 tahun saya menjadi seorang front-end engineer penuh waktu, lebih tepatnya saat pertama kali saya bergabung di perusahaan rintisan Kredibel. Sebelumnya saya seorang lebih tepatnya saat pertama kali saya bergabung di perusahaan rintisan Kredibel. Sebelumnya saya seorang",
+    category: "Bupati",
+    date: "20 Agustus 2024",
+    image: "beritaImage.png",
+  },
+  {
+    id: 6,
+    link: "/berita/aba",
+    author: "Azwar mata satu",
+    title:
+      "6Bupati Merlan Nilai Program Pra Pensiun BSI Gorontalo Baik Untuk ASN Bone Bolango",
+    content:
+      "Cerita aja sih — Sekiranya sudah hampir 4 tahun saya menjadi seorang front-end engineer penuh waktu, lebih tepatnya saat pertama kali saya bergabung di perusahaan rintisan Kredibel. Sebelumnya saya seorang lebih tepatnya saat pertama kali saya bergabung di perusahaan rintisan Kredibel. Sebelumnya saya seorang",
+    category: "Bupati",
+    date: "20 Agustus 2024",
+    image: "beritaImage.png",
+  },
+  {
+    id: 7,
+    link: "/berita/aba",
+    author: "Azwar mata satu",
+    title:
+      "7Bupati Merlan Nilai Program Pra Pensiun BSI Gorontalo Baik Untuk ASN Bone Bolango",
+    content:
+      "Cerita aja sih — Sekiranya sudah hampir 4 tahun saya menjadi seorang front-end engineer penuh waktu, lebih tepatnya saat pertama kali saya bergabung di perusahaan rintisan Kredibel. Sebelumnya saya seorang lebih tepatnya saat pertama kali saya bergabung di perusahaan rintisan Kredibel. Sebelumnya saya seorang",
+    category: "Bupati",
+    date: "20 Agustus 2024",
+    image: "beritaImage.png",
+  },
+  {
+    id: 8,
+    link: "/berita/aba",
+    author: "Azwar mata satu",
+    title:
+      "8Bupati Merlan Nilai Program Pra Pensiun BSI Gorontalo Baik Untuk ASN Bone Bolango",
     content:
       "Cerita aja sih — Sekiranya sudah hampir 4 tahun saya menjadi seorang front-end engineer penuh waktu, lebih tepatnya saat pertama kali saya bergabung di perusahaan rintisan Kredibel. Sebelumnya saya seorang lebih tepatnya saat pertama kali saya bergabung di perusahaan rintisan Kredibel. Sebelumnya saya seorang",
     category: "Bupati",

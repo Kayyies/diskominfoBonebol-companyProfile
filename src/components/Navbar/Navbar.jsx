@@ -7,7 +7,7 @@ import { usePathname } from "next/navigation";
 import { NavItem } from "@/data/NavItem";
 import { RiMoonClearLine, RiSunLine } from "react-icons/ri";
 import { IoIosArrowDown } from "react-icons/io";
-import { NavMenuItem } from "./NavItem";
+import { NavMenuItem } from "./NavMenuItem";
 
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -98,14 +98,26 @@ const Navbar = () => {
             <div className="hidden xl:flex">
               <ul className="menu menu-horizontal px-1">
                 {NavItem.map((item, i) => (
-                  <li key={i}>
+                  <li key={i} className="relative">
                     <Link href={item.url}>
                       <span
-                        className={`${
-                          pathName === item.url ? "font-bold text-[0C62F7]" : ""
+                        className={`relative transition-colors duration-300 ease-in-out hover:text-textAccent ${
+                          pathName === item.url
+                            ? "font-bold text-blue-700 dark:text-textAccent"
+                            : ""
                         }`}
                       >
                         {item.label}
+                        {/* Border Bottom */}
+                        <span
+                          className={`absolute -bottom-2 left-0 h-[2px] w-full bg-gray-500 transition-all duration-300 ease-in-out dark:bg-textAccent ${
+                            pathName === item.url ? "scale-x-100 " : "scale-x-0"
+                          }`}
+                          style={{
+                            transformOrigin:
+                              pathName === item.url ? "left" : "right",
+                          }}
+                        />
                       </span>
                     </Link>
                   </li>
@@ -114,12 +126,15 @@ const Navbar = () => {
 
               {/* Layanan Kami Dropdown with Hover */}
               <div
-                className="group relative ml-6"
+                className="group relative"
                 onMouseEnter={openMenu}
                 onMouseLeave={closeMenuWithDelay}
               >
-                <button className="btn btn-ghost">
-                  Layanan Kami <IoIosArrowDown />
+                <button className="transition-color group btn btn-ghost font-medium duration-300 ease-in-out group-hover:text-textAccent">
+                  Layanan Kami
+                  <span className="transition-transform duration-300 ease-in-out group-hover:rotate-180">
+                    <IoIosArrowDown />
+                  </span>
                 </button>
 
                 {/* Mega Menu */}
@@ -178,7 +193,7 @@ const Navbar = () => {
                 onClick={toggleDarkMode}
                 className="ml-4 rounded-full text-[#38BDF8]"
               >
-                {isDarkMode ? <RiSunLine /> : <RiMoonClearLine />}
+                {isDarkMode ? <RiMoonClearLine /> : <RiSunLine />}
               </button>
             </div>
           </div>

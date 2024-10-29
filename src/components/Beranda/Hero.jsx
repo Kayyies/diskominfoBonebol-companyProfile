@@ -1,7 +1,7 @@
 function Hero() {
   return (
     <div className="container mx-auto flex flex-col items-center justify-center gap-3 px-10 text-center leading-3 xl:gap-5 xl:px-40">
-      <p className="max-w-5xl text-2xl font-bold text-[#070404] dark:text-white xl:pt-16 xl:text-6xl">
+      <p className="max-w-5xl text-2xl font-bold text-[#070404] dark:text-white xl:text-6xl">
         <span className="bg-gradient-to-r from-blue-500 via-blue-400 to-blue-400 bg-clip-text text-transparent">
           Diskominfo
         </span>{" "}

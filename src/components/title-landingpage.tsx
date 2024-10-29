@@ -36,3 +36,13 @@ export const TitleLast = ({ title, descColor, descNormal, subdesc }) => {
     </div>
   );
 };
+
+export const TitleOnly = () => {
+  return (
+    <div className="mb-7 flex flex-col items-center justify-center gap-5 text-center">
+      <div className="text-darkPrimary dark:border-textAccent flex max-w-fit items-center justify-center rounded-xl border border-[0C62F7] px-4 py-2 text-sm font-semibold dark:border-2 dark:bg-transparent  dark:text-white">
+        <span className="text-xl">👋🏻</span> Selamat Datang!
+      </div>
+    </div>
+  );
+};

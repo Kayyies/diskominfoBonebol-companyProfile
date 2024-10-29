@@ -8,11 +8,11 @@ export const NavItem = [
     url: "/profil",
   },
   {
-    label: "Berita",
+    label: "Berita & Pengumuman",
     url: "/berita",
   },
   {
-    label: "Dokumen",
+    label: "Dokumen & Infografis",
     url: "/dokumen",
   },
 ];

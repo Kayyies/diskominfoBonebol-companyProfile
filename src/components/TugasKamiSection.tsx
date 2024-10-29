@@ -9,7 +9,7 @@ function TugasKamiSection() {
 
   useEffect(() => {
     const handleScroll = () => {
-      const triggerPosition = window.scrollY + window.innerHeight;
+      const triggerPosition = window.scrollY + window.innerHeight - 400;
       const element = document.getElementById("tugas-kami");
       const elementPosition =
         element?.getBoundingClientRect().top + window.scrollY;
@@ -38,7 +38,7 @@ function TugasKamiSection() {
         {/* Tugas Kami 1 */}
         <div
           className={`w-1/3 transform transition-all duration-500 ease-out ${
-            isVisible ? "translate-y-0 opacity-100" : "translate-y-20 opacity-0"
+            isVisible ? "translate-y-0 opacity-100" : "translate-y-50 opacity-0"
           }`}
         >
           <TugasKami
@@ -51,7 +51,7 @@ function TugasKamiSection() {
         {/* Tugas Kami 2 */}
         <div
           className={`w-1/3 transform transition-all duration-700 ease-out ${
-            isVisible ? "translate-y-0 opacity-100" : "translate-y-20 opacity-0"
+            isVisible ? "translate-y-0 opacity-100" : "translate-y-50 opacity-0"
           }`}
         >
           <TugasKami
@@ -64,7 +64,7 @@ function TugasKamiSection() {
         {/* Tugas Kami 3 */}
         <div
           className={`w-1/3 transform transition-all duration-1000 ease-out ${
-            isVisible ? "translate-y-0 opacity-100" : "translate-y-20 opacity-0"
+            isVisible ? "translate-y-0 opacity-100" : "translate-y-50 opacity-0"
           }`}
         >
           <TugasKami
