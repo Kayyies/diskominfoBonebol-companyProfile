@@ -10,6 +10,7 @@ import { MdPerson } from "react-icons/md";
 import { PiTagSimpleFill } from "react-icons/pi";
 import { BsFillCalendarFill } from "react-icons/bs";
 import { IoIosArrowBack, IoIosArrowDropleftCircle } from "react-icons/io";
+import { SelengkapnyaCard } from "./NewsCard";
 
 export const NewsRecom = () => {
   const highlightData = newsData.slice(0, 3);
@@ -59,7 +60,7 @@ export const BeritaBaru = ({ id }) => {
   const [endX, setEndX] = useState(0);
 
   // data limit
-  const maxItems = Math.min(newsData.length, 7);
+  const maxItems = Math.min(newsData.length, 9);
   const beritaBaru = newsData.slice(0, maxItems);
   const currentPage = Math.floor(startIndex / visibleCards);
   const totalPages = Math.ceil(maxItems / visibleCards);
@@ -136,7 +137,7 @@ export const BeritaBaru = ({ id }) => {
   return (
     <div className="container mx-auto mb-20">
       <div className="mb-2 flex items-center justify-between">
-        <div className="h-10 w-52 bg-[url(/assets/beritabonebolfull-dark.png)] bg-no-repeat dark:bg-[url(/assets/beritabonebolfull.png)] dark:bg-no-repeat"></div>
+        <div className="h-10 w-52 bg-[url(/assets/beritabonebolfull-dark.png)] bg-no-repeat dark:bg-[url(/assets/beritabonebolfull.png)] dark:bg-no-repeat" />
         <Link
           href="https://berita.bonebolangokab.go.id/"
           className="transition-color text-sm font-medium duration-100 hover:text-textAccent"
@@ -182,13 +183,6 @@ export const BeritaBaru = ({ id }) => {
               </div>
             </Link>
           ))}
-          {startIndex + visibleCards > maxItems && (
-            <div className="see-more card">
-              <p>
-                <a href="https://example.com/full-list">Lihat Selengkapnya</a>
-              </p>
-            </div>
-          )}
         </div>
         {/* button prev & next */}
         <button
@@ -206,6 +200,7 @@ export const BeritaBaru = ({ id }) => {
           <IoIosArrowBack />
         </button>
       </div>
+      {/* circle */}
       <div className="mt-4 flex justify-center gap-2">
         {Array.from({ length: totalPages }).map((_, index) => (
           <div

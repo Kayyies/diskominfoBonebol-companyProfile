@@ -31,7 +31,7 @@ function TugasKamiSection() {
         title="💼Tugas Kami"
         descNormal="Apa saja yang menjadi"
         descColor="tugas kami"
-        subdesc="diskominfo bonebol membagi tugasnya menjadi tiga tugas utama:"
+        subdesc="diskomdigi bonebol membagi tugasnya menjadi tiga tugas utama:"
       />
 
       <div className="flex flex-row flex-nowrap space-x-5">

@@ -75,3 +75,15 @@ export const PengumumanCard = () => {
     </>
   );
 };
+
+export const SelengkapnyaCard = () => {
+  return (
+    <div className="w-full flex-shrink-0 md:w-[200px]">
+      <div className="card flex h-[200px] justify-center gap-3 rounded-full border-2 border-transparent bg-white p-5 transition-all duration-100 ease-in-out hover:border-2 hover:border-[#38BDF8] hover:bg-base-300 hover:text-blue-600 dark:bg-[#01091E] dark:text-white hover:dark:text-blue-600">
+        <h2 className="text-md line-clamp-2 flex justify-center font-bold leading-tight">
+          Lihat Selengkapnya
+        </h2>
+      </div>
+    </div>
+  );
+};

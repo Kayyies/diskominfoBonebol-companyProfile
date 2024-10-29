@@ -1,8 +1,10 @@
+import PengumumanSection from "@/components/pageSections/pengumuman-section";
+
 const PengumumanPage = () => {
   return (
-    <div>
-      <div>halo</div>
-    </div>
+    <>
+      <PengumumanSection />
+    </>
   );
 };
 

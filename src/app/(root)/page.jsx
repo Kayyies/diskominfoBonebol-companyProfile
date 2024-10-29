@@ -55,14 +55,14 @@ function page() {
             <span className="font-bold text-textAccent">
               Misnawaty Wantogia, SE, MM.{" "}
             </span>
-            Kepala Dinas Komunikasi dan Informatika Kabupaten Bone Bolango {"["}
+            Kepala Dinas Komunikasi dan Digital Kabupaten Bone Bolango {"["}
             2021 - Sekarang{"]"}
           </p>
           {/* text kanan */}
           <h1 className="w-9/12 text-4xl font-extralight leading-loose tracking-wide">
             Dengan menyebut nama Tuhan yang Maha Esa, saya sebagai{" "}
             <span className="font-bold text-textAccent">Kepala Dinas</span>,
-            mewakili jajaran Dinas Komunikasi dan Informatika Bone Bolango{" "}
+            mewakili jajaran Dinas Komunikasi dan Digital Bone Bolango{" "}
             <span className="font-bold text-textAccent">
               menyambut teman-teman pada halaman resmi kami.
             </span>{" "}

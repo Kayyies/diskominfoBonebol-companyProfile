@@ -66,26 +66,12 @@
   }
 }
 
-/* @layer base {
-  * {
-    @apply border-border;
-  }
-  body {
-    @apply bg-background text-foreground;
-  }
-} */
-
 /* Webkit browsers */
 input[type="number"]::-webkit-outer-spin-button,
 input[type="number"]::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
-
-/* Mozilla Firefox */
-/* input[type="number"] {
-  -moz-appearance: textfield;
-} */
 
 /* Optional: Further styling for the input to make it look nicer */
 input[type="number"] {
@@ -94,6 +80,14 @@ input[type="number"] {
   box-shadow: none;
   padding: 0;
   text-align: center;
+}
+
+html,
+body {
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
 }
 
 /* Lexical */

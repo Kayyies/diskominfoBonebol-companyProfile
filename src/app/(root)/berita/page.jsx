@@ -11,7 +11,6 @@ import {
   IoMdDownload,
   IoMdShare,
 } from "react-icons/io";
-import Image from "next/image";
 import Link from "next/link";
 import { NewsRecom, BeritaBaru } from "@/components/News/NewsRecom";
 
@@ -330,7 +329,8 @@ function BeritaPage() {
                     </p>
                   )}
                 </div>
-                <div className="flex w-1/3 flex-col gap-2">
+                {/* pengumuman */}
+                <div className="hidden w-1/3 flex-col gap-2 md:flex ">
                   <div className="mb-2 flex items-end justify-between">
                     <h1 className="text-lg font-bold">Pengumuman</h1>
                     <Link
