@@ -198,7 +198,7 @@ function BeritaPage() {
         subdesc="Mulai dari berita, kabar, informasi dan lain-lain!"
       />
       <div className="-mt-4 bg-gradient-to-b from-[#edf1fd] to-[#f5f4f4] to-10% dark:bg-gradient-to-b dark:from-[#283257] dark:to-darkPrimary dark:to-15% dark:text-white">
-        <div className="container mx-auto px-6 xl:px-48">
+        <div className="container mx-auto xl:px-48">
           <BeritaBaru id="beritaBaru-circle" isVisible={isVisible} />
           <div className="flex flex-col gap-8">
             {/* Pencarian */}
@@ -220,40 +220,12 @@ function BeritaPage() {
             <>
               {/* Daftar Berita */}
               <div className="flex flex-row gap-5">
-                <div className="grid w-2/3 grid-cols-1 gap-1 xl:gap-4">
+                <div className="mb-22 grid grid-cols-1 gap-1 md:mb-0 md:w-2/3 xl:gap-4">
                   {/* total artikel dan filter */}
                   <div>
-                    {/* Tag Sumber yang Dipilih */}
-                    {selectedSources.length > 0 && (
-                      <div className="flex flex-wrap justify-center gap-2 md:justify-start">
-                        {selectedSources.map((source, index) => (
-                          <div
-                            key={index}
-                            className="bg-primary-100 text-primary-700 flex items-center gap-2 rounded bg-white px-2 py-1 text-xs font-medium shadow dark:border dark:border-white dark:bg-[#1A2031]"
-                          >
-                            <span>📌 {source}</span>
-
-                            {/* Hapus Tag */}
-                            <button
-                              className="rounded bg-gray-200 p-1 text-lg dark:bg-[#283257]"
-                              onClick={() => handleRemoveSource(source)}
-                            >
-                              <IoIosClose fill="currentColor" />
-                            </button>
-                          </div>
-                        ))}
-                        <button
-                          className="ms-2 text-xs text-gray-700 transition-all hover:text-[38BDF8] dark:text-white dark:hover:text-[38BDF8]"
-                          onClick={handleClearSourceFilter}
-                        >
-                          Hapus Semua
-                        </button>
-                      </div>
-                    )}
-
                     {/* Filter dan Urutkan */}
-                    <div className="flex flex-col-reverse items-center justify-between gap-4 md:flex-row">
-                      <p className="text-sm text-darkPrimary dark:text-white">
+                    <div className="flex items-center justify-between gap-4 md:flex-row">
+                      <p className="hidden text-sm text-darkPrimary dark:text-white md:flex">
                         <span className="font-bold">{filteredNews.length}</span>{" "}
                         Artikel ditemukan
                       </p>
@@ -275,7 +247,7 @@ function BeritaPage() {
                         {/* Dropdown Filter Sumber */}
                         <div className="relative">
                           <button
-                            className="flex items-center gap-3 rounded border border-gray-300 px-2 py-2 text-sm dark:bg-[#1A2031]"
+                            className="flex items-center gap-3 rounded border border-gray-300 px-7 py-2 text-sm dark:bg-[#1A2031] md:px-2"
                             onClick={() => setIsDropdownOpen(!isDropdownOpen)} // Toggle dropdown
                           >
                             {"Pilih Source Name"}
@@ -309,9 +281,36 @@ function BeritaPage() {
                       </div>
                     </div>
                   </div>
+                  {/* Tag Sumber yang Dipilih */}
+                  {selectedSources.length > 0 && (
+                    <div className="mt-5 flex flex-wrap items-center justify-start gap-2 md:mt-0">
+                      {selectedSources.map((source, index) => (
+                        <div
+                          key={index}
+                          className="bg-primary-100 text-primary-700 flex items-center gap-2 rounded bg-white px-2 py-1 text-xs font-medium shadow dark:border dark:border-white dark:bg-[#1A2031]"
+                        >
+                          <span>📌 {source}</span>
+
+                          {/* Hapus Tag */}
+                          <button
+                            className="rounded bg-gray-200 p-1 text-lg dark:bg-[#283257]"
+                            onClick={() => handleRemoveSource(source)}
+                          >
+                            <IoIosClose fill="currentColor" />
+                          </button>
+                        </div>
+                      ))}
+                      <button
+                        className="ms-2 text-xs text-gray-700 transition-all hover:text-[38BDF8] dark:text-white dark:hover:text-[38BDF8]"
+                        onClick={handleClearSourceFilter}
+                      >
+                        Hapus Semua
+                      </button>
+                    </div>
+                  )}
                   {/* berita hoax*/}
                   <div className="flex items-end justify-between">
-                    <div className="h-10 w-52 bg-[url(/assets/beritabonebolfull-dark.png)] bg-no-repeat dark:bg-[url(/assets/beritabonebolfull.png)] dark:bg-no-repeat"></div>
+                    <div className="mt-10 h-10 w-52 bg-[url(/assets/beritabonebolfull-dark.png)] bg-no-repeat dark:bg-[url(/assets/beritabonebolfull.png)] dark:bg-no-repeat md:mt-0"></div>
                     <Link
                       href="https://berita.bonebolangokab.go.id/"
                       className="transition-color text-sm font-medium duration-100 hover:text-textAccent"
@@ -328,6 +327,55 @@ function BeritaPage() {
                       Tidak ada berita yang ditemukan.
                     </p>
                   )}
+                  {/* Pagination */}
+                  {filteredNews.length > 0 && (
+                    <div className="mt-6 flex flex-wrap items-center justify-center gap-3 lg:justify-between">
+                      <div className="flex gap-2">
+                        <select
+                          value={pageSize}
+                          onChange={(e) => {
+                            setPageSize(Number(e.target.value));
+                            setCurrentPage(1); // Reset ke halaman pertama saat mengubah ukuran halaman
+                          }}
+                          className="rounded border border-gray-300 px-2 py-1 dark:bg-[#1A2031]"
+                        >
+                          {[...Array(5).keys()].map((i) => {
+                            const value = (i + 1) * 6;
+                            if (value <= MAX_PAGE_SIZE) {
+                              return (
+                                <option key={value} value={value}>
+                                  {value}
+                                </option>
+                              );
+                            }
+                            return null;
+                          })}
+                        </select>
+                        <label className="label">
+                          <span className="label-text">
+                            Menampilkan{" "}
+                            {Math.min(
+                              (currentPage - 1) * pageSize + 1,
+                              filteredNews.length,
+                            )}{" "}
+                            -{" "}
+                            {Math.min(
+                              currentPage * pageSize,
+                              filteredNews.length,
+                            )}{" "}
+                            dari {filteredNews.length} Artikel
+                          </span>
+                        </label>
+                      </div>
+
+                      <Pagination
+                        currentPage={currentPage}
+                        totalPages={totalPages}
+                        onPageChange={handlePageChange}
+                        pageSize={pageSize}
+                      />
+                    </div>
+                  )}
                 </div>
                 {/* pengumuman */}
                 <div className="hidden w-1/3 flex-col gap-2 md:flex ">
@@ -343,53 +391,6 @@ function BeritaPage() {
                   <PengumumanCard />
                 </div>
               </div>
-
-              {/* Pagination */}
-              {filteredNews.length > 0 && (
-                <div className="mt-6 flex w-[500px] flex-wrap items-center justify-center gap-3 lg:justify-between">
-                  <div className="flex gap-2">
-                    <select
-                      value={pageSize}
-                      onChange={(e) => {
-                        setPageSize(Number(e.target.value));
-                        setCurrentPage(1); // Reset ke halaman pertama saat mengubah ukuran halaman
-                      }}
-                      className="rounded border border-gray-300 px-2 py-1 dark:bg-[#1A2031]"
-                    >
-                      {[...Array(5).keys()].map((i) => {
-                        const value = (i + 1) * 6;
-                        if (value <= MAX_PAGE_SIZE) {
-                          return (
-                            <option key={value} value={value}>
-                              {value}
-                            </option>
-                          );
-                        }
-                        return null;
-                      })}
-                    </select>
-                    <label className="label">
-                      <span className="label-text">
-                        Menampilkan{" "}
-                        {Math.min(
-                          (currentPage - 1) * pageSize + 1,
-                          filteredNews.length,
-                        )}{" "}
-                        -{" "}
-                        {Math.min(currentPage * pageSize, filteredNews.length)}{" "}
-                        dari {filteredNews.length} Artikel
-                      </span>
-                    </label>
-                  </div>
-
-                  <Pagination
-                    currentPage={currentPage}
-                    totalPages={totalPages}
-                    onPageChange={handlePageChange}
-                    pageSize={pageSize}
-                  />
-                </div>
-              )}
             </>
           )}
         </div>

@@ -13,11 +13,11 @@ function JumbotronDetail({ title, author, category, date }) {
   });
   return (
     <div>
-      <div className="h-[380px] w-full bg-[url(/slugDivider.png)] bg-cover bg-top py-10 dark:text-white xl:h-[480px]">
-        <div className="container mx-auto mt-10 px-6 lg:px-30 xl:mt-16 2xl:px-48">
+      <div className="h-[280px] w-full bg-[url(/slugDivider.png)] bg-cover bg-top py-10 dark:text-white lg:h-[370px]">
+        <div className="container mx-auto mt-10 px-48">
           <Link
             href={`/${pathName}`}
-            className="mb-2 inline-flex items-center gap-2 text-xs text-gray-400 transition-all hover:text-[38BDF8] xl:mb-4 xl:text-sm"
+            className="mb-2 inline-flex items-center gap-2 text-xs text-gray-400 transition-all hover:text-[38BDF8] lg:mb-4 lg:text-sm"
           >
             <span className="pb-0.5 text-base xl:text-xl">&lsaquo;</span>
             <span>Kembali</span>

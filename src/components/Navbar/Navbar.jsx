@@ -236,12 +236,10 @@ const Navbar = () => {
               <Link
                 key={i}
                 href={item.url}
-                className="flex w-22 flex-col items-center gap-2 gap-y-1 "
+                className={`flex w-22 flex-col items-center gap-2 gap-y-1  transition-colors duration-300  ${pathName === item.url ? "text-blue-500" : "text-gray-600 dark:text-white"}`}
               >
-                <span className="text-2xl text-gray-600 dark:text-white">
-                  {item.icon}
-                </span>{" "}
-                <span className="flex flex-wrap text-center text-[9px] text-gray-600 dark:text-white">
+                <span className="text-2xl ">{item.icon}</span>{" "}
+                <span className="flex flex-wrap text-center text-[9px] ">
                   {item.mobileLabel}
                 </span>
               </Link>

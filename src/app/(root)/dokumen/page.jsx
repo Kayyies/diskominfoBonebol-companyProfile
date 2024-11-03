@@ -21,6 +21,11 @@ const DokumenPage = () => {
   const [sortOrder, setSortOrder] = useState("Terbaru"); // Urutan default
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false); // State untuk membuka/tutup dropdown
+  const dokumenCategoryMapping = {
+    SK_GUBERNUR: "SK Gubernur",
+    SK_BUPATI: "SK Bupati",
+    BONEBOL_SEPEKAN: "Bonebol Sepekan",
+  };
 
   // Fetch dokumen dari data lokal (PublikasiData)
   useEffect(() => {
@@ -29,9 +34,15 @@ const DokumenPage = () => {
 
       try {
         // Ambil data dari PublikasiData.js
-        const data = PublikasiData;
+        const response = await fetch("/api/dokumen");
+        const data = await response.json();
 
-        setDokumens(data); // Set dokumens ke data
+        const mappedData = data.map((item) => ({
+          ...item,
+          category: dokumenCategoryMapping[item.category], // Map kategori dokumen
+          date: new Date(item.createdAt).toISOString().split("T")[0], // Format tanggal
+        }));
+        setDokumens(mappedData);
         // Total pages akan dihitung di useEffect berikutnya
       } catch (error) {
         console.error("Failed to fetch dokumens:", error);
@@ -57,6 +68,11 @@ const DokumenPage = () => {
     },
     [selectedCategories],
   );
+
+  // Mengambil kategori unik dari data dokumen
+  const uniqueCategories = useMemo(() => {
+    return [...new Set(dokumens.map((dokumen) => dokumen.category))];
+  }, [dokumens]);
 
   // Update totalPages dan reset currentPage ketika dokumen, selectedCategories, pageSize, atau searchQuery berubah
   useEffect(() => {
@@ -141,11 +157,6 @@ const DokumenPage = () => {
     );
   }, [sortedDokumens, currentPage, pageSize]);
 
-  // Menggunakan useMemo untuk mendapatkan kategori unik
-  const uniqueCategories = useMemo(() => {
-    return [...new Set(dokumens.map((dokumen) => dokumen.category))];
-  }, [dokumens]);
-
   return (
     <div className="bg-base-100">
       <JumbotronNew
@@ -155,7 +166,7 @@ const DokumenPage = () => {
         subdesc="Kamu bisa temukan SK Bupati, SK Gubernur, dan dokumen lain seputar Bone Bolango di sini!"
       />
       <div className="-mt-4 bg-gradient-to-b from-[#edf1fd] to-[#f5f4f4] to-10% dark:bg-gradient-to-b dark:from-[#283257] dark:to-darkPrimary dark:to-15% dark:text-white">
-        <div className="container mx-auto px-6 lg:px-30 2xl:px-48">
+        <div className="container mx-auto xl:px-48">
           <div className="flex flex-col gap-8">
             {/* Pencarian */}
             <SearchBar
@@ -193,8 +204,8 @@ const DokumenPage = () => {
             )}
 
             {/* Filter dan Urutkan */}
-            <div className="flex flex-col-reverse items-center justify-between gap-4 px-5 md:flex-row">
-              <p className="text-sm text-gray-900 dark:text-white">
+            <div className="flex items-center justify-between gap-4 md:flex-row md:px-5">
+              <p className="hidden text-sm text-gray-900 dark:text-white md:flex">
                 <span className="font-bold">{filteredDokumens.length}</span>{" "}
                 Dokumen ditemukan
               </p>
@@ -215,7 +226,7 @@ const DokumenPage = () => {
                 {/* Dropdown Filter Kategori */}
                 <div className="relative">
                   <button
-                    className="flex items-center gap-3 rounded border border-gray-300 px-2 py-2 text-sm dark:bg-[#1A2031]"
+                    className="flex items-center gap-3 rounded border border-gray-300 px-10 py-2 text-sm dark:bg-[#1A2031] md:px-2"
                     onClick={() => setIsDropdownOpen(!isDropdownOpen)} // Toggle dropdown
                   >
                     {"Pilih Kategori"}

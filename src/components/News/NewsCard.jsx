@@ -19,7 +19,7 @@ export const NewsCard = ({ article }) => {
   return (
     <Link
       href={`/berita/${createSlug(article.title)}`}
-      className="rounded-lg border-2 border-gray-200 bg-white/90 p-5 drop-shadow-sm transition-all duration-100 ease-in-out hover:border-textAccent dark:border-textAccent/30 dark:bg-transparent hover:dark:border-textAccent"
+      className="my-3 rounded-lg border-transparent p-1 transition-all duration-100 ease-in-out md:my-0 md:border-2 md:border-gray-200 md:bg-white/90 md:p-5 md:drop-shadow-sm md:hover:border-textAccent md:dark:border-textAccent/30 md:dark:bg-transparent md:hover:dark:border-textAccent"
     >
       <div className="flex items-start gap-4">
         <div className="w-fit">
@@ -32,7 +32,9 @@ export const NewsCard = ({ article }) => {
           />
         </div>
         <div className="flex w-full flex-col gap-2">
-          <h1 className="line-clamp-2 text-lg font-bold">{article.title}</h1>
+          <h1 className="text- line-clamp-2 font-bold md:text-lg">
+            {article.title}
+          </h1>
           <p className="line-clamp-2 hidden text-xs lg:line-clamp-1 lg:block">
             {article.description}
           </p>

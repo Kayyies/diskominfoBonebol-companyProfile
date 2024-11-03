@@ -9,12 +9,13 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import slugify from "slugify";
 import { hash } from "bcryptjs"; // bcryptjs untuk hash password
-import { generateDateTimeString } from "./generatedTimes";
 
-// PDF to image (PDF-LIB)
 import { PDFDocument } from "pdf-lib";
+import sharp from "sharp";
+
+// save image locally
 import fs from "fs";
-import { Buffer } from "buffer";
+import path from "path";
 
 const extractImageUrls = (content: string): string[] => {
   const regex = /<img[^>]+src="([^">]+)"/g;
@@ -316,77 +317,93 @@ const DokumenUploadSchema = (
 ) =>
   z.object({
     title: z.string().min(1, { message: "Nama dokumen diperlukan" }),
+    desc: z.string().min(1, { message: "Deskripsi harus ada" }),
 
-    // Schema untuk file dokumen
+    // Validasi untuk file dokumen
     file: z
       .instanceof(File)
-      .optional() // Optional jika dalam mode edit
+      .optional()
       .refine(
         (file) => {
-          // Jika sedang edit dan file tidak di-upload, izinkan menggunakan file yang sudah ada
-          if (isEdit && existingFile && !file) return true;
+          // Jika dalam mode edit dan ada existingFile, abaikan validasi untuk file kosong
+          if (isEdit && existingFile && file?.size === 0) return true;
 
-          // File diperlukan untuk create
+          // Enforce file existence pada mode create
           if (!isEdit) return file?.size > 0;
 
+          // Semua kondisi lain, file harus ada dan size > 0
           return file?.size > 0;
         },
         { message: "File dokumen diperlukan" },
       )
       .refine(
         (file) => {
+          // Abaikan validasi type jika file kosong
           if (file?.size === 0) return true;
+
+          // Hanya izinkan file dengan tipe PDF
           return file === undefined || file.type === "application/pdf";
         },
         { message: "Hanya file PDF yang diperbolehkan" },
       )
       .refine(
         (file) => {
+          // Abaikan validasi ukuran file jika kosong
           if (file?.size === 0) return true;
+
+          // Ukuran maksimal 10MB
           return file === undefined || file.size < 10000000;
         },
         { message: "File harus kurang dari 10MB" },
       ),
 
-    // Schema untuk image
+    // Validasi untuk gambar (image)
     image: z
       .instanceof(File)
-      .optional() // Optional jika dalam mode edit
+      .optional()
       .refine(
         (file) => {
-          // Jika sedang edit dan image tidak di-upload, izinkan menggunakan image yang sudah ada
-          if (isEdit && existingImage && !file) return true;
+          // Jika dalam mode edit dan ada existingImage, abaikan validasi untuk file kosong
+          if (isEdit && existingImage && file?.size === 0) return true;
 
-          // Image diperlukan untuk create
+          // Enforce image existence pada mode create
           if (!isEdit) return file?.size > 0;
 
+          // Semua kondisi lain, file harus ada dan size > 0
           return file?.size > 0;
         },
         { message: "Cover dokumen diperlukan" },
       )
       .refine(
         (file) => {
+          // Abaikan validasi tipe file jika kosong
           if (file?.size === 0) return true;
+
+          // Hanya izinkan file dengan tipe gambar
           return file === undefined || file.type.startsWith("image/");
         },
         { message: "Hanya file gambar yang diperbolehkan" },
       )
       .refine(
         (file) => {
+          // Abaikan validasi ukuran jika file kosong
           if (file?.size === 0) return true;
+
+          // Ukuran maksimal 4MB
           return file === undefined || file.size < 4000000;
         },
         { message: "Cover dokumen harus kurang dari 4MB" },
       ),
 
-    // Kategori dokumen
+    // Validasi kategori dokumen
     category: z.nativeEnum(DokumenCategory, { message: "Kategori diperlukan" }),
   });
 
 // Dokumen Create
-export const createDokumen = async (prevState: unknown, formData: FormData) => {
+export const createDokumen = async (prevState, formData) => {
   console.log("createDokumen called");
-  const validatedFields = DokumenUploadSchema.safeParse(
+
+  const validatedFields = DokumenUploadSchema(false).safeParse(
     Object.fromEntries(formData.entries()),
   );
 
@@ -395,33 +412,39 @@ export const createDokumen = async (prevState: unknown, formData: FormData) => {
       "Validation failed",
       validatedFields.error.flatten().fieldErrors,
     );
-    return {
-      error: validatedFields.error.flatten().fieldErrors,
-    };
+    return { error: validatedFields.error.flatten().fieldErrors };
   }
 
-  const { title, image, file, category } = validatedFields.data;
+  const { title, desc, image, file, category } = validatedFields.data;
 
   const baseSlug = slugify(title, { lower: true, strict: true });
-  // const timeForSlug = generateDateTimeString();
-  // const uniqueSlug = `${baseSlug}-${timeForSlug}`;
+  const uploadsDir = path.join(process.cwd(), "public", "uploads");
+  if (!fs.existsSync(uploadsDir)) {
+    fs.mkdirSync(uploadsDir, { recursive: true });
+  }
 
-  const { url: imageUrl } = await put(image.name, image, {
-    access: "public",
-    multipart: true,
-  });
+  // Process the image and file names to replace spaces with hyphens and convert to lowercase
+  const processedImageName = slugify(image.name, { lower: true });
+  const processedFileName = slugify(file.name, { lower: true });
 
-  const { url: fileUrl } = await put(file.name, file, {
-    access: "public",
-    multipart: true,
-  });
+  // Save the image locally with the processed name
+  const imagePath = path.join(uploadsDir, processedImageName);
+  await fs.promises.writeFile(
+    imagePath,
+    Buffer.from(await image.arrayBuffer()),
+  );
+
+  // Save the file locally with the processed name
+  const filePath = path.join(uploadsDir, processedFileName);
+  await fs.promises.writeFile(filePath, Buffer.from(await file.arrayBuffer()));
 
   try {
     await prisma.dokumen.create({
       data: {
         title,
-        image: imageUrl,
-        file: fileUrl,
+        desc,
+        image: `/uploads/${processedImageName}`,
+        file: `/uploads/${processedFileName}`,
         category,
         slug: baseSlug,
         createdAt: new Date(),
@@ -436,12 +459,12 @@ export const createDokumen = async (prevState: unknown, formData: FormData) => {
   redirect("/admin/dokumen");
 };
 
+// Dokumen Update
 export const updateDokumen = async (
   id: string,
   prevState: unknown,
   formData: FormData,
 ) => {
-  // Fetch dokumen existing dari database
   const existingDokumen = await prisma.dokumen.findUnique({
     where: { id },
   });
@@ -450,11 +473,10 @@ export const updateDokumen = async (
     return { message: "Dokumen tidak ditemukan" };
   }
 
-  // Validasi form menggunakan Zod schema
   const validatedFields = DokumenUploadSchema(
-    true, // mode edit
-    existingDokumen.image, // existing image
-    existingDokumen.file, // existing file
+    true,
+    existingDokumen.image,
+    existingDokumen.file,
   ).safeParse(Object.fromEntries(formData.entries()));
 
   if (!validatedFields.success) {
@@ -463,35 +485,41 @@ export const updateDokumen = async (
     };
   }
 
-  const { title, image, file, category } = validatedFields.data;
+  const { title, desc, image, file, category } = validatedFields.data;
 
   let imageUrl = existingDokumen.image;
   let fileUrl = existingDokumen.file;
 
-  // Jika ada image baru yang di-upload
+  const uploadsDir = path.join(process.cwd(), "public", "uploads");
+
+  if (!fs.existsSync(uploadsDir)) {
+    fs.mkdirSync(uploadsDir, { recursive: true });
+  }
+
   if (image && image.size > 0) {
-    const { url } = await put(image.name, image, {
-      access: "public",
-      multipart: true,
-    });
-    imageUrl = url;
+    const imagePath = path.join(uploadsDir, image.name);
+    await fs.promises.writeFile(
+      imagePath,
+      Buffer.from(await image.arrayBuffer()),
+    );
+    imageUrl = `/uploads/${image.name}`;
   }
 
-  // Jika ada file dokumen baru yang di-upload
   if (file && file.size > 0) {
-    const { url } = await put(file.name, file, {
-      access: "public",
-      multipart: true,
-    });
-    fileUrl = url;
+    const filePath = path.join(uploadsDir, file.name);
+    await fs.promises.writeFile(
+      filePath,
+      Buffer.from(await file.arrayBuffer()),
+    );
+    fileUrl = `/uploads/${file.name}`;
   }
 
-  // Update dokumen dengan data yang baru
   try {
     await prisma.dokumen.update({
       where: { id },
       data: {
         title,
+        desc,
         image: imageUrl,
         file: fileUrl,
         category,
@@ -502,13 +530,11 @@ export const updateDokumen = async (
     return { message: "Gagal memperbarui data dokumen" };
   }
 
-  // Revalidate dan redirect ke halaman dokumen
   revalidatePath("/admin/dokumen");
   redirect("/admin/dokumen");
 };
 
 //=================================================================
-// Dokumen
 //=================================================================
 // Profil Schema for Zod
 const ProfilUploadSchema = z.object({

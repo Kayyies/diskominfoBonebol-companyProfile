@@ -94,6 +94,18 @@ const newsData = [
     date: "20 Agustus 2024",
     image: "beritaImage.png",
   },
+  {
+    id: 9,
+    link: "/berita/aba",
+    author: "Azwar mata satu",
+    title:
+      "8Bupati Merlan Nilai Program Pra Pensiun BSI Gorontalo Baik Untuk ASN Bone Bolango",
+    content:
+      "Cerita aja sih — Sekiranya sudah hampir 4 tahun saya menjadi seorang front-end engineer penuh waktu, lebih tepatnya saat pertama kali saya bergabung di perusahaan rintisan Kredibel. Sebelumnya saya seorang lebih tepatnya saat pertama kali saya bergabung di perusahaan rintisan Kredibel. Sebelumnya saya seorang",
+    category: "Bupati",
+    date: "20 Agustus 2024",
+    image: "beritaImage.png",
+  },
 ];
 
 export default newsData;

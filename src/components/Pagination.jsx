@@ -134,7 +134,7 @@ export const SearchBar = ({ placeholder, value, onChange }) => {
         placeholder={placeholder}
         value={value}
         onChange={onChange}
-        className="w-full rounded border-2 border-gray-200 bg-white p-5 pl-12 hover:border-textAccent dark:border-none dark:bg-[#1A2031]"
+        className="md:text-md w-full rounded border-2 border-gray-200 bg-white p-5 pl-12 text-xs hover:border-textAccent dark:border-none dark:bg-[#1A2031]"
       />
     </div>
   );

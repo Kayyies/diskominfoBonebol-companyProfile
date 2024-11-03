@@ -5,7 +5,7 @@ import CarouselImage from "@/data/CarouselImage";
 import Image from "next/image";
 import { FaArrowRight, FaArrowLeft } from "react-icons/fa";
 
-export default function Banner() {
+export const Banner = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
 
   // Fungsi untuk langsung menuju slide tertentu
@@ -37,7 +37,7 @@ export default function Banner() {
 
   return (
     <div className="relative w-full overflow-hidden rounded-lg shadow-xl">
-      {/* Kontainer Slides */}
+      {/* Kontainer Slides dengan Rasio Tetap */}
       <div
         className="flex transition-transform duration-500 ease-in-out"
         style={{ transform: `translateX(-${currentSlide * 100}%)` }}
@@ -45,15 +45,13 @@ export default function Banner() {
         {CarouselImage.map((image, index) => (
           <div
             key={`slide${index + 1}`}
-            className="relative w-full flex-shrink-0"
+            className="relative aspect-[3/1] w-full flex-shrink-0" // Rasio 3:1 untuk 1152 x 384
           >
             <Image
               src={image}
-              className="h-auto w-full object-cover"
               alt={`slide${index + 1}`}
-              layout="responsive"
-              width={1600} // Sesuaikan dengan ukuran gambar Anda
-              height={900} // Sesuaikan dengan ukuran gambar Anda
+              layout="fill" // Memenuhi kontainer dengan width dan height penuh
+              objectFit="cover" // Sesuaikan ukuran gambar untuk mengisi kontainer
             />
           </div>
         ))}
@@ -99,4 +97,6 @@ export default function Banner() {
       </div>
     </div>
   );
-}
+};
+
+export const NewBanner = () => {};

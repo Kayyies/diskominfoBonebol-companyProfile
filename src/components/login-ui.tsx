@@ -1,9 +1,13 @@
 "use client";
 
 import Image from "next/image";
-import { FaLongArrowAltLeft } from "react-icons/fa";
 import { InputPassword, InputUsername } from "./login-input";
 import { useRouter } from "next/navigation";
+
+//icons
+import { FaLongArrowAltLeft } from "react-icons/fa";
+import { FaInstagram } from "react-icons/fa";
+import Link from "next/link";
 
 interface LoginUIProps {
   handleLogin: (e: React.FormEvent) => void;
@@ -39,7 +43,7 @@ export const LoginUI: React.FC<LoginUIProps> = ({
             <p className="text-sm">Back to website</p>
           </button>
           <Image
-            src="/langit.png"
+            src="/diskomdigi-login.png"
             width={500}
             height={500}
             className="h-[600px] w-full  rounded-md object-cover"
@@ -47,14 +51,14 @@ export const LoginUI: React.FC<LoginUIProps> = ({
           />
           <div className="absolute bottom-5 left-5 text-white">
             <h1 className="text-2xl font-semibold">
-              Capturing Moments, Creating Memories
+              Diskomdigi, melayani sepenuh hati 🫶🏻
             </h1>
           </div>
         </div>
 
         {/* Bagian kanan: form login */}
-        <div className="flex w-full flex-col justify-center lg:w-1/2">
-          <h1 className="mb-10 text-4xl font-bold text-white">
+        <div className="flex w-full flex-col justify-center gap-10 lg:w-1/2">
+          <h1 className="text-4xl font-bold text-white">
             Selamat Datang Kembali!
           </h1>
           <form className="flex flex-col gap-5" onSubmit={handleLogin}>
@@ -75,20 +79,36 @@ export const LoginUI: React.FC<LoginUIProps> = ({
             </button>
           </form>
 
-          {/* Bagian tambahan: Tombol untuk media sosial */}
-          <div className="mt-10 text-center text-white">
-            <p className="mb-5">Media Sosial Diskominfo</p>
-            <div className="flex justify-center gap-4">
-              <button className="flex items-center gap-2 rounded-md border border-gray-500 px-6 py-3 text-white">
-                <Image
-                  src="/google-icon.png"
-                  alt="Google"
-                  width={24}
-                  height={24}
-                />
-                <span>Google</span>
-              </button>
-            </div>
+          {/* divider */}
+          <div className="grid grid-cols-3 items-center gap-5">
+            <div className="h-0 w-full border border-white/30" />
+            <p className="text-center text-white">Media Sosial Diskominfo</p>
+            <div className="h-0 w-full border border-white/30" />
+          </div>
+
+          {/* Media sosial */}
+          <div className="grid grid-cols-3 gap-5 text-white">
+            <Link
+              className="flex items-center justify-center gap-2 rounded-md border-2 border-gray-500 py-3 text-white"
+              href="https://www.instagram.com/diskominfobonebol/"
+            >
+              <FaInstagram />
+              <span>Instagram</span>
+            </Link>
+            <Link
+              className="flex items-center justify-center gap-2 rounded-md border-2 border-gray-500 py-3 text-white"
+              href="https://www.instagram.com/diskominfobonebol/"
+            >
+              <FaInstagram />
+              <span>Instagram</span>
+            </Link>
+            <Link
+              className="flex items-center justify-center gap-2 rounded-md border-2 border-gray-500 py-3 text-white"
+              href="https://www.instagram.com/diskominfobonebol/"
+            >
+              <FaInstagram />
+              <span>Instagram</span>
+            </Link>
           </div>
         </div>
       </div>

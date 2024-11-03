@@ -1,15 +1,11 @@
 import BannerSection from "@/components/Beranda/Banner/BannerSection";
 import Hero from "@/components/Beranda/Hero";
-import HeroImage from "@/components/Beranda/HeroImage";
 import LayananSection from "@/components/Beranda/LayananKami/LayananSection";
 import { ModalInfo } from "@/components/modal-information";
 import { NewsRecom, BeritaBaru } from "@/components/News/NewsRecom";
+import { SambutanKadis } from "@/components/sambutan";
 import { StatsPengunjung } from "@/components/statistik-pengunjung/statistik-pengunjung";
-import {
-  TitleFirst,
-  TitleLast,
-  TitleOnly,
-} from "@/components/title-landingpage";
+import { TitleFirst, TitleLast } from "@/components/title-landingpage";
 import { TugasKami } from "@/components/tugas-kami";
 import TugasKamiSection from "@/components/TugasKamiSection";
 
@@ -30,55 +26,22 @@ function page() {
         >
           <div className="hero-content flex flex-col text-center">
             <div className="mt-15 leading-3">
-              <TitleOnly />
               <Hero />
             </div>
-            <HeroImage />
           </div>
         </div>
       </div>
       {/* Tugas Kami */}
       <TugasKamiSection />
 
-      {/* Sambutan Kepala dinas */}
-      <div className="mx-auto mb-20 flex w-[1400px] flex-col gap-10">
-        {/* image */}
-        <div className="h-[500px] rounded-lg bg-[url(/assets/kadis.png)] bg-cover bg-center">
-          <div className="h-[500px] bg-gradient-to-r from-[#0C1124]/60 from-45% to-[#0C1124]/80">
-            <div className="h-[500px] bg-[url(/assets/gridSambutan.png)] bg-cover bg-center"></div>
-          </div>
-        </div>
-        {/* text */}
-        <div className="mx-auto flex w-[1150px] flex-row gap-10 leading-loose tracking-wide text-darkPrimary dark:text-white">
-          {/* text kiri */}
-          <p className="w-3/12 pt-5 font-light">
-            <span className="font-bold text-textAccent">
-              Misnawaty Wantogia, SE, MM.{" "}
-            </span>
-            Kepala Dinas Komunikasi dan Digital Kabupaten Bone Bolango {"["}
-            2021 - Sekarang{"]"}
-          </p>
-          {/* text kanan */}
-          <h1 className="w-9/12 text-4xl font-extralight leading-loose tracking-wide">
-            Dengan menyebut nama Tuhan yang Maha Esa, saya sebagai{" "}
-            <span className="font-bold text-textAccent">Kepala Dinas</span>,
-            mewakili jajaran Dinas Komunikasi dan Digital Bone Bolango{" "}
-            <span className="font-bold text-textAccent">
-              menyambut teman-teman pada halaman resmi kami.
-            </span>{" "}
-            Semoga segala informasi seputar dinas kami tersampaikan dengan
-            tuntas kepada teman-teman 🙏🏻
-          </h1>
-        </div>
-        <div className="rounded-lg border border-black/30 border-darkPrimary/20 dark:border-white/30"></div>
-      </div>
+      <SambutanKadis />
 
       {/* Informasi Publikasi */}
-      <div className="container relative mx-auto items-center">
+      <div className="container relative mx-auto items-center lg:px-48">
         <TitleLast
-          title="📢 Informasi Publikasi"
-          descColor="Sedang terjadi apa"
-          descNormal="di Bone Bolango"
+          title="📢 Berita & Pengumuman"
+          descColor="Apa yang terjadi"
+          descNormal="di Bonebol"
           subdesc="Berikut tiga berita teranyar dari kami!"
         />
         <BeritaBaru />

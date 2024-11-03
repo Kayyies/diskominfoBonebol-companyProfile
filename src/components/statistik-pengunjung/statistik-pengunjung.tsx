@@ -1,40 +1,80 @@
-import { StatsItem } from "./statistik-item";
+import { TitleFirst, TitleLast } from "../title-landingpage";
+import { GoTriangleUp } from "react-icons/go";
+
+const statistikData = [
+  {
+    id: "1",
+    when: "Hari ini",
+    number: "240",
+    past: "Kemarin",
+  },
+  {
+    id: "2",
+    when: "Minggu ini",
+    number: "2400",
+    past: "Minggu Kemarin",
+  },
+  {
+    id: "3",
+    when: "Bulan ini",
+    number: "7200",
+    past: "Bulan Kemarin",
+  },
+  {
+    id: "4",
+    when: "Tahun ini",
+    number: "86400",
+    past: "Tahun Kemarin",
+  },
+];
 
 export const StatsPengunjung = () => {
+  const datas = statistikData;
   return (
     <>
       {/* background */}
-      <div className="border-textAccent mx-auto mt-20 flex h-[550px] w-[1200px] items-center justify-center rounded-xl border-4 bg-gradient-to-br dark:from-[#1B074F] dark:via-[#040726] dark:to-[#1B074F]">
+      <div className="container mx-auto flex w-full items-center justify-center rounded-xl border-4 border-textAccent bg-gradient-to-br py-7 dark:from-[#1B074F] dark:via-[#040726] dark:to-[#1B074F] lg:mt-20 lg:h-[550px] lg:w-[1200px] lg:py-0">
         {/* title, divider, stats */}
-        <div className="flex flex-col gap-10">
+        <div className="flex flex-col gap-5 px-5 lg:px-0">
           {/* title gang */}
-          <div className="flex flex-col items-center gap-5">
-            {/* preTitle */}
-            <div className="text-darkPrimary dark:via-darkPrimary inline-block max-w-fit rounded-xl border border-[0C62F7] px-4 py-2 text-sm font-semibold dark:border-none dark:bg-gradient-to-b dark:from-[#283877] dark:to-[#283877] dark:text-white">
-              📊 statistik
-            </div>
-            {/* Title */}
-            <h1 className="text-5xl font-bold text-[#38bdf8]">
-              <span className="text-darkPrimary dark:text-white">Laporan </span>
-              Statistik Kunjungan
-            </h1>
-            {/* Desc */}
-            <p className="text-darkPrimary text-lg font-light dark:text-white">
-              Mulai dari statistik kunjungan perhari hingga pertahun!
-            </p>
-          </div>
+          <TitleLast
+            title="📊 statistik"
+            descColor="Laporan"
+            descNormal="Statistik Kunjungan"
+            subdesc="Mulai dari statistik kunjungan perhari hingga pertahun!"
+          />
           {/* divider */}
-          <div className="w-[900px] border border-gray-300 dark:border-white/10"></div>
+          <div className="border border-gray-300 dark:border-white/10 lg:w-[900px]"></div>
           {/* stats gang */}
-          <div className="flex flex-row gap-15 text-white">
-            {/* hari ini */}
-            <StatsItem when="Hari ini" number="240" past="Kemarin" />
-            {/* Minggu ini */}
-            <StatsItem when="Minggu ini" number="2400" past="Minggu Kemarin" />
-            {/* Bulan ini */}
-            <StatsItem when="Bulan ini" number="7200" past="Bulan Kemarin" />
-            {/* Tahun ini */}
-            <StatsItem when="Tahun ini" number="86400" past="Tahun Kemarin" />
+          <div className="flex flex-col gap-5 px-5 lg:flex-row lg:gap-15 lg:px-0">
+            {datas.map((data) => (
+              <div
+                className="flex justify-between gap-3 text-darkPrimary dark:text-white lg:flex-col lg:justify-normal"
+                key={data.id}
+              >
+                {/* present */}
+                <div className="flex flex-col gap-3">
+                  <h2 className="text-sm font-light tracking-wide lg:text-lg">
+                    {data.when}
+                  </h2>
+                  <h1 className="text-3xl font-bold tracking-wide lg:text-5xl">
+                    {data.number}
+                  </h1>
+                </div>
+                {/* past */}
+                <div className="flex flex-row items-center gap-1 lg:items-start lg:gap-3">
+                  <div className="lg:text-md h-auto w-full flex-wrap text-sm tracking-wide lg:w-[100px]">
+                    vs {data.past}
+                  </div>
+                  <div className="lg:text-md flex flex-row items-center text-sm font-bold">
+                    17%{" "}
+                    <span>
+                      <GoTriangleUp />
+                    </span>
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </div>

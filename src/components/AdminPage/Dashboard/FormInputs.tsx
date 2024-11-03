@@ -116,6 +116,7 @@ export const InputSelect = ({
   );
 };
 
+//=============== Input File ===============
 interface InputFileProps {
   name: string;
   label: string;
@@ -134,17 +135,17 @@ export const InputFile = ({
   error,
 }: InputFileProps) => {
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
-  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(
+    initialImage || null,
+  ); // Set initial preview jika ada gambar
   const inputRef = useRef<HTMLInputElement>(null);
 
-  // Set initial image preview jika ada gambar dari database
   useEffect(() => {
     if (initialImage) {
-      setImagePreview(initialImage); // Jika ada gambar dari database (BannerEdit)
+      setImagePreview(initialImage); // Tampilkan preview dari database
     }
   }, [initialImage]);
 
-  // Handle perubahan file
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0] || null;
     setSelectedImage(file);
@@ -154,40 +155,29 @@ export const InputFile = ({
       setImagePreview(imageUrl);
       onFileChange(file, imageUrl);
     } else {
-      setImagePreview(initialImage || null); // Kembali ke initial image
+      setImagePreview(initialImage || null);
       onFileChange(null, initialImage || null);
     }
   };
 
-  // Fungsi untuk menghapus gambar
   const handleRemoveImage = () => {
     setSelectedImage(null);
-
-    if (initialImage) {
-      // Jika di BannerEdit, kembali ke initialImage
-      setImagePreview(initialImage);
-      onFileChange(null, initialImage);
-    } else {
-      // Jika di BannerAdd, kosongkan preview
-      setImagePreview(null);
-      onFileChange(null, null);
-    }
-
+    setImagePreview(null);
+    onFileChange(null, null);
     if (inputRef.current) {
       inputRef.current.value = ""; // Reset nilai input file
     }
   };
 
-  // Callback untuk reset file input saat dipanggil dari luar
   useEffect(() => {
     if (resetFileInput) {
-      resetFileInput(handleRemoveImage); // Set callback reset untuk dipanggil dari luar
+      resetFileInput(handleRemoveImage); // Callback reset file input
     }
   }, [resetFileInput]);
 
   return (
     <>
-      <label htmlFor="image">{label}</label>
+      <label htmlFor={name}>{label}</label>
       <div className="flex items-center gap-4">
         <input
           type="file"
@@ -196,8 +186,7 @@ export const InputFile = ({
           className="text-slate-500 block cursor-pointer rounded-lg border-2 text-sm file:mr-4 file:border-0 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-white file:transition-all hover:file:bg-gray-800 hover:file:text-white active:file:bg-gray-600 active:file:text-white"
           onChange={handleImageChange}
         />
-        {/* Tombol hapus hanya muncul jika ada selectedImage (gambar baru) */}
-        {selectedImage && (
+        {imagePreview && (
           <button
             className="rounded-md bg-red p-2 text-white"
             onClick={handleRemoveImage}
@@ -222,6 +211,85 @@ export const InputFile = ({
             style={{ objectFit: "contain" }}
           />
         </div>
+      )}
+    </>
+  );
+};
+
+//=============== Input PDF ===============
+interface InputPDFProps {
+  name: string;
+  label: string;
+  onFileChange: (file: File | null) => void;
+  resetFileInput?: (callback: () => void) => void;
+  error?: string;
+}
+
+export const InputPDF = ({
+  name,
+  label,
+  onFileChange,
+  resetFileInput,
+  error,
+}: InputPDFProps) => {
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  // Handle perubahan file
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0] || null;
+    setSelectedFile(file);
+    onFileChange(file);
+  };
+
+  // Fungsi untuk menghapus file
+  const handleRemoveFile = () => {
+    setSelectedFile(null);
+    onFileChange(null);
+    if (inputRef.current) {
+      inputRef.current.value = ""; // Reset nilai input file
+    }
+  };
+
+  // Callback untuk reset file input saat dipanggil dari luar
+  useEffect(() => {
+    if (resetFileInput) {
+      resetFileInput(handleRemoveFile); // Set callback reset untuk dipanggil dari luar
+    }
+  }, [resetFileInput]);
+
+  return (
+    <>
+      <label htmlFor={name}>{label}</label>
+      <div className="flex items-center gap-4">
+        <input
+          type="file"
+          name={name}
+          ref={inputRef}
+          accept="application/pdf"
+          className="text-slate-500 block cursor-pointer rounded-lg border-2 text-sm file:mr-4 file:border-0 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-white file:transition-all hover:file:bg-gray-800 hover:file:text-white active:file:bg-gray-600 active:file:text-white"
+          onChange={handleFileChange}
+        />
+        {/* Tombol hapus hanya muncul jika ada file yang dipilih */}
+        {selectedFile && (
+          <button
+            className="rounded-md bg-red p-2 text-white"
+            onClick={handleRemoveFile}
+          >
+            <MdDeleteForever />
+          </button>
+        )}
+        {error && (
+          <div aria-live="polite" aria-atomic="true">
+            <p className="mt-2 text-sm text-red">{error}</p>
+          </div>
+        )}
+      </div>
+
+      {selectedFile && (
+        <p className="mt-2 text-sm text-gray-500">
+          {selectedFile.name} berhasil dipilih
+        </p>
       )}
     </>
   );
