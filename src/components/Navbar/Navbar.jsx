@@ -79,7 +79,7 @@ const Navbar = () => {
   return (
     <>
       {/* desktop */}
-      <div className="sticky top-3 z-50 hidden md:block">
+      <div className="sticky top-3 z-50 hidden lg:block">
         <div
           className={`mx-auto w-[1200px] rounded-2xl transition-all ${
             isScrolled ? "bg-white/10 shadow-md backdrop-blur-lg" : ""
@@ -208,7 +208,7 @@ const Navbar = () => {
 
       {/* mobile */}
       <div>
-        <div className="fixed top-0 z-50 w-full md:hidden">
+        <div className="fixed top-0 z-50 w-full lg:hidden">
           <div className="flex h-12 items-center justify-between bg-white shadow-lg dark:bg-[#1A2031]">
             <div className="ml-4 flex items-center gap-4">
               {/* <RiMenu2Fill className="text-lg font-bold text-darkPrimary dark:text-gray-300" /> */}
@@ -230,7 +230,7 @@ const Navbar = () => {
             </button>
           </div>
         </div>
-        <div className="fixed bottom-0 z-50 w-full md:hidden">
+        <div className="fixed bottom-0 z-50 w-full lg:hidden">
           <div className="flex h-16 items-center justify-around bg-white shadow-lg dark:bg-[#1A2031]">
             {NavItem.slice(0, 5).map((item, i) => (
               <Link
