@@ -15,8 +15,7 @@ export const InputUsername: React.FC<InputUsernameProps> = ({
   onChange,
 }) => {
   return (
-    <div className="flex flex-col gap-3">
-      <label htmlFor="username">Masukan Username</label>
+    <div className="flex flex-col gap-3 text-white">
       <div className="relative">
         {/* Icon FaUser di sebelah kiri */}
         <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">
@@ -55,8 +54,7 @@ export const InputPassword: React.FC<InputPasswordProps> = ({
   };
 
   return (
-    <div className="flex flex-col gap-3">
-      <label htmlFor="password">Masukan Password</label>
+    <div className="flex flex-col gap-3 text-white">
       <div className="relative">
         {/* Icon FaRegEye di sebelah kiri */}
         <span className="absolute left-4 top-1/2 -translate-y-1/2 cursor-pointer text-gray-400">

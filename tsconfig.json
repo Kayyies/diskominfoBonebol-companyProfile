@@ -2,15 +2,9 @@
   "compilerOptions": {
     "baseUrl": "src",
     "paths": {
-      "@/*": [
-        "*"
-      ]
+      "@/*": ["*"]
     },
-    "lib": [
-      "dom",
-      "dom.iterable",
-      "esnext"
-    ],
+    "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
     "skipLibCheck": true,
     "strict": false,
@@ -35,6 +29,6 @@
     "**/*.ts",
     "**/*.tsx",
     "src/components/DarkModeToggle.js"
-, "src/components/pageSections/pengumuman-section.jsx", "src/app/(root)/berita/pengumuman/page.jsx"  ],
+  ],
   "exclude": ["node_modules"]
 }

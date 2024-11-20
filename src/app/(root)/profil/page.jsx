@@ -1,7 +1,7 @@
 "use client";
 
 // Reacts
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 
 // Components
 import JumbotronNew from "@/components/Jumbotron/JumbotronNew";
@@ -12,12 +12,18 @@ import Contact from "@/components/Contact/Contact";
 import { ProfileSidebar } from "@/data/ProfilSidebar";
 import { ProfilText } from "@/data/ProfilText";
 import Simak from "@/components/Simak";
+import { useRouter, useSearchParams } from "next/navigation";
 
 //dynamic accordion
 const ProfilPage = () => {
   const [activeSection, setActiveSection] = useState("section-1");
   const [isSidebarOpen, setIsSidebarOpen] = useState(false); // State untuk sidebar
   const navbarRef = useRef(null); // Reference untuk navbar
+  const router = useRouter();
+  const [activeHash, setActiveHash] = useState("");
+  const searchParams = useSearchParams();
+  const topic = searchParams.get("topic") || "dinas";
+  const section = searchParams.get("section");
 
   const handleAccordionClick = (sectionId) => {
     console.log(sectionId);
@@ -39,17 +45,52 @@ const ProfilPage = () => {
     setIsSidebarOpen(false);
   };
 
+  useEffect(() => {
+    if (section) {
+      document.getElementById(section)?.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [section]);
+
+  const handleSubtitleClick = (topic, subtitle) => {
+    const sectionId = subtitle
+      .toLowerCase()
+      .replace(/\s+/g, "-")
+      .replace(/[?]/g, "");
+    const newUrl = `/profil?topic=${topic}#${sectionId}`; // Construct the new URL
+    // Use history.pushState to update the URL without causing a page reload
+    window.history.pushState({}, "", newUrl);
+
+    // Now trigger the smooth scroll after updating the URL
+    setTimeout(() => {
+      const element = document.getElementById(sectionId);
+      if (element) {
+        const offset = 100; // Adjust for any navbar or header height
+        const bodyRect = document.body.getBoundingClientRect().top;
+        const elementRect = element.getBoundingClientRect().top;
+        const elementPosition = elementRect - bodyRect;
+        const offsetPosition = elementPosition - offset;
+
+        window.scrollTo({
+          top: offsetPosition,
+          behavior: "smooth",
+        });
+      }
+    }, 100); // Short delay to ensure URL is updated first
+  };
+
+  const filteredContent = ProfilText.find((item) => item.topic === topic);
+
   return (
     <div className="dark:bg-darkPrimary">
       <div ref={navbarRef}>
         <JumbotronNew
           title="🙆🏻‍♂️ Profil"
           descColor="Kenalan"
-          descNormal="sama Diskominfo Bonebol kuy!"
+          descNormal="sama Diskomdigi Bonebol kuy!"
           subdesc="*kuy adalah slang/bahasa gaul dari ‘yuk’"
         />
       </div>
-      <div className="dark:to-darkPrimary -mt-4 bg-gradient-to-b from-[#edf1fd] to-[#f5f4f4] to-10% dark:bg-gradient-to-b dark:from-[#283257] dark:to-15% dark:text-white">
+      <div className="-mt-4 bg-gradient-to-b from-[#edf1fd] to-[#f5f4f4] to-10% dark:bg-gradient-to-b dark:from-[#283257] dark:to-darkPrimary dark:to-15% dark:text-white">
         <div className="container relative mx-auto px-10 lg:px-40 xl:py-10">
           <div className="mb-52 flex flex-col gap-16 xl:flex-row">
             {/* Tombol untuk membuka sidebar pada mobile */}
@@ -62,16 +103,19 @@ const ProfilPage = () => {
 
             {/* Sidebar */}
             <div className="hidden xl:block">
-              {ProfileSidebar.map((item, index) => (
-                <Accordion
-                  key={index}
-                  title={item.title}
-                  subtitles={[item.subtitle1, item.subtitle2, item.subtitle3]}
-                  onClick={() => handleAccordionClick(`section-${index + 1}`)}
-                  isActive={activeSection === `section-${index + 1}`}
-                />
-              ))}
-              <Contact />
+              <div className="sticky top-20 z-50">
+                {ProfileSidebar.map((item, index) => (
+                  <Accordion
+                    key={index}
+                    topic={item.topic}
+                    title={item.title}
+                    subtitles={item.subtitles}
+                    onClick={handleSubtitleClick}
+                    isActive={topic === item.title.toLowerCase()}
+                  />
+                ))}
+                <Contact />
+              </div>
             </div>
 
             <div
@@ -101,34 +145,18 @@ const ProfilPage = () => {
 
             {/* Konten utama */}
             <div className="mt-2 flex flex-col">
-              {ProfilText.map((section, i) => (
-                <div key={i} id={section.id}>
-                  {section.id === activeSection && (
-                    <>
-                      <h1 className="mb-10 text-3xl font-bold">
-                        {section.title}
-                      </h1>
-                      {section.content.map((content, contentIndex) => (
-                        <div
-                          key={contentIndex}
-                          id={content.id}
-                          className="flex flex-col gap-3"
-                        >
-                          <h2 className="text-xl font-bold">
-                            {content.heading}
-                          </h2>
-                          <p
-                            className="text-md mb-10 font-light"
-                            id={`content-${i + 1}`}
-                          >
-                            {content.text}
-                          </p>
-                        </div>
-                      ))}
-                    </>
-                  )}
-                </div>
-              ))}
+              {filteredContent?.content.map((section, i) => {
+                const sectionId = section.heading
+                  .toLowerCase()
+                  .replace(/\s+/g, "-")
+                  .replace(/[?]/g, ""); // Generate section id
+                return (
+                  <div key={i} id={sectionId}>
+                    <h2 className="text-xl font-bold">{section.heading}</h2>
+                    <p className="text-md mb-10 font-light">{section.text}</p>
+                  </div>
+                );
+              })}
             </div>
           </div>
         </div>

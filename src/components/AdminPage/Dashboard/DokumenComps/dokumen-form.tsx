@@ -11,6 +11,8 @@ import {
   InputText,
   InputFile,
   InputSelect,
+  InputPDF,
+  InputTextArea,
 } from "@/components/AdminPage/Dashboard/FormInputs";
 import { ConfirmationModal } from "@/components/AdminPage/Dashboard/confirmation-modal";
 import { useFormHandlers } from "@/hooks/useFormHandlers";
@@ -27,6 +29,7 @@ export const DokumenAdd = () => {
     image: null,
     file: null,
     category: "",
+    desc: "", // Menambahkan desc di formData
   });
 
   // Menggunakan hooks untuk menangani logika form
@@ -46,7 +49,7 @@ export const DokumenAdd = () => {
   } = useFormHandlers(formData, section); // Pass formData dan section
 
   const resetForm = () => {
-    setFormData({ title: "", image: null, file: null, category: "" });
+    setFormData({ title: "", image: null, file: null, category: "", desc: "" }); // Tambahkan reset desc
     resetFileInputRef.current?.(); // Reset file input
     setIsFormDirty(false);
   };
@@ -79,10 +82,10 @@ export const DokumenAdd = () => {
             />
 
             {/* Input untuk File Dokumen */}
-            <InputFile
+            <InputPDF
               name="file"
               label="Masukan File Dokumen"
-              onFileChange={(file, preview) => {
+              onFileChange={(file) => {
                 setFormData((prev) => ({ ...prev, file: file }));
                 setIsFormDirty(true);
               }}
@@ -118,6 +121,19 @@ export const DokumenAdd = () => {
               error={state?.error?.category}
             />
 
+            {/* Input untuk Deskripsi Dokumen */}
+            <InputTextArea
+              name="desc"
+              label="Masukan Deskripsi"
+              value={formData.desc}
+              onChange={(e) => {
+                setFormData((prev) => ({ ...prev, desc: e.target.value })); // Update formData desc
+                setIsFormDirty(true);
+              }}
+              placeholder="Masukan Deskripsi Dokumen"
+              error={state?.error?.desc}
+            />
+
             <SubmitButton label="Masukan Data" disabled={isResetDisabled} />
           </form>
         </div>
@@ -150,6 +166,7 @@ export const DokumenEdit = ({ item }: { item: Dokumen }) => {
     image: null, // Gambar baru (jika diupload)
     file: null, // File baru (jika diupload)
     category: item.category, // Kategori dokumen
+    desc: item.desc, // Deskripsi dari dokumen yang ada di database
   });
 
   const [imagePreview, setImagePreview] = useState<string | null>(item.image); // Initial image preview
@@ -177,6 +194,7 @@ export const DokumenEdit = ({ item }: { item: Dokumen }) => {
       image: null,
       file: null,
       category: item.category,
+      desc: item.desc, // Reset ke deskripsi awal
     });
     setImagePreview(item.image); // Kembali ke image awal
     resetFileInputRef.current?.(); // Reset file input
@@ -202,6 +220,12 @@ export const DokumenEdit = ({ item }: { item: Dokumen }) => {
   ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
+    setIsFormDirty(true);
+  };
+
+  // Callback untuk perubahan text area (desc)
+  const handleTextAreaChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setFormData((prev) => ({ ...prev, desc: e.target.value }));
     setIsFormDirty(true);
   };
 
@@ -231,10 +255,13 @@ export const DokumenEdit = ({ item }: { item: Dokumen }) => {
             />
 
             {/* Input untuk File Dokumen */}
-            <InputFile
+            <InputPDF
               name="file"
               label="Masukan File Dokumen"
-              onFileChange={handleFileChangeForDokumen}
+              onFileChange={(file) => {
+                setFormData((prev) => ({ ...prev, file: file }));
+                setIsFormDirty(true);
+              }}
               resetFileInput={(callback) => {
                 resetFileInputRef.current = callback;
               }}
@@ -259,6 +286,16 @@ export const DokumenEdit = ({ item }: { item: Dokumen }) => {
               value={formData.category}
               onChange={handleInputChange}
               error={state?.error?.category}
+            />
+
+            {/* Input untuk Deskripsi Dokumen */}
+            <InputTextArea
+              name="desc"
+              label="Masukan Deskripsi"
+              value={formData.desc}
+              onChange={handleTextAreaChange} // Menggunakan handler untuk textarea
+              placeholder="Masukan Deskripsi Dokumen"
+              error={state?.error?.desc}
             />
 
             <SubmitButton label="Perbarui Data" disabled={isResetDisabled} />

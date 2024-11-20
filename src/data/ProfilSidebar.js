@@ -1,21 +1,30 @@
 export const ProfileSidebar = [
   {
-    id: 1,
-    title: "Diskominfo Bone Bolango",
-    subtitle1: "Apa itu Diskominfo",
-    subtitle2: "Apa itu Diskominfo Bone Bolango",
-    subtitle3: "Tugas dan Tanggung Jawab Diskominfo Bone Bolango",
+    topic: "dinas",
+    title: "Dinas Komunikasi dan Informatika",
+    subtitles: [
+      "Apa itu Diskominfo",
+      "Apa itu Diskominfo secara nasional",
+      "Mengapa Diskominfo diperlukan",
+      "Peran Kemenkominfo dan Diskominfo di daerah",
+    ],
   },
   {
-    id: 2,
-    title: "Sejarah Diskominfo Bone Bolango",
-    subtitle1: "Awal Diskominfo Bone Bolango",
-    subtitle2: "Pemekaran Bidang Diskominfo Bone Bolango",
+    topic: "diskominfo",
+    title: "Diskominfo Bonebol",
+    subtitles: [
+      "Apa itu Diskominfo Bone Bolango",
+      "Awal Diskominfo Bone Bolango",
+      "Di mana Diskominfo Bone Bolango",
+    ],
   },
   {
-    id: 3,
-    title: "Jajaran Diskominfo Bone Bolango",
-    subtitle1: "Kepala Diskominfo Bone Bolango",
-    subtitle2: "Struktur Organisasi Bone Bolango",
+    topic: "tugas",
+    title: "Tugas dan Jajaran",
+    subtitles: [
+      "Kepala Dinas Diskominfo Bone Bolango",
+      "Struktur Organisasi Diskominfo Bone Bolango",
+      "Tugas Pokok dan Fungsi Diskominfo Bone Bolango",
+    ],
   },
 ];

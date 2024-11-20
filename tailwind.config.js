@@ -41,7 +41,9 @@ module.exports = withMT({
         darkTheme: "#0C1124", // Warna background untuk dark mode
         darkPrimary: "#0C1124",
         darkSecondary: "#1E293B",
+        textAccent: "#38BDF8",
         darkAccent: "#CBD5E1",
+        bgIcon: "#EAE8E8",
         current: "currentColor",
         transparent: "transparent",
         white: "#FFFFFF",
@@ -287,6 +289,24 @@ module.exports = withMT({
         5: "0px 1px 5px rgba(0, 0, 0, 0.2)",
       },
       keyframes: {
+        // ================================ animasi slide ===
+        slideInFromRight: {
+          "0%": { transform: "translateX(100%)" },
+          "100%": { transform: "translateX(0)" },
+        },
+        slideInFromLeft: {
+          "0%": { transform: "translateX(-100%)" },
+          "100%": { transform: "translateX(0)" },
+        },
+        slideOutToRight: {
+          "0%": { transform: "translateX(0)" },
+          "100%": { transform: "translateX(100%)" },
+        },
+        slideOutToLeft: {
+          "0%": { transform: "translateX(0)" },
+          "100%": { transform: "translateX(-100%)" },
+        },
+        // ================================================
         linspin: {
           "100%": { transform: "rotate(360deg)" },
         },
@@ -348,6 +368,11 @@ module.exports = withMT({
         line1: "line 10s infinite linear",
         line2: "line-revert 8s infinite linear",
         line3: "line 7s infinite linear",
+        // animasi slide
+        slideInFromRight: "slideInFromRight 0.5s ease-out",
+        slideInFromLeft: "slideInFromLeft 0.5s ease-out",
+        slideOutToRight: "slideOutToRight 0.5s ease-out",
+        slideOutToLeft: "slideOutToLeft 0.5s ease-out",
       },
     },
   },
