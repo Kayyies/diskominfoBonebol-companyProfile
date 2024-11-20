@@ -5,6 +5,7 @@ import Image from "next/image";
 import JumbotronDetail from "@/components/Jumbotron/JumbotronDetail";
 import Spinner from "@/components/Spinner";
 
+// Fungsi untuk membuat slug dari judul
 function createSlug(title) {
   return title
     .toLowerCase()
@@ -26,13 +27,13 @@ export default function BeritaDetailPage({ params }) {
       setIsLoading(true);
       try {
         const response = await fetch(
-          `https://newsapi.org/v2/everything?q=indonesia&apiKey=${process.env.NEXT_PUBLIC_NEWS_API_KEY}`,
+          `https://berita.bonebolangokab.go.id/wp-json/wp/v2/posts?slug=${slug}`,
         );
         const data = await response.json();
 
         // Cari artikel berdasarkan slug
-        const foundArticle = data.articles.find(
-          (article) => createSlug(article.title) === slug,
+        const foundArticle = data.find(
+          (article) => createSlug(article.title.rendered) === slug,
         );
 
         if (foundArticle) {
@@ -55,25 +56,32 @@ export default function BeritaDetailPage({ params }) {
   return (
     <div className="bg-base-100">
       <JumbotronDetail
-        title={article?.title}
-        author={article?.author}
-        date={article?.publishedAt}
+        title={article?.title?.rendered}
+        author={"Admin Diskominfo"}
+        date={article?.date}
       />
       <div className="container mx-auto px-6 lg:px-40">
         {isLoading ? (
           <Spinner />
         ) : article ? (
           <div className="mb-12">
-            <Image
-              src={article.urlToImage}
-              alt={article.title}
-              width={1000}
-              height={500}
-              className="mb-6 h-full w-full object-cover"
+            {/* Cek jika gambar ada */}
+            {article.yoast_head_json?.og_image?.[0]?.url ? (
+              <Image
+                src={article.yoast_head_json.og_image[0].url}
+                alt={article.title?.rendered || "Article Image"}
+                width={1000}
+                height={500}
+                className="mb-6 h-full w-full object-cover"
+              />
+            ) : (
+              <div className="mb-6 bg-gray-200 h-[500px] w-full" /> // fallback jika tidak ada gambar
+            )}
+            {/* Tampilkan konten artikel */}
+            <div
+              className="text-sm text-darkPrimary dark:text-white xl:text-lg"
+              dangerouslySetInnerHTML={{ __html: article.content.rendered }}
             />
-            <p className="text-sm text-darkPrimary dark:text-white xl:text-lg">
-              {article.description}
-            </p>
           </div>
         ) : (
           <div>Article not found</div>

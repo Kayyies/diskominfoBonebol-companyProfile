@@ -72,9 +72,8 @@ export const PengumumanCard = ({ pengumuman }) => {
 
     return (
         <>
-            <Link href={`/berita/pengumuman/${pengumuman.slug}`} className="flex flex-col gap-3 hover:cursor-pointer">
-                <div
-                    key={pengumuman.id}
+            <Link key={pengumuman.id} href={`/berita/pengumuman/${pengumuman.slug}`} className="flex flex-col gap-3 hover:cursor-pointer">
+                <div  
                     className="flex h-fit w-full flex-col gap-5 bg-white p-5 text-darkPrimary border-2 rounded-lg hover:border-textAccent  drop-shadow-sm transition-all duration-150 ease-in-out dark:border-textAccent/30 dark:bg-transparent dark:text-white/90 hover:dark:border-textAccent"
                 >
                     {/* title & date */}
@@ -94,13 +93,13 @@ export const PengumumanCard = ({ pengumuman }) => {
 
                     {/* download & share */}
                     <div className="flex gap-3 text-xs font-bold">
-                        <a
+                        <Link
                             href={pengumuman.file ?? "-"}
                             download
                             className="flex items-center gap-2 rounded-lg border-2 border-textAccent/70 p-3 transition-colors duration-100 hover:border-textAccent hover:text-textAccent dark:border-textAccent"
                         >
                             Unduh Dokumen <IoMdDownload className="text-lg" />
-                        </a>
+                        </Link>
 
                         {/* <button className="transition-color rounded-lg border-2 border-textAccent/70 p-3 duration-100 hover:border-textAccent hover:text-textAccent dark:border-textAccent">
                 <IoMdShare className="text-lg" />
