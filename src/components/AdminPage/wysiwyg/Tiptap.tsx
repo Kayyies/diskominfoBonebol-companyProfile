@@ -1,3 +1,5 @@
+//Tiptap.tsx
+
 "use client";
 
 import React, { useState } from "react";
@@ -46,7 +48,7 @@ const ImageUploadSchema = z.object({
     }),
 });
 
-const Tiptap = ({ editorRef, onChange  }) => {
+const Tiptap = ({ editorRef, onChange }) => {
   const [errorMessage, setErrorMessage] = useState("");
 
   const editor = useEditor({

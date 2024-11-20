@@ -3,15 +3,17 @@
 
 import { z } from "zod";
 import prisma from "./db";
-import { ProfilCategory, DokumenCategory, Role } from "@prisma/client";
+import {
+  ProfilCategory,
+  DokumenCategory,
+  Role,
+  KategoriBerita,
+} from "@prisma/client";
 import { put } from "@vercel/blob";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import slugify from "slugify";
 import { hash } from "bcryptjs"; // bcryptjs untuk hash password
-
-import { PDFDocument } from "pdf-lib";
-import sharp from "sharp";
 
 // save image locally
 import fs from "fs";
@@ -307,6 +309,200 @@ export const updateBanner = async (
 };
 
 //=================================================================
+// Berita Hoax
+//=================================================================
+// Berita Hoax for Zod
+const BeritaHoaxUploadSchema = (isEdit: boolean, existingImage?: string) =>
+  z.object({
+    title: z.string().min(1, { message: "Judul berita hoax diperlukan" }),
+    content: z
+      .string()
+      .min(1, { message: "Konten berita hoax diperlukan" })
+      .refine((value) => typeof value === "string" && value.trim().length > 0, {
+        message: "Konten tidak boleh kosong",
+      }),
+
+    // Validasi untuk gambar
+    image: z
+      .instanceof(File)
+      .optional()
+      .refine(
+        (file) => {
+          // Jika dalam mode edit dan gambar sudah ada di database dan tidak ada gambar baru, lewati validasi
+          if (isEdit && !file && existingImage) return true;
+
+          // Untuk create atau jika ada gambar baru
+          if (!isEdit || (file && file.size > 0)) return file?.size > 0;
+
+          // Jika tidak ada gambar baru, harus ada gambar yang sudah ada
+          return true;
+        },
+        { message: "Cover dokumen diperlukan" },
+      )
+      .refine(
+        (file) => {
+          // Abaikan validasi tipe jika gambar kosong
+          if (!file || file.size === 0) return true;
+
+          // Hanya izinkan gambar
+          return file?.type.startsWith("image/");
+        },
+        { message: "Hanya file gambar yang diperbolehkan" },
+      )
+      .refine(
+        (file) => {
+          // Abaikan validasi ukuran jika gambar kosong
+          if (!file || file.size === 0) return true;
+
+          // Ukuran maksimal 4MB
+          return file?.size < 4000000;
+        },
+        { message: "Cover dokumen harus kurang dari 4MB" },
+      ),
+
+    // Validasi kategori berita
+    category: z.nativeEnum(KategoriBerita),
+  });
+
+export const createBeritaHoax = async (
+  prevState: unknown,
+  formData: FormData,
+) => {
+  console.log("createBeritaHoax called");
+  console.log("FormData entries:", Object.fromEntries(formData.entries()));
+
+  // Ensure that formData is properly populated
+  if (!(formData instanceof FormData)) {
+    return { error: "FormData is invalid" };
+  }
+
+  // Validate with schema
+  const validatedFields = BeritaHoaxUploadSchema(false).safeParse(
+    Object.fromEntries(formData.entries()),
+  );
+
+  if (!validatedFields.success) {
+    console.log(
+      "Validation failed",
+      validatedFields.error.flatten().fieldErrors,
+    );
+    return { error: validatedFields.error.flatten().fieldErrors };
+  }
+
+  // Destructure validated fields
+  const { title, content, image, category } = validatedFields.data;
+
+  // Slugify to create slug based on the title
+  const baseSlug = slugify(title, { lower: true, strict: true });
+  const uploadsDir = path.join(process.cwd(), "public", "uploads");
+
+  // Ensure the uploads directory exists
+  if (!fs.existsSync(uploadsDir)) {
+    fs.mkdirSync(uploadsDir, { recursive: true });
+  }
+
+  // Process image if present
+  let imagePath = null;
+  if (image) {
+    const processedImageName = slugify(image.name, { lower: true });
+    imagePath = path.join(uploadsDir, processedImageName);
+    await fs.promises.writeFile(
+      imagePath,
+      Buffer.from(await image.arrayBuffer()),
+    );
+  }
+
+  try {
+    // Save the data to the database using Prisma
+    await prisma.beritaHoax.create({
+      data: {
+        title,
+        content,
+        image: imagePath ? `/uploads/${path.basename(imagePath)}` : null,
+        category,
+        slug: baseSlug,
+        createdAt: new Date(),
+      },
+    });
+
+    console.log("Berita Hoax berhasil disimpan ke database");
+  } catch (error) {
+    console.error("Error occurred while saving to the database:", error);
+    return { message: "Failed to create Berita Hoax" };
+  }
+
+  // Revalidate path and redirect after successful creation
+  revalidatePath("/admin/beritahoax");
+  redirect("/admin/beritahoax");
+};
+
+export const updateBeritaHoax = async (
+  id: string,
+  prevState: unknown,
+  formData: FormData,
+) => {
+  // Get the existing BeritaHoax from the database
+  const existingBeritaHoax = await prisma.beritaHoax.findUnique({
+    where: { id },
+  });
+
+  if (!existingBeritaHoax) {
+    return { message: "Berita Hoax tidak ditemukan" };
+  }
+
+  // Pass the edit flag and existing image to Zod schema
+  const validatedFields = BeritaHoaxUploadSchema(
+    true,
+    existingBeritaHoax.image, // existingImage from database
+  ).safeParse(Object.fromEntries(formData.entries()));
+
+  if (!validatedFields.success) {
+    return {
+      error: validatedFields.error.flatten().fieldErrors,
+    };
+  }
+
+  const { title, content, image, category } = validatedFields.data;
+
+  let imageUrl = existingBeritaHoax.image;
+
+  const uploadsDir = path.join(process.cwd(), "public", "uploads");
+
+  if (!fs.existsSync(uploadsDir)) {
+    fs.mkdirSync(uploadsDir, { recursive: true });
+  }
+
+  // If a new image is uploaded, process it
+  if (image && image.size > 0) {
+    const processedImageName = slugify(image.name, { lower: true });
+    const imagePath = path.join(uploadsDir, processedImageName);
+    await fs.promises.writeFile(
+      imagePath,
+      Buffer.from(await image.arrayBuffer()),
+    );
+    imageUrl = `/uploads/${processedImageName}`;
+  }
+
+  try {
+    await prisma.beritaHoax.update({
+      where: { id },
+      data: {
+        title,
+        content,
+        image: imageUrl,
+        category,
+      },
+    });
+  } catch (error) {
+    console.error("Failed to update data:", error);
+    return { message: "Gagal memperbarui Berita Hoax" };
+  }
+
+  // Redirect after successfully updating
+  revalidatePath("/admin/beritahoax");
+  redirect("/admin/beritahoax");
+};
+//=================================================================
 // Dokumen
 //=================================================================
 // Dokumen Schema for Zod
@@ -317,7 +513,12 @@ const DokumenUploadSchema = (
 ) =>
   z.object({
     title: z.string().min(1, { message: "Nama dokumen diperlukan" }),
-    desc: z.string().min(1, { message: "Deskripsi harus ada" }),
+    content: z
+      .string()
+      .min(1, { message: "Konten dokumen diperlukan" })
+      .refine((value) => typeof value === "string" && value.trim().length > 0, {
+        message: "Konten tidak boleh kosong",
+      }),
 
     // Validasi untuk file dokumen
     file: z
@@ -325,34 +526,34 @@ const DokumenUploadSchema = (
       .optional()
       .refine(
         (file) => {
-          // Jika dalam mode edit dan ada existingFile, abaikan validasi untuk file kosong
-          if (isEdit && existingFile && file?.size === 0) return true;
+          // Jika dalam mode edit dan file sudah ada di database dan tidak ada file baru, lewati validasi
+          if (isEdit && !file && existingFile) return true;
 
-          // Enforce file existence pada mode create
-          if (!isEdit) return file?.size > 0;
+          // Untuk create atau jika ada file baru
+          if (!isEdit || (file && file.size > 0)) return file?.size > 0;
 
-          // Semua kondisi lain, file harus ada dan size > 0
-          return file?.size > 0;
+          // Jika tidak ada file baru, harus ada file yang sudah ada
+          return true;
         },
         { message: "File dokumen diperlukan" },
       )
       .refine(
         (file) => {
-          // Abaikan validasi type jika file kosong
-          if (file?.size === 0) return true;
+          // Jika file tidak diunggah, lewati validasi tipe
+          if (!file || file.size === 0) return true;
 
-          // Hanya izinkan file dengan tipe PDF
-          return file === undefined || file.type === "application/pdf";
+          // Hanya izinkan file PDF
+          return file?.type === "application/pdf";
         },
         { message: "Hanya file PDF yang diperbolehkan" },
       )
       .refine(
         (file) => {
-          // Abaikan validasi ukuran file jika kosong
-          if (file?.size === 0) return true;
+          // Abaikan validasi ukuran jika file kosong
+          if (!file || file.size === 0) return true;
 
           // Ukuran maksimal 10MB
-          return file === undefined || file.size < 10000000;
+          return file?.size < 10000000;
         },
         { message: "File harus kurang dari 10MB" },
       ),
@@ -363,34 +564,34 @@ const DokumenUploadSchema = (
       .optional()
       .refine(
         (file) => {
-          // Jika dalam mode edit dan ada existingImage, abaikan validasi untuk file kosong
-          if (isEdit && existingImage && file?.size === 0) return true;
+          // Jika dalam mode edit dan gambar sudah ada di database dan tidak ada gambar baru, lewati validasi
+          if (isEdit && !file && existingImage) return true;
 
-          // Enforce image existence pada mode create
-          if (!isEdit) return file?.size > 0;
+          // Untuk create atau jika ada gambar baru
+          if (!isEdit || (file && file.size > 0)) return file?.size > 0;
 
-          // Semua kondisi lain, file harus ada dan size > 0
-          return file?.size > 0;
+          // Jika tidak ada gambar baru, harus ada gambar yang sudah ada
+          return true;
         },
         { message: "Cover dokumen diperlukan" },
       )
       .refine(
         (file) => {
-          // Abaikan validasi tipe file jika kosong
-          if (file?.size === 0) return true;
+          // Abaikan validasi tipe jika gambar kosong
+          if (!file || file.size === 0) return true;
 
-          // Hanya izinkan file dengan tipe gambar
-          return file === undefined || file.type.startsWith("image/");
+          // Hanya izinkan gambar
+          return file?.type.startsWith("image/");
         },
         { message: "Hanya file gambar yang diperbolehkan" },
       )
       .refine(
         (file) => {
-          // Abaikan validasi ukuran jika file kosong
-          if (file?.size === 0) return true;
+          // Abaikan validasi ukuran jika gambar kosong
+          if (!file || file.size === 0) return true;
 
           // Ukuran maksimal 4MB
-          return file === undefined || file.size < 4000000;
+          return file?.size < 4000000;
         },
         { message: "Cover dokumen harus kurang dari 4MB" },
       ),
@@ -402,7 +603,9 @@ const DokumenUploadSchema = (
 // Dokumen Create
 export const createDokumen = async (prevState, formData) => {
   console.log("createDokumen called");
+  console.log("FormData entries:", Object.fromEntries(formData.entries()));
 
+  // Validasi dengan schema
   const validatedFields = DokumenUploadSchema(false).safeParse(
     Object.fromEntries(formData.entries()),
   );
@@ -415,46 +618,61 @@ export const createDokumen = async (prevState, formData) => {
     return { error: validatedFields.error.flatten().fieldErrors };
   }
 
-  const { title, desc, image, file, category } = validatedFields.data;
+  // Dekonstruksi data hasil validasi
+  const { title, content, image, file, category } = validatedFields.data;
 
+  // Slugify untuk membuat slug berdasarkan judul
   const baseSlug = slugify(title, { lower: true, strict: true });
   const uploadsDir = path.join(process.cwd(), "public", "uploads");
+
+  // Pastikan direktori "uploads" ada
   if (!fs.existsSync(uploadsDir)) {
     fs.mkdirSync(uploadsDir, { recursive: true });
   }
 
-  // Process the image and file names to replace spaces with hyphens and convert to lowercase
-  const processedImageName = slugify(image.name, { lower: true });
-  const processedFileName = slugify(file.name, { lower: true });
+  // Validasi file image (jika ada)
+  let imagePath = null;
+  if (image) {
+    const processedImageName = slugify(image.name, { lower: true });
+    imagePath = path.join(uploadsDir, processedImageName);
+    await fs.promises.writeFile(
+      imagePath,
+      Buffer.from(await image.arrayBuffer()),
+    );
+  }
 
-  // Save the image locally with the processed name
-  const imagePath = path.join(uploadsDir, processedImageName);
-  await fs.promises.writeFile(
-    imagePath,
-    Buffer.from(await image.arrayBuffer()),
-  );
-
-  // Save the file locally with the processed name
-  const filePath = path.join(uploadsDir, processedFileName);
-  await fs.promises.writeFile(filePath, Buffer.from(await file.arrayBuffer()));
+  // Validasi file dokumen (jika ada)
+  let filePath = null;
+  if (file) {
+    const processedFileName = slugify(file.name, { lower: true });
+    filePath = path.join(uploadsDir, processedFileName);
+    await fs.promises.writeFile(
+      filePath,
+      Buffer.from(await file.arrayBuffer()),
+    );
+  }
 
   try {
+    // Simpan data ke database menggunakan Prisma
     await prisma.dokumen.create({
       data: {
         title,
-        desc,
-        image: `/uploads/${processedImageName}`,
-        file: `/uploads/${processedFileName}`,
+        content,
+        image: imagePath ? `/uploads/${path.basename(imagePath)}` : null,
+        file: filePath ? `/uploads/${path.basename(filePath)}` : null,
         category,
         slug: baseSlug,
         createdAt: new Date(),
       },
     });
+
+    console.log("Dokumen berhasil disimpan ke database");
   } catch (error) {
-    console.log("Error occurred", error);
+    console.error("Error occurred while saving to the database:", error);
     return { message: "Failed to create document" };
   }
 
+  // Revalidasi path dan redirect setelah dokumen berhasil dibuat
   revalidatePath("/admin/dokumen");
   redirect("/admin/dokumen");
 };
@@ -465,6 +683,7 @@ export const updateDokumen = async (
   prevState: unknown,
   formData: FormData,
 ) => {
+  // Get the existing dokumen from the database
   const existingDokumen = await prisma.dokumen.findUnique({
     where: { id },
   });
@@ -473,6 +692,7 @@ export const updateDokumen = async (
     return { message: "Dokumen tidak ditemukan" };
   }
 
+  // Pass the edit flag and existing image/file to Zod schema
   const validatedFields = DokumenUploadSchema(
     true,
     existingDokumen.image,
@@ -485,7 +705,7 @@ export const updateDokumen = async (
     };
   }
 
-  const { title, desc, image, file, category } = validatedFields.data;
+  const { title, content, image, file, category } = validatedFields.data;
 
   let imageUrl = existingDokumen.image;
   let fileUrl = existingDokumen.file;
@@ -496,22 +716,26 @@ export const updateDokumen = async (
     fs.mkdirSync(uploadsDir, { recursive: true });
   }
 
+  // If a new image is uploaded, process it
   if (image && image.size > 0) {
-    const imagePath = path.join(uploadsDir, image.name);
+    const processedImageName = slugify(image.name, { lower: true });
+    const imagePath = path.join(uploadsDir, processedImageName);
     await fs.promises.writeFile(
       imagePath,
       Buffer.from(await image.arrayBuffer()),
     );
-    imageUrl = `/uploads/${image.name}`;
+    imageUrl = `/uploads/${processedImageName}`;
   }
 
+  // If a new file is uploaded, process it
   if (file && file.size > 0) {
-    const filePath = path.join(uploadsDir, file.name);
+    const processedFileName = slugify(file.name, { lower: true });
+    const filePath = path.join(uploadsDir, processedFileName);
     await fs.promises.writeFile(
       filePath,
       Buffer.from(await file.arrayBuffer()),
     );
-    fileUrl = `/uploads/${file.name}`;
+    fileUrl = `/uploads/${processedFileName}`;
   }
 
   try {
@@ -519,7 +743,7 @@ export const updateDokumen = async (
       where: { id },
       data: {
         title,
-        desc,
+        content,
         image: imageUrl,
         file: fileUrl,
         category,

@@ -1,48 +1,56 @@
+// BeritaHoaxComp.tsx
 "use client";
 import React from "react";
 import Breadcrumb from "../../Breadcrumbs/Breadcrumb";
 import TableDashboard from "../TableDashboard/TableDashboard";
 import useRefreshData from "@/hooks/useRefreshData";
-import { DokumenCategory } from "@prisma/client";
+import { KategoriBerita } from "@prisma/client"; // Pastikan KategoriBerita sudah ada
 
-const dokumenCategoryMapping: { [key in DokumenCategory]: string } = {
-  SK_GUBERNUR: "SK Gubernur",
-  SK_BUPATI: "SK Bupati",
-  BONEBOL_SEPEKAN: "Bonebol Sepekan",
+// Mapping kategori untuk menampilkan string kategori
+const beritaHoaxCategoryMapping: { [key in KategoriBerita]: string } = {
+  POLITIK: "Politik",
+  EKONOMI: "Ekonomi",
+  SOSIAL: "Sosial",
+  KEBUDAYAAN: "Kebudayaan",
+  KESEHATAN: "Kesehatan",
+  TEKNOLOGI: "Teknologi",
+  LINGKUNGAN: "Lingkungan",
+  LOKAL: "Lokal",
 };
 
+// Fungsi untuk mengambil data dari API
 const fetchData = async () => {
   try {
-    const response = await fetch("/api/dokumen");
+    const response = await fetch("/api/beritahoax"); // Endpoint API untuk berita hoax
     const data = await response.json();
     return data.map((item) => ({
       ...item,
-      createdAt: new Date(item.createdAt).toISOString().split("T")[0],
-      category: dokumenCategoryMapping[item.category as DokumenCategory],
+      createdAt: new Date(item.createdAt).toISOString().split("T")[0], // Format tanggal
+      kategori: beritaHoaxCategoryMapping[item.kategori as KategoriBerita],
     }));
   } catch (error) {
-    console.error("Eror fetching data:", error);
+    console.error("Error fetching data:", error);
     return [];
   }
 };
 
-const Dokumen: React.FC = () => {
-  // inisiasi table headers
-  const headers = ["Date", "Document Cover", "Title", "Category", "Action"];
+// Komponen utama untuk menampilkan data BeritaHoax
+const BeritaHoaxComp: React.FC = () => {
+  // Kolom-kolom tabel
+  const headers = ["Date", "Title", "Category", "Action"];
   const [datas, isLoading, refreshData] = useRefreshData([], fetchData);
 
-  // fungsi mengatur kapan harus ada icon sortable
+  // Fungsi untuk menentukan apakah kolom dapat diurutkan
   const sortableIcon = (index: number) => {
-    if (index === 0 || index === 2 || index === 3) {
+    if (index === 0 || index === 1 || index === 2) {
       return true;
     }
     return false;
   };
 
-  // fungsi implement icon sortable based on logic operation above
+  // Menambahkan ikon sortable ke kolom yang bisa diurutkan
   const modifiedHeaders = headers.map((header, index) => {
     if (sortableIcon(index)) {
-      // Include icon SVG for the column
       return (
         <>
           {header}
@@ -64,13 +72,12 @@ const Dokumen: React.FC = () => {
         </>
       );
     }
-    // Return the header without the icon SVG
     return header;
   });
 
   return (
     <>
-      <Breadcrumb pageName="Dokumen" />
+      <Breadcrumb pageName="Berita Hoax" />
       <div className="relative flex h-full w-full flex-col rounded-xl bg-white bg-clip-border text-gray-700 shadow-md">
         <TableDashboard
           datas={datas}
@@ -78,11 +85,11 @@ const Dokumen: React.FC = () => {
           sortableIcon={sortableIcon}
           onRefresh={refreshData}
           isLoading={isLoading}
-          section="dokumen"
+          section="beritahoax"
         />
       </div>
     </>
   );
 };
 
-export default Dokumen;
+export default BeritaHoaxComp;

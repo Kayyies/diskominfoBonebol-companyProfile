@@ -8,6 +8,7 @@ import {
   MdFilterFrames,
   MdBuild,
   MdAdminPanelSettings,
+  MdNewspaper,
 } from "react-icons/md";
 
 import React, { useEffect, useRef, useState } from "react";
@@ -168,6 +169,20 @@ const Sidebar = ({
                   >
                     <MdPerson />
                     Profil
+                  </button>
+                </li>
+
+                {/* Menu Item Berita Hoax */}
+                <li>
+                  <button
+                    onClick={() => handleNavigation("/admin/beritahoax")}
+                    className={`hover:bg-graydark group relative flex items-center gap-2.5 rounded-sm px-4 py-2 font-medium text-bodydark1 duration-300 ease-in-out dark:hover:bg-meta-4 ${
+                      pathname === "/admin/beritahoax" &&
+                      "bg-blue-gray-600 dark:bg-meta-4"
+                    }`}
+                  >
+                    <MdNewspaper />
+                    Berita Hoax
                   </button>
                 </li>
 

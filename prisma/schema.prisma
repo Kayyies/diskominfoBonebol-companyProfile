@@ -43,8 +43,8 @@ model Dokumen {
   category  DokumenCategory
   file      String
   slug      String?         @unique
-  desc      String
   updatedAt DateTime        @updatedAt
+  content   String?
 }
 
 model User {
@@ -55,6 +55,28 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   isActive  Boolean  @default(true)
+}
+
+model BeritaHoax {
+  id        String         @id @default(cuid()) // ID unik untuk berita hoax
+  title     String // Judul berita hoax
+  content   String // Isi berita hoax
+  category  KategoriBerita // Kategori berita (misalnya, politik, ekonomi, dll)
+  createdAt DateTime       @default(now()) // Waktu dibuat
+  updatedAt DateTime       @updatedAt // Waktu terakhir diperbarui
+  slug      String?        @unique
+  image     String? // URL gambar (optional)
+}
+
+enum KategoriBerita {
+  POLITIK
+  EKONOMI
+  SOSIAL
+  KEBUDAYAAN
+  KESEHATAN
+  TEKNOLOGI
+  LINGKUNGAN
+  LOKAL
 }
 
 enum Role {
