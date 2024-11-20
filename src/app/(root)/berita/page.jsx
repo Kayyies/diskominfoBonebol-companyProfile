@@ -12,7 +12,7 @@ import {
     IoMdShare,
 } from "react-icons/io";
 import Link from "next/link";
-import { BeritaBaru } from "@/components/News/NewsRecom";
+import { NewsRecom } from "@/components/News/NewsRecom";
 
 const DEFAULT_PAGE_SIZE = 6;
 const MAX_PAGE_SIZE = 30;
@@ -199,7 +199,7 @@ function BeritaPage() {
             />
             <div className="-mt-4 bg-gradient-to-b from-[#edf1fd] to-[#f5f4f4] to-10% dark:bg-gradient-to-b dark:from-[#283257] dark:to-darkPrimary dark:to-15% dark:text-white">
                 <div className="container mx-auto xl:px-48">
-                    <BeritaBaru id="beritaBaru-circle" isVisible={isVisible} />
+                    <NewsRecom id="beritaBaru-circle" isVisible={isVisible} />
                     <div className="flex flex-col gap-8">
                         {/* Pencarian */}
                         <SearchBar

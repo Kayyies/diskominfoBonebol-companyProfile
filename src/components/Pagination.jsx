@@ -1,7 +1,7 @@
 import React from "react";
 import { IoMdSearch } from "react-icons/io";
 
-const Pagination = ({
+export const Pagination = ({
     currentPage,
     totalPages,
     onPageChange,

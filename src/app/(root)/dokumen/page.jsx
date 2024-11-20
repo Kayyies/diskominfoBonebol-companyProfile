@@ -56,7 +56,7 @@ const DokumenPage = () => {
         };
 
         fetchDokumens();
-    }, []);
+    }, [dokumenCategoryMapping]);
 
     // Memoize handleCategoryFilter untuk menghindari pembuatan ulang fungsi setiap render
     const handleCategoryFilter = useCallback(
