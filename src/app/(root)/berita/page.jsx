@@ -17,7 +17,7 @@ import { NewsRecom } from "@/components/News/NewsRecom";
 const DEFAULT_PAGE_SIZE = 6;
 const MAX_PAGE_SIZE = 30;
 
-function BeritaPage() {
+const BeritaPage = () => {
     const [news, setNews] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
