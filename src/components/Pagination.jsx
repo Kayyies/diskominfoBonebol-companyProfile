@@ -1,4 +1,5 @@
 import React from "react";
+import { IoMdSearch } from "react-icons/io";
 
 const Pagination = ({
     currentPage,
@@ -64,58 +65,72 @@ const Pagination = ({
 
     const pages = paginationRange();
 
-    return (
-        <div className="flex flex-wrap gap-1">
-            <button
-                className="btn btn-sm rounded"
-                onClick={handleFirstPage}
-                disabled={currentPage === 1}
-            >
-                &#10092;&#10092;
-            </button>
+  return (
+    <div className="flex flex-wrap gap-1">
+      <button
+        className="btn btn-sm rounded dark:text-white"
+        onClick={handleFirstPage}
+        disabled={currentPage === 1}
+      >
+        &#10092;&#10092;
+      </button>
 
-            <button
-                className="btn btn-sm rounded"
-                onClick={handlePrevPage}
-                disabled={currentPage === 1}
-            >
-                &#10092;
-            </button>
+      <button
+        className="btn btn-sm rounded dark:text-white"
+        onClick={handlePrevPage}
+        disabled={currentPage === 1}
+      >
+        &#10092;
+      </button>
 
-            {pages.map((page, index) =>
-                page === "..." ? (
-                    <button key={index} className="" disabled>
-                        ...
-                    </button>
-                ) : (
-                    <button
-                        key={index}
-                        className={`btn btn-sm rounded ${currentPage === page ? "btn-active" : ""
-                            }`}
-                        onClick={() => onPageChange(page)}
-                    >
-                        {page}
-                    </button>
-                )
-            )}
+      {pages.map((page, index) =>
+        page === "..." ? (
+          <button key={index} className="" disabled>
+            ...
+          </button>
+        ) : (
+          <button
+            key={index}
+            className={`btn btn-sm rounded dark:text-white ${
+              currentPage === page ? "btn-active" : ""
+            }`}
+            onClick={() => onPageChange(page)}
+          >
+            {page}
+          </button>
+        ),
+      )}
 
-            <button
-                className="btn btn-sm rounded"
-                onClick={handleNextPage}
-                disabled={currentPage === totalPages}
-            >
-                &#10093;
-            </button>
+      <button
+        className="btn btn-sm rounded dark:text-white"
+        onClick={handleNextPage}
+        disabled={currentPage === totalPages}
+      >
+        &#10093;
+      </button>
 
-            <button
-                className="btn btn-sm rounded"
-                onClick={handleLastPage}
-                disabled={currentPage === totalPages}
-            >
-                &#10093;&#10093;
-            </button>
-        </div>
-    );
+      <button
+        className="btn btn-sm rounded dark:text-white"
+        onClick={handleLastPage}
+        disabled={currentPage === totalPages}
+      >
+        &#10093;&#10093;
+      </button>
+    </div>
+  );
 };
 
-export default Pagination;
+export const SearchBar = ({ placeholder, value, onChange }) => {
+  return (
+    <div className="form-control relative w-full">
+      <IoMdSearch className="absolute left-4 top-1/2 -translate-y-1/2 transform text-xl text-gray-400" />
+      <input
+        type="text"
+        placeholder={placeholder}
+        value={value}
+        onChange={onChange}
+        className="md:text-md w-full rounded border-2 border-gray-200 bg-white p-5 pl-12 text-xs hover:border-textAccent dark:border-none dark:bg-[#1A2031]"
+      />
+    </div>
+  );
+};

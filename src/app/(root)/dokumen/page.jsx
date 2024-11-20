@@ -7,6 +7,8 @@ import PublikasiCard from "@/components/PublikasiCard";
 import Pagination from "@/components/Pagination"; // Komponen pagination
 import Spinner from "@/components/Spinner"; // Komponen spinner
 import { IoIosArrowDown, IoIosClose } from "react-icons/io";
+import pengumumanData from "@/data/pengumumanData";
+import { SearchBar } from "@/components/Pagination";
 
 const DEFAULT_PAGE_SIZE = 6; // Ukuran halaman default
 const MAX_PAGE_SIZE = 30; // Ukuran halaman maksimum
@@ -21,6 +23,11 @@ const DokumenPage = () => {
     const [sortOrder, setSortOrder] = useState("Terbaru"); // Urutan default
     const [selectedCategories, setSelectedCategories] = useState([]);
     const [isDropdownOpen, setIsDropdownOpen] = useState(false); // State untuk membuka/tutup dropdown
+    const dokumenCategoryMapping = {
+        SK_GUBERNUR: "SK Gubernur",
+        SK_BUPATI: "SK Bupati",
+        BONEBOL_SEPEKAN: "Bonebol Sepekan",
+    };
 
     // Fetch dokumen dari data lokal (PublikasiData)
     useEffect(() => {
@@ -29,9 +36,15 @@ const DokumenPage = () => {
 
             try {
                 // Ambil data dari PublikasiData.js
-                const data = PublikasiData;
+                const response = await fetch("/api/dokumen");
+                const data = await response.json();
 
-                setDokumens(data); // Set dokumens ke data
+                const mappedData = data.map((item) => ({
+                    ...item,
+                    category: dokumenCategoryMapping[item.category], // Map kategori dokumen
+                    date: new Date(item.createdAt).toISOString().split("T")[0], // Format tanggal
+                }));
+                setDokumens(mappedData);
                 // Total pages akan dihitung di useEffect berikutnya
             } catch (error) {
                 console.error("Failed to fetch dokumens:", error);
@@ -52,19 +65,26 @@ const DokumenPage = () => {
                 return dokumensList;
             }
             return dokumensList.filter((dokumen) =>
-                selectedCategories.includes(dokumen.category)
+                selectedCategories.includes(dokumen.category),
             );
         },
-        [selectedCategories]
+        [selectedCategories],
     );
+
+    // Mengambil kategori unik dari data dokumen
+    const uniqueCategories = useMemo(() => {
+        return [...new Set(dokumens.map((dokumen) => dokumen.category))];
+    }, [dokumens]);
 
     // Update totalPages dan reset currentPage ketika dokumen, selectedCategories, pageSize, atau searchQuery berubah
     useEffect(() => {
-        const filteredArticles = handleCategoryFilter(dokumens).filter((dokumen) => {
-            const title = dokumen.title ? dokumen.title.toLowerCase() : "";
-            const category = dokumen.category ? dokumen.category.toLowerCase() : "";
-            return title.includes(searchQuery) || category.includes(searchQuery);
-        });
+        const filteredArticles = handleCategoryFilter(dokumens).filter(
+            (dokumen) => {
+                const title = dokumen.title ? dokumen.title.toLowerCase() : "";
+                const category = dokumen.category ? dokumen.category.toLowerCase() : "";
+                return title.includes(searchQuery) || category.includes(searchQuery);
+            },
+        );
         setTotalPages(Math.ceil(filteredArticles.length / pageSize));
         setCurrentPage(1); // Reset ke halaman pertama saat filter berubah
     }, [handleCategoryFilter, pageSize, dokumens, searchQuery]);
@@ -73,9 +93,13 @@ const DokumenPage = () => {
     const sortDokumens = (dokumensList) => {
         switch (sortOrder) {
             case "Terbaru":
-                return [...dokumensList].sort((a, b) => new Date(b.date) - new Date(a.date));
+                return [...dokumensList].sort(
+                    (a, b) => new Date(b.date) - new Date(a.date),
+                );
             case "Terlama":
-                return [...dokumensList].sort((a, b) => new Date(a.date) - new Date(b.date));
+                return [...dokumensList].sort(
+                    (a, b) => new Date(a.date) - new Date(b.date),
+                );
             default:
                 return dokumensList;
         }
@@ -95,7 +119,9 @@ const DokumenPage = () => {
     // Handle perubahan filter kategori
     const handleCategoryFilterChange = (categoryName) => {
         if (selectedCategories.includes(categoryName)) {
-            setSelectedCategories(selectedCategories.filter((category) => category !== categoryName));
+            setSelectedCategories(
+                selectedCategories.filter((category) => category !== categoryName),
+            );
         } else {
             setSelectedCategories([...selectedCategories, categoryName]);
         }
@@ -103,7 +129,9 @@ const DokumenPage = () => {
 
     // Handle menghapus kategori secara spesifik
     const handleRemoveCategory = (categoryName) => {
-        setSelectedCategories(selectedCategories.filter((category) => category !== categoryName));
+        setSelectedCategories(
+            selectedCategories.filter((category) => category !== categoryName),
+        );
     };
 
     // Handle menghapus semua kategori
@@ -127,14 +155,9 @@ const DokumenPage = () => {
     const paginatedDokumens = useMemo(() => {
         return sortedDokumens.slice(
             (currentPage - 1) * pageSize,
-            currentPage * pageSize
+            currentPage * pageSize,
         );
     }, [sortedDokumens, currentPage, pageSize]);
-
-    // Menggunakan useMemo untuk mendapatkan kategori unik
-    const uniqueCategories = useMemo(() => {
-        return [...new Set(dokumens.map((dokumen) => dokumen.category))];
-    }, [dokumens]);
 
     return (
         <div className="bg-base-100">
@@ -144,33 +167,29 @@ const DokumenPage = () => {
                 descNormal="yang kamu butuhkan di sini!"
                 subdesc="Kamu bisa temukan SK Bupati, SK Gubernur, dan dokumen lain seputar Bone Bolango di sini!"
             />
-            <div className="dark:to-darkPrimary -mt-4 bg-gradient-to-b from-[#edf1fd] to-[#f5f4f4] to-10% dark:bg-gradient-to-b dark:from-[#283257] dark:to-15% dark:text-white">
-                <div className="container mx-auto px-6 lg:px-30 2xl:px-48">
+            <div className="-mt-4 bg-gradient-to-b from-[#edf1fd] to-[#f5f4f4] to-10% dark:bg-gradient-to-b dark:from-[#283257] dark:to-darkPrimary dark:to-15% dark:text-white">
+                <div className="container mx-auto xl:px-48">
                     <div className="flex flex-col gap-8">
                         {/* Pencarian */}
-                        <div className="form-control">
-                            <input
-                                type="text"
-                                placeholder="Cari Dokumen yang kamu butuhkan!"
-                                value={searchQuery}
-                                onChange={handleSearchChange}
-                                className="input input-bordered w-full rounded md:w-auto"
-                            />
-                        </div>
+                        <SearchBar
+                            placeholder="Cari Dokumen yang kamu butuhkan"
+                            value={searchQuery}
+                            onChange={handleSearchChange}
+                        />
 
                         {/* Tag Kategori yang Dipilih */}
                         {selectedCategories.length > 0 && (
-                            <div className="flex flex-wrap justify-center md:justify-start gap-2 px-5">
+                            <div className="flex flex-wrap justify-center gap-2 px-5 md:justify-start">
                                 {selectedCategories.map((category, index) => (
                                     <div
                                         key={index}
-                                        className="rounded shadow bg-white dark:border dark:border-white dark:bg-[#1A2031] bg-primary-100 px-2 py-1 text-xs font-medium text-primary-700 flex items-center gap-2"
+                                        className="bg-primary-100 text-primary-700 flex items-center gap-2 rounded bg-white px-2 py-1 text-xs font-medium shadow dark:border dark:border-white dark:bg-[#1A2031]"
                                     >
                                         <span>📌 {category}</span>
 
                                         {/* Hapus Tag */}
                                         <button
-                                            className="text-lg bg-gray-200 dark:bg-[#283257] rounded p-1"
+                                            className="rounded bg-gray-200 p-1 text-lg dark:bg-[#283257]"
                                             onClick={() => handleRemoveCategory(category)}
                                         >
                                             <IoIosClose fill="currentColor" />
@@ -178,7 +197,7 @@ const DokumenPage = () => {
                                     </div>
                                 ))}
                                 <button
-                                    className="ms-2 text-xs text-gray-700 hover:text-[38BDF8] dark:text-white dark:hover:text-[38BDF8] transition-all"
+                                    className="ms-2 text-xs text-gray-700 transition-all hover:text-[38BDF8] dark:text-white dark:hover:text-[38BDF8]"
                                     onClick={handleClearCategoryFilter}
                                 >
                                     Hapus Semua
@@ -187,8 +206,8 @@ const DokumenPage = () => {
                         )}
 
                         {/* Filter dan Urutkan */}
-                        <div className="flex flex-col-reverse gap-4 md:flex-row items-center justify-between px-5">
-                            <p className="text-sm text-gray-900 dark:text-white">
+                        <div className="flex items-center justify-between gap-4 md:flex-row md:px-5">
+                            <p className="hidden text-sm text-gray-900 dark:text-white md:flex">
                                 <span className="font-bold">{filteredDokumens.length}</span>{" "}
                                 Dokumen ditemukan
                             </p>
@@ -209,21 +228,23 @@ const DokumenPage = () => {
                                 {/* Dropdown Filter Kategori */}
                                 <div className="relative">
                                     <button
-                                        className="flex items-center gap-3 rounded border border-gray-300 px-2 py-2 text-sm dark:bg-[#1A2031]"
+                                        className="flex items-center gap-3 rounded border border-gray-300 px-10 py-2 text-sm dark:bg-[#1A2031] md:px-2"
                                         onClick={() => setIsDropdownOpen(!isDropdownOpen)} // Toggle dropdown
                                     >
                                         {"Pilih Kategori"}
                                         <IoIosArrowDown size={13} />
                                     </button>
                                     {isDropdownOpen && (
-                                        <div className="absolute top-10.5 right-0 bg-white dark:bg-[#1A2031] dark:border dark:border-white shadow z-10 p-3 w-[200px] max-h-60 rounded overflow-y-auto">
+                                        <div className="absolute right-0 top-10.5 z-10 max-h-60 w-[200px] overflow-y-auto rounded bg-white p-3 shadow dark:border dark:border-white dark:bg-[#1A2031]">
                                             {uniqueCategories.map((category, index) => (
                                                 <div key={index} className="flex items-start">
                                                     <div>
                                                         <input
                                                             type="checkbox"
                                                             checked={selectedCategories.includes(category)}
-                                                            onChange={() => handleCategoryFilterChange(category)}
+                                                            onChange={() =>
+                                                                handleCategoryFilterChange(category)
+                                                            }
                                                             id={`category-${index}`}
                                                         />
                                                     </div>
@@ -252,7 +273,7 @@ const DokumenPage = () => {
                     ) : (
                         <>
                             {/* Render dokumen */}
-                            <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
+                            <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
                                 {paginatedDokumens.length > 0 ? (
                                     paginatedDokumens.map((publikasi, index) => (
                                         <PublikasiCard key={index} publikasi={publikasi} />
@@ -275,7 +296,7 @@ const DokumenPage = () => {
                                                 setPageSize(Number(e.target.value));
                                                 setCurrentPage(1); // Reset ke halaman pertama saat mengubah ukuran halaman
                                             }}
-                                            className="rounded border border-gray-300 dark:bg-[#1A2031] px-2 py-1"
+                                            className="rounded border border-gray-300 px-2 py-1 dark:bg-[#1A2031]"
                                         >
                                             {[...Array(5).keys()].map((i) => {
                                                 const value = (i + 1) * 6; // Menghasilkan 6, 12, 18, 24, 30
@@ -296,12 +317,12 @@ const DokumenPage = () => {
                                                 Menampilkan{" "}
                                                 {Math.min(
                                                     (currentPage - 1) * pageSize + 1,
-                                                    filteredDokumens.length
+                                                    filteredDokumens.length,
                                                 )}{" "}
                                                 -{" "}
                                                 {Math.min(
                                                     currentPage * pageSize,
-                                                    filteredDokumens.length
+                                                    filteredDokumens.length,
                                                 )}{" "}
                                                 dari {filteredDokumens.length} Dokumen
                                             </span>

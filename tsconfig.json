@@ -33,9 +33,8 @@
     "next-env.d.ts",
     ".next/types/**/*.ts",
     "**/*.ts",
-    "**/*.tsx"
-  ],
-  "exclude": [
-    "node_modules"
-  ]
+    "**/*.tsx",
+    "src/components/DarkModeToggle.js"
+, "src/components/pageSections/pengumuman-section.jsx", "src/app/(root)/berita/pengumuman/page.jsx"  ],
+  "exclude": ["node_modules"]
 }
