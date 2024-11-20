@@ -64,6 +64,12 @@ export const ListPengumumanCard = () => {
 }
 
 export const PengumumanCard = ({ pengumuman }) => {
+    const formattedDate = new Date(pengumuman.date).toLocaleDateString("id-ID", {
+        day: "numeric",
+        month: "long",
+        year: "numeric",
+    });
+
     return (
         <>
             <Link href={`/berita/pengumuman/${pengumuman.slug}`} className="flex flex-col gap-3 hover:cursor-pointer">
@@ -76,9 +82,14 @@ export const PengumumanCard = ({ pengumuman }) => {
                         <h1 className="text-md line-clamp-2 font-bold tracking-wide ">
                             {pengumuman.title ?? "-"}
                         </h1>
-                        <p className="text-xs font-light text-gray-500">
-                            <span>🕛</span> {pengumuman.date ?? "-"}
-                        </p>
+                        <div className="flex flex-row gap-2">
+                            <p className="text-xs font-light text-gray-500">
+                                <span>🕛</span> {formattedDate ?? "-"}
+                            </p>
+                            <p className="text-xs font-light text-gray-500">
+                                <span>🏷️</span> {pengumuman.category ?? "-"}
+                            </p>
+                        </div>
                     </div>
 
                     {/* download & share */}

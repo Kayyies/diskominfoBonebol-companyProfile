@@ -1,9 +1,6 @@
 import React from "react";
 import { IoMdSearch } from "react-icons/io";
 
-//icons
-import { IoMdSearch } from "react-icons/io";
-
 export const Pagination = ({
   currentPage,
   totalPages,
@@ -74,7 +71,7 @@ export const Pagination = ({
   return (
     <div className="flex flex-wrap gap-1">
       <button
-        className="btn btn-sm rounded"
+        className="btn btn-sm rounded dark:text-white"
         onClick={handleFirstPage}
         disabled={currentPage === 1}
       >
@@ -82,7 +79,7 @@ export const Pagination = ({
       </button>
 
       <button
-        className="btn btn-sm rounded"
+        className="btn btn-sm rounded dark:text-white"
         onClick={handlePrevPage}
         disabled={currentPage === 1}
       >
@@ -97,7 +94,7 @@ export const Pagination = ({
         ) : (
           <button
             key={index}
-            className={`btn btn-sm rounded ${
+            className={`btn btn-sm rounded dark:text-white ${
               currentPage === page ? "btn-active" : ""
             }`}
             onClick={() => onPageChange(page)}
@@ -108,7 +105,7 @@ export const Pagination = ({
       )}
 
       <button
-        className="btn btn-sm rounded"
+        className="btn btn-sm rounded dark:text-white"
         onClick={handleNextPage}
         disabled={currentPage === totalPages}
       >
@@ -116,7 +113,7 @@ export const Pagination = ({
       </button>
 
       <button
-        className="btn btn-sm rounded"
+        className="btn btn-sm rounded dark:text-white"
         onClick={handleLastPage}
         disabled={currentPage === totalPages}
       >

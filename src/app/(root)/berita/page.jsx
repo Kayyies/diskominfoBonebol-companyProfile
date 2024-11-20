@@ -12,12 +12,12 @@ import {
     IoMdShare,
 } from "react-icons/io";
 import Link from "next/link";
-import { NewsRecom } from "@/components/News/NewsRecom";
+import { BeritaBaru } from "@/components/News/NewsRecom";
 
 const DEFAULT_PAGE_SIZE = 6;
 const MAX_PAGE_SIZE = 30;
 
-const BeritaPage = () => {
+function BeritaPage() {
     const [news, setNews] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
@@ -28,39 +28,39 @@ const BeritaPage = () => {
     const [selectedSources, setSelectedSources] = useState([]);
     const [isDropdownOpen, setIsDropdownOpen] = useState(false); // State untuk membuka/tutup dropdown
 
-  // Fetch berita dari API
-  useEffect(() => {
-    const fetchNews = async () => {
-      setIsLoading(true);
-      try {
-        const response = await fetch(
-          `https://newsapi.org/v2/everything?q=indonesia&apiKey=${process.env.NEXT_PUBLIC_NEWS_API_KEY}`,
-        );
-        const data = await response.json();
+    // Fetch berita dari API
+    useEffect(() => {
+        const fetchNews = async () => {
+            setIsLoading(true);
+            try {
+                const response = await fetch(
+                    `https://newsapi.org/v2/everything?q=indonesia&apiKey=${process.env.NEXT_PUBLIC_NEWS_API_KEY}`,
+                );
+                const data = await response.json();
 
-        if (data.articles) {
-          const filteredArticles = data.articles.filter(
-            (article) => !article.title.startsWith("[Removed]"),
-          );
+                if (data.articles) {
+                    const filteredArticles = data.articles.filter(
+                        (article) => !article.title.startsWith("[Removed]"),
+                    );
 
-          setNews(filteredArticles);
-          // Total pages akan dihitung di useEffect berikutnya
-        } else {
-          console.error("No articles found in the response.");
-          setNews([]);
-          setTotalPages(0);
-        }
-      } catch (error) {
-        console.error("Failed to fetch news:", error);
-        setNews([]);
-        setTotalPages(0);
-      } finally {
-        setIsLoading(false);
-      }
-    };
+                    setNews(filteredArticles);
+                    // Total pages akan dihitung di useEffect berikutnya
+                } else {
+                    console.error("No articles found in the response.");
+                    setNews([]);
+                    setTotalPages(0);
+                }
+            } catch (error) {
+                console.error("Failed to fetch news:", error);
+                setNews([]);
+                setTotalPages(0);
+            } finally {
+                setIsLoading(false);
+            }
+        };
 
-    fetchNews();
-  }, [pageSize]);
+        fetchNews();
+    }, [pageSize]);
 
     // Memoize handleSourceFilter untuk menghindari pembuatan ulang fungsi setiap render
     const handleSourceFilter = useCallback(
@@ -108,16 +108,16 @@ const BeritaPage = () => {
         }
     };
 
-  // Handle perubahan pencarian
-  const handleSearchChange = (e) => {
-    const query = e.target.value.toLowerCase();
-    setSearchQuery(query);
-  };
+    // Handle perubahan pencarian
+    const handleSearchChange = (e) => {
+        const query = e.target.value.toLowerCase();
+        setSearchQuery(query);
+    };
 
-  // Handle perubahan halaman
-  const handlePageChange = (newPage) => {
-    setCurrentPage(newPage);
-  };
+    // Handle perubahan halaman
+    const handlePageChange = (newPage) => {
+        setCurrentPage(newPage);
+    };
 
     // Handle perubahan filter sumber
     const handleSourceFilterChange = (sourceName) => {
@@ -137,10 +137,10 @@ const BeritaPage = () => {
         );
     };
 
-  // Handle menghapus semua sumber
-  const handleClearSourceFilter = () => {
-    setSelectedSources([]);
-  };
+    // Handle menghapus semua sumber
+    const handleClearSourceFilter = () => {
+        setSelectedSources([]);
+    };
 
     // Menggunakan useMemo untuk menghitung filteredNews agar tidak dihitung ulang setiap render kecuali dependensi berubah
     const filteredNews = useMemo(() => {
@@ -153,16 +153,16 @@ const BeritaPage = () => {
         });
     }, [handleSourceFilter, news, searchQuery]);
 
-  // Mengurutkan berita yang telah difilter
-  const sortedNews = sortNews(filteredNews);
+    // Mengurutkan berita yang telah difilter
+    const sortedNews = sortNews(filteredNews);
 
-  // Mengambil berita untuk halaman saat ini
-  const paginatedNews = useMemo(() => {
-    return sortedNews.slice(
-      (currentPage - 1) * pageSize,
-      currentPage * pageSize,
-    );
-  }, [sortedNews, currentPage, pageSize]);
+    // Mengambil berita untuk halaman saat ini
+    const paginatedNews = useMemo(() => {
+        return sortedNews.slice(
+            (currentPage - 1) * pageSize,
+            currentPage * pageSize,
+        );
+    }, [sortedNews, currentPage, pageSize]);
 
     // Menggunakan useMemo untuk mendapatkan sumber unik
     const uniqueSources = useMemo(() => {
@@ -199,7 +199,7 @@ const BeritaPage = () => {
             />
             <div className="-mt-4 bg-gradient-to-b from-[#edf1fd] to-[#f5f4f4] to-10% dark:bg-gradient-to-b dark:from-[#283257] dark:to-darkPrimary dark:to-15% dark:text-white">
                 <div className="container mx-auto xl:px-48">
-                    <NewsRecom id="beritaBaru-circle" isVisible={isVisible} />
+                    <BeritaBaru id="beritaBaru-circle" isVisible={isVisible} />
                     <div className="flex flex-col gap-8">
                         {/* Pencarian */}
                         <SearchBar
