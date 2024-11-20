@@ -10,6 +10,27 @@ const createSlug = (title) => {
     .replace(/\s+/g, "-"); // Mengganti spasi dengan tanda "-"
 };
 
+const pengumuman = [
+  {
+    id: 1,
+    title: "Pengumuman Beasiswa Bone Bolango Cemerlang 2024",
+    date: "Selasa, 26 September 2023 Pukul 16:13",
+    file: "/pengumuman_beasiswa.pdf",
+  },
+  {
+    id: 2,
+    title: "Pengumuman Beasiswa Bank Indonesia 2024",
+    date: "Selasa, 26 September 2023 Pukul 16:13",
+    file: "/pengumuman_beasiswa.pdf",
+  },
+  {
+    id: 3,
+    title: "Aturan penggunaan frekuensi 22.3fm",
+    date: "Rabu, 27 September 2023 Pukul 16:13",
+    file: "/pengumuman_beasiswa.pdf",
+  },
+];
+
 export const NewsCard = ({ article }) => {
   // jika image bad request 400
   const image = article.urlToImage
@@ -52,27 +73,38 @@ export const NewsCard = ({ article }) => {
 export const PengumumanCard = () => {
   return (
     <>
-      <div>
-        <div className="flex h-fit w-full flex-col gap-5 rounded-lg border-2 border-gray-200 bg-white p-5 text-darkPrimary drop-shadow-sm transition-all duration-150 ease-in-out dark:border-textAccent/30 dark:bg-transparent dark:text-white/90 hover:dark:border-textAccent">
-          {/* title & date */}
-          <div className="flex flex-col gap-2">
-            <h1 className="text-md line-clamp-2 font-bold tracking-wide ">
-              Pengumuman Beasiswa Bone Bolango Cemerlang 2024
-            </h1>
-            <p className="text-xs font-light text-gray-500">
-              🕛 Selasa, 26 September 2023 Pukul 16:13
-            </p>
+      <div className="flex flex-col gap-3">
+        {pengumuman.map((data) => (
+          <div
+            key={data.id}
+            className="flex h-fit w-full flex-col gap-5 rounded-lg border-2 border-gray-200 bg-white p-5 text-darkPrimary drop-shadow-sm transition-all duration-150 ease-in-out dark:border-textAccent/30 dark:bg-transparent dark:text-white/90 hover:dark:border-textAccent"
+          >
+            {/* title & date */}
+            <div className="flex flex-col gap-2">
+              <h1 className="text-md line-clamp-2 font-bold tracking-wide ">
+                {data.title}
+              </h1>
+              <p className="text-xs font-light text-gray-500">
+                <span>🕛</span> {data.date}
+              </p>
+            </div>
+
+            {/* download & share */}
+            <div className="flex gap-3 text-xs font-bold">
+              <a
+                href={data.file}
+                download
+                className="flex items-center gap-2 rounded-lg border-2 border-textAccent/70 p-3 transition-colors duration-100 hover:border-textAccent hover:text-textAccent dark:border-textAccent"
+              >
+                Unduh Dokumen <IoMdDownload className="text-lg" />
+              </a>
+
+              {/* <button className="transition-color rounded-lg border-2 border-textAccent/70 p-3 duration-100 hover:border-textAccent hover:text-textAccent dark:border-textAccent">
+                <IoMdShare className="text-lg" />
+              </button> */}
+            </div>
           </div>
-          {/* donwload & share */}
-          <div className="flex gap-3 text-xs font-bold">
-            <button className="flex items-center gap-2 rounded-lg border-2 border-textAccent/70 p-3 transition-colors duration-100 hover:border-textAccent hover:text-textAccent dark:border-textAccent">
-              Unduh Dokumen <IoMdDownload className="text-lg" />
-            </button>
-            <button className="transition-color rounded-lg border-2 border-textAccent/70 p-3 duration-100 hover:border-textAccent hover:text-textAccent dark:border-textAccent">
-              <IoMdShare className="text-lg" />
-            </button>
-          </div>
-        </div>
+        ))}
       </div>
     </>
   );

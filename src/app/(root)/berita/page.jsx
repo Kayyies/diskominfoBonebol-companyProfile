@@ -12,7 +12,7 @@ import {
   IoMdShare,
 } from "react-icons/io";
 import Link from "next/link";
-import { NewsRecom, BeritaBaru } from "@/components/News/NewsRecom";
+import { BeritaBaru } from "@/components/News/NewsRecom";
 
 const DEFAULT_PAGE_SIZE = 6;
 const MAX_PAGE_SIZE = 30;
@@ -308,7 +308,7 @@ function BeritaPage() {
                       </button>
                     </div>
                   )}
-                  {/* berita hoax*/}
+                  {/* berita baru*/}
                   <div className="flex items-end justify-between">
                     <div className="mt-10 h-10 w-52 bg-[url(/assets/beritabonebolfull-dark.png)] bg-no-repeat dark:bg-[url(/assets/beritabonebolfull.png)] dark:bg-no-repeat md:mt-0"></div>
                     <Link

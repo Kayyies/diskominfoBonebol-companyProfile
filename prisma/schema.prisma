@@ -42,7 +42,7 @@ model Dokumen {
   title     String
   category  DokumenCategory
   file      String
-  slug      String?
+  slug      String?         @unique
   desc      String
   updatedAt DateTime        @updatedAt
 }
