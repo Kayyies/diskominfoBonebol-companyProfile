@@ -1,10 +1,9 @@
-//(root)/dokumen/[slug]/page.jsx
-
 "use client";
 
 import { useEffect, useState } from "react";
 import JumbotronDetail from "@/components/Jumbotron/JumbotronDetail";
 import Spinner from "@/components/Spinner";
+import DOMPurify from "dompurify"; // Import DOMPurify for sanitization
 
 export default function DokumenDetailPage({ params }) {
   const { slug } = params;
@@ -36,6 +35,13 @@ export default function DokumenDetailPage({ params }) {
 
     fetchDokumen();
   }, [slug]);
+
+  // Sanitize HTML content to prevent XSS attacks
+  const getSanitizedContent = (html) => {
+    // Replace empty <p></p> tags with <br />
+    const modifiedContent = html.replace(/<p><\/p>/g, "<br />");
+    return DOMPurify.sanitize(modifiedContent); // Clean the HTML content
+  };
 
   return (
     <div className="bg-base-100">
@@ -75,7 +81,13 @@ export default function DokumenDetailPage({ params }) {
             </div>
             <div>
               <div className="text-justify leading-8 dark:text-white">
-                <p>{dokumen.desc}</p>
+                {/* Use dangerouslySetInnerHTML with sanitized content */}
+                <div
+                  className="dokumen-content"
+                  dangerouslySetInnerHTML={{
+                    __html: getSanitizedContent(dokumen.content), // Inject sanitized HTML
+                  }}
+                />
               </div>
             </div>
           </div>

@@ -60,6 +60,16 @@ export const getDokumenById = async (id: string) => {
     throw new Error("Failed to fetch data");
   }
 };
+export const getBeritaHoaxById = async (id: string) => {
+  try {
+    const item = await prisma?.beritaHoax.findUnique({
+      where: { id },
+    });
+    return item;
+  } catch (error) {
+    throw new Error("Failed to fetch data");
+  }
+};
 export const getUserById = async (id: string) => {
   try {
     const item = await prisma?.user.findUnique({
