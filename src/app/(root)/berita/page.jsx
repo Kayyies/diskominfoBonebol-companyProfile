@@ -28,39 +28,38 @@ function BeritaPage() {
     const [selectedSources, setSelectedSources] = useState([]);
     const [isDropdownOpen, setIsDropdownOpen] = useState(false); // State untuk membuka/tutup dropdown
 
+    const beritaHoaxCategoryMapping = {
+        UMUM: "Umum",
+    };
+
     // Fetch berita dari API
     useEffect(() => {
-        const fetchNews = async () => {
-            setIsLoading(true);
+        const fetchBeritaHoax = async () => {
+            setIsLoading(true); // Set loading ke true sebelum fetching
+
             try {
-                const response = await fetch(
-                    `https://newsapi.org/v2/everything?q=indonesia&apiKey=${process.env.NEXT_PUBLIC_NEWS_API_KEY}`,
-                );
+                // Ambil data dari PublikasiData.js
+                const response = await fetch("/api/beritahoax");
                 const data = await response.json();
 
-                if (data.articles) {
-                    const filteredArticles = data.articles.filter(
-                        (article) => !article.title.startsWith("[Removed]"),
-                    );
-
-                    setNews(filteredArticles);
-                    // Total pages akan dihitung di useEffect berikutnya
-                } else {
-                    console.error("No articles found in the response.");
-                    setNews([]);
-                    setTotalPages(0);
-                }
+                const mappedData = data.map((item) => ({
+                    ...item,
+                    category: beritaHoaxCategoryMapping[item.category], // Map kategori dokumen
+                    date: new Date(item.createdAt).toISOString().split("T")[0], // Format tanggal
+                }));
+                setNews(mappedData);
+                // Total pages akan dihitung di useEffect berikutnya
             } catch (error) {
-                console.error("Failed to fetch news:", error);
-                setNews([]);
-                setTotalPages(0);
+                console.error("Failed to fetch berita hoax:", error);
+                setNews([]); // Set default ke array kosong jika terjadi error
+                setTotalPages(0); // Set total pages ke 0
             } finally {
-                setIsLoading(false);
+                setIsLoading(false); // Set loading ke false setelah fetching selesai
             }
         };
 
-        fetchNews();
-    }, [pageSize]);
+        fetchBeritaHoax();
+    }, []);
 
     // Memoize handleSourceFilter untuk menghindari pembuatan ulang fungsi setiap render
     const handleSourceFilter = useCallback(
@@ -69,7 +68,7 @@ function BeritaPage() {
                 return newsList;
             }
             return newsList.filter((article) =>
-                selectedSources.includes(article.source.name),
+                selectedSources.includes(article.category),
             );
         },
         [selectedSources],
@@ -79,10 +78,7 @@ function BeritaPage() {
     useEffect(() => {
         const filteredArticles = handleSourceFilter(news).filter((article) => {
             const title = article.title ? article.title.toLowerCase() : "";
-            const description = article.description
-                ? article.description.toLowerCase()
-                : "";
-            return title.includes(searchQuery) || description.includes(searchQuery);
+            return title.includes(searchQuery);
         });
         setTotalPages(Math.ceil(filteredArticles.length / pageSize));
         setCurrentPage(1); // Reset ke halaman pertama saat filter berubah
@@ -93,7 +89,7 @@ function BeritaPage() {
         switch (sortOrder) {
             case "Terbaru":
                 return [...newsList].sort(
-                    (a, b) => new Date(b.publishedAt) - new Date(a.publishedAt),
+                    (a, b) => new Date(b.createdAt) - new Date(a.createdAt),
                 );
             case "Populer":
                 return [...newsList].sort(
@@ -101,7 +97,7 @@ function BeritaPage() {
                 );
             case "Terlama":
                 return [...newsList].sort(
-                    (a, b) => new Date(a.publishedAt) - new Date(b.publishedAt),
+                    (a, b) => new Date(a.createdAt) - new Date(b.createdAt),
                 );
             default:
                 return newsList;
@@ -146,10 +142,7 @@ function BeritaPage() {
     const filteredNews = useMemo(() => {
         return handleSourceFilter(news).filter((article) => {
             const title = article.title ? article.title.toLowerCase() : "";
-            const description = article.description
-                ? article.description.toLowerCase()
-                : "";
-            return title.includes(searchQuery) || description.includes(searchQuery);
+            return title.includes(searchQuery);
         });
     }, [handleSourceFilter, news, searchQuery]);
 
@@ -166,7 +159,7 @@ function BeritaPage() {
 
     // Menggunakan useMemo untuk mendapatkan sumber unik
     const uniqueSources = useMemo(() => {
-        return [...new Set(news.map((article) => article.source.name))];
+        return [...new Set(news.map((article) => article.category))];
     }, [news]);
 
     const [isVisible, setIsVisible] = useState(false);
@@ -225,9 +218,9 @@ function BeritaPage() {
                                     <div>
                                         {/* Filter dan Urutkan */}
                                         <div className="flex items-center justify-between gap-4 md:flex-row">
-                                            <p className="hidden text-sm text-darkPrimary dark:text-white md:flex">
+                                            <p className="hidden text-sm text-darkPrimary dark:text-white md:flex gap-1">
                                                 <span className="font-bold">{filteredNews.length}</span>{" "}
-                                                Artikel ditemukan
+                                                Berita Hoax ditemukan
                                             </p>
 
                                             <div className="flex flex-row gap-2">
@@ -250,7 +243,7 @@ function BeritaPage() {
                                                         className="flex items-center gap-3 rounded border border-gray-300 px-7 py-2 text-sm dark:bg-[#1A2031] md:px-2"
                                                         onClick={() => setIsDropdownOpen(!isDropdownOpen)} // Toggle dropdown
                                                     >
-                                                        {"Pilih Source Name"}
+                                                        {"Pilih Kategori"}
                                                         <IoIosArrowDown size={13} />
                                                     </button>
                                                     {isDropdownOpen && (
@@ -309,22 +302,25 @@ function BeritaPage() {
                                         </div>
                                     )}
                                     {/* berita baru*/}
-                                    <div className="flex items-end justify-between">
-                                        <div className="mt-10 h-10 w-52 bg-[url(/assets/beritabonebolfull-dark.png)] bg-no-repeat dark:bg-[url(/assets/beritabonebolfull.png)] dark:bg-no-repeat md:mt-0"></div>
-                                        <Link
-                                            href="https://berita.bonebolangokab.go.id/"
-                                            className="transition-color text-sm font-medium duration-100 hover:text-textAccent"
-                                        >
-                                            Lihat semua
-                                        </Link>
-                                    </div>
                                     {paginatedNews.length > 0 ? (
                                         paginatedNews.map((article, index) => (
-                                            <NewsCard key={index} article={article} />
+                                            <>
+                                                <div className="flex items-end justify-between">
+                                                    <div className="mt-10 h-10 w-52 bg-[url(/assets/beritabonebolfull-dark.png)] bg-no-repeat dark:bg-[url(/assets/beritabonebolfull.png)] dark:bg-no-repeat md:mt-0"></div>
+                                                    <Link
+                                                        href="https://berita.bonebolangokab.go.id/"
+                                                        className="transition-color text-sm font-medium duration-100 hover:text-textAccent"
+                                                    >
+                                                        Lihat semua
+                                                    </Link>
+                                                </div>
+                                                
+                                                <NewsCard key={index} article={article} />
+                                            </>
                                         ))
                                     ) : (
-                                        <p className="text-center">
-                                            Tidak ada berita yang ditemukan.
+                                        <p className="text-center dark:text-white">
+                                            Tidak ada berita hoax yang ditemukan.
                                         </p>
                                     )}
                                     {/* Pagination */}

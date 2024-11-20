@@ -13,13 +13,13 @@ const createSlug = (title) => {
 
 export const NewsCard = ({ article }) => {
     // jika image bad request 400
-    const image = article.urlToImage
-        ? article.urlToImage
+    const image = article.image
+        ? article.image
         : "https://placehold.jp/150x150.png";
 
     return (
         <Link
-            href={`/berita/${createSlug(article.title)}`}
+            href={`/berita/hoax/${article.slug}`}
             className="my-3 rounded-lg border-transparent p-1 transition-all duration-100 ease-in-out md:my-0 md:border-2 md:border-gray-200 md:bg-white/90 md:p-5 md:drop-shadow-sm md:hover:border-textAccent md:dark:border-textAccent/30 md:dark:bg-transparent md:hover:dark:border-textAccent"
         >
             <div className="flex items-start gap-4">
@@ -28,7 +28,7 @@ export const NewsCard = ({ article }) => {
                         src={image} // default image jika tidak ada
                         width={150}
                         height={150}
-                        alt={article.title}
+                        alt={article.image}
                         className="aspect-square rounded object-cover"
                     />
                 </div>
@@ -37,12 +37,12 @@ export const NewsCard = ({ article }) => {
                         {article.title}
                     </h1>
                     <p className="line-clamp-2 hidden text-xs lg:line-clamp-1 lg:block">
-                        {article.description}
+                        {article.content}
                     </p>
                     <NewsTag
-                        author={article.author}
-                        category={article.source.name}
-                        date={article.publishedAt}
+                        author={"Admin Diskominfo"}
+                        category={article.category}
+                        date={article.createdAt}
                     />
                 </div>
             </div>
