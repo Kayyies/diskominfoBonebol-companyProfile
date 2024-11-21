@@ -3,7 +3,8 @@ import { usePathname } from "next/navigation";
 
 function JumbotronDetail({ title, author, category, date }) {
   let pathName = usePathname();
-  pathName = pathName.split("/").slice(0, -1).join("");
+  const pathArray = pathName.split("/");
+  pathName = pathArray.slice(1, pathArray.length - 1).join("/");
 
   const dateFormat = new Date(date);
   date = dateFormat.toLocaleDateString("id-ID", {

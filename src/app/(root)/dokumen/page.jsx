@@ -7,6 +7,7 @@ import PublikasiCard from "@/components/PublikasiCard";
 import { Pagination, SearchBar } from "@/components/Pagination"; // Komponen pagination
 import Spinner from "@/components/Spinner"; // Komponen spinner
 import { IoIosArrowDown, IoIosClose } from "react-icons/io";
+import pengumumanData from "@/data/pengumumanData";
 
 const DEFAULT_PAGE_SIZE = 12; // Ukuran halaman default
 const MAX_PAGE_SIZE = 30; // Ukuran halaman maksimum
