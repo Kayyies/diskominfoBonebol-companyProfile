@@ -3,9 +3,9 @@ export const ProfileSidebar = [
     topic: "dinas",
     title: "Dinas Komunikasi dan Informatika",
     subtitles: [
-      "Apa itu Diskominfo",
-      "Apa itu Diskominfo secara nasional",
-      "Mengapa Diskominfo diperlukan",
+      "Apa itu Dinas Komunikasi dan Informatika",
+      "Sejarah Dinas Komunikasi dan Informatika",
+      "Mengapa Diskominfo diperlukan?",
       "Peran Kemenkominfo dan Diskominfo di daerah",
     ],
   },
@@ -14,8 +14,8 @@ export const ProfileSidebar = [
     title: "Diskominfo Bonebol",
     subtitles: [
       "Apa itu Diskominfo Bone Bolango",
-      "Awal Diskominfo Bone Bolango",
-      "Di mana Diskominfo Bone Bolango",
+      "Sejarah Diskominfo Bone Bolango",
+      "Di mana Dinas Komunikasi dan Informatika Bone Bolango",
     ],
   },
   {

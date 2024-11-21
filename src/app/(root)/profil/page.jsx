@@ -13,6 +13,7 @@ import { ProfileSidebar } from "@/data/ProfilSidebar";
 import { ProfilText } from "@/data/ProfilText";
 import Simak from "@/components/Simak";
 import { useRouter, useSearchParams } from "next/navigation";
+import Image from "next/image";
 
 //dynamic accordion
 const ProfilPage = () => {
@@ -152,7 +153,16 @@ const ProfilPage = () => {
                   .replace(/[?]/g, ""); // Generate section id
                 return (
                   <div key={i} id={sectionId}>
-                    <h2 className="text-xl font-bold">{section.heading}</h2>
+                    <h2 className="text-xl font-bold mb-3">{section.heading}</h2>
+                    {section.image ? (
+                        <img 
+                            src={section.image}
+                            alt={"diskominfo-image"}
+                            className="w-full h-fit mb-3"
+                        />
+                    ) : (
+                        <></>
+                    )}
                     <p className="text-md mb-10 font-light">{section.text}</p>
                   </div>
                 );
