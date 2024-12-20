@@ -8,7 +8,7 @@ import Link from "next/link";
 export default function Footer() {
   return (
     <div className="bg-gradient-to-b from-[#f5f4f4] to-[#edf1fd] to-70% pb-15 dark:bg-gradient-to-b dark:from-darkPrimary dark:via-[#1d2956] dark:to-[#2e418a] dark:to-90% lg:mt-20 ">
-      <div className="container mx-auto mb-12 text-base-content dark:text-white lg:px-48">
+      <div className="container mx-auto mb-12 px-6 text-base-content dark:text-white lg:px-48">
         {/* kata besar */}
         <div className="flex flex-col gap-15 lg:mb-10 lg:flex-row">
           <div className="flex flex-col gap-5 text-darkPrimary dark:text-white lg:w-5/12">

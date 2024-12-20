@@ -14,8 +14,8 @@ function JumbotronDetail({ title, author, category, date }) {
   });
   return (
     <div>
-      <div className="h-[280px] w-full bg-[url(/slugDivider.png)] bg-cover bg-top py-10 dark:text-white lg:h-[370px]">
-        <div className="container mx-auto mt-10 px-48">
+      <div className="h-[330px] w-full bg-[url(/slugDivider.png)] bg-cover bg-top py-10 dark:text-white lg:h-[370px]">
+        <div className="container mx-auto mt-10 px-5 xl:px-48">
           <Link
             href={`/${pathName}`}
             className="mb-2 inline-flex items-center gap-2 text-xs text-gray-400 transition-all hover:text-[38BDF8] lg:mb-4 lg:text-sm"

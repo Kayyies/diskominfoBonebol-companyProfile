@@ -75,13 +75,17 @@ export default function BeritaDetailPage({ params }) {
                 className="mb-6 h-full w-full object-cover"
               />
             ) : (
-              <div className="mb-6 bg-gray-200 h-[500px] w-full" /> // fallback jika tidak ada gambar
+              <div className="mb-6 h-[500px] w-full bg-gray-200" /> // fallback jika tidak ada gambar
             )}
             {/* Tampilkan konten artikel */}
-            <div
-              className="text-sm text-darkPrimary dark:text-white xl:text-lg"
-              dangerouslySetInnerHTML={{ __html: article.content.rendered }}
-            />
+            <div className="flex justify-center">
+              <div className="w-[340px] text-sm text-darkPrimary dark:text-white lg:w-[700px] xl:text-lg">
+                <div
+                  className="space-y-6 overflow-hidden"
+                  dangerouslySetInnerHTML={{ __html: article.content.rendered }}
+                />
+              </div>
+            </div>
           </div>
         ) : (
           <div>Article not found</div>
